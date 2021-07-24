@@ -56,10 +56,8 @@ void Console::PlotPixelIfBrighter(int x, int y, double luminosity)
 
 void Console::Draw()
 {
-	for (int y = 0; y < realHeight; y++)
-	{
-		for (int x = 0; x < realWidth; x++)
-		{
+	for(int y = 0; y < realHeight; y++){
+		for (int x = 0; x < realWidth; x++){
 			std::cout << console[y * realWidth + x];
 		}
 		std::cout << '\n';
@@ -77,10 +75,9 @@ void Console::Clear()
 {
 	std::cout << "\e[3J\e[1;1H";
 
-	for (int y = 0; y < realHeight; y++)
-	{
-		for (int x = 0; x < realWidth; x++)
-		{
+	for (int y = 0; y < realHeight; y++){
+		for (int x = 0; x < realWidth; x++){
+			
 			if (x == 0 || x == realWidth - 1 || y == 0 || y == realHeight - 1)
 				console[y * realWidth + x] = '#';
 			else

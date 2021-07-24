@@ -49,13 +49,17 @@ void Game::InitDefaultGame()
 
 void Game::DrawSphere(double x, double y, double r) 
 {
-    for(double ix = x - r; ix <= x + r; ix += 1.0){
-        for(double iy = y - r; iy <= y + r; iy += 1.0){
-            double distance = std::hypot(ix - x, iy - y);
+    double cx = (int)(x);
+    double cy = (int)(y);
+
+    for(double ix = -r; ix <= r; ix += 1.0){
+        for(double iy = -r; iy <= r; iy += 1.0){
+
+            double distance = std::hypot(cx + ix - x, cy + iy - y);
             double luminosity = 1.0 - distance / r;
             
             // screen.PlotPixel(ix, iy, luminosity);
-            screen.PlotPixelIfBrighter(ix, iy, luminosity);
+            screen.PlotPixelIfBrighter(cx + ix, cy + iy, luminosity);
         }
     }
 }
