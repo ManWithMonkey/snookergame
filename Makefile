@@ -1,2 +1,4 @@
-all:
-	g++ -o out main.cpp Game.cpp Console.cpp Vec2d.cpp
+CXXFLAGS = -Wall -g
+
+executable:
+	c++ $(CXXFLAGS) -o out *.cpp
