@@ -9,6 +9,12 @@ Important:
 - more reliable collision system
 
 Visual:
+- use predefined strings and sizes to draw circles for clear and less chaotic look, like:
+
+    /---\
+    | 8 |
+    \---/
+
 - cursor blinks at bottom left corner, could be invisible
 - color?
 
