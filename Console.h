@@ -5,6 +5,7 @@
 
 class Console{
 private:
+    int realWidth, realHeight;
     int width, height;
     char* console;
 
