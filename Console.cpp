@@ -17,7 +17,7 @@ void Console::InitBackground()
 {
 	for(int y=0; y<height; y++)
 		for(int x=0; x<width; x++)
-			if (x == 4 || x == width - 5 || y == 4 || y == height - 5 || x == 0 || y == 0 || x == width - 1 || y == height - 1)
+			if (x == 4 || x == width - 5 || y == 3 || y == height - 3 || x == 0 || y == 0 || x == width - 1 || y == height - 1)
 				background[y * width + x] = '#';
 			else
 				background[y * width + x] = ((y + x) % 2 ? '/' : '\\');

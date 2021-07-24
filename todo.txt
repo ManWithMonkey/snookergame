@@ -1,0 +1,17 @@
+Important:
+- keyboard input
+- cue aiming, pull strength and release
+- holes
+- way to identify balls from one another (number, character?)
+- turns
+- scorekeeping
+- gameplay
+- more reliable collision system
+
+Visual:
+- cursor blinks at bottom left corner, could be invisible
+- color?
+
+Maybe:
+- ncurses
+- multiplayer

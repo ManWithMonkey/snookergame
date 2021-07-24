@@ -34,10 +34,6 @@ void Game::UpdateScreen()
 
 void Game::InitDefaultGame() 
 {
-    auto _randScalar = []() -> double {
-        return 2.0 * (double)(rand()) / (double)RAND_MAX - 1.0;
-    };
-
     const Vec2d white_start(6, height / 2);
     const Vec2d hub_start(40, height / 2);
     const double hub_scalar = 2.0f;
@@ -97,8 +93,8 @@ void Game::HandleBallCollisions()
                 Vec2d mirrorUnitVector = collisionDirection.unit();
 
                 double velTotal = b1.vel.norm() + b2.vel.norm();
-                double velDifferenceScale1 = b1.vel.norm() / velTotal;
-                double velDifferenceScale2 = 1.0 - velDifferenceScale1;
+                // double velDifferenceScale1 = b1.vel.norm() / velTotal;
+                // double velDifferenceScale2 = 1.0 - velDifferenceScale1;
 
                 double velavg = 0.5 * velTotal;
 
