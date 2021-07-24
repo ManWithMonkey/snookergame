@@ -1,12 +1,19 @@
 #include "Game.h"
 
-Game::Game(int w, int h) 
+Game::Game(int w, int h) :
+    width(w), height(h), screen(width, height), balls(0)
 {
-    width = w;
-    height = h;
-    screen = Console(w, h);
-
     InitDefaultGame();
+}
+
+Game::Game() :
+    width(defaultWidth), height(defaultHeight), screen(defaultWidth, defaultHeight), balls(0)
+{
+    InitDefaultGame();
+}
+
+Game::~Game() 
+{
 }
 
 void Game::Update(double dt) 
@@ -47,11 +54,37 @@ void Game::InitDefaultGame()
         return 2.0 * (double)(rand()) / (double)RAND_MAX - 1.0;
     };
 
+    const Vec2d white_start(4, 25);
+    const Vec2d hub_start(55, 25);
+    const double hub_scalar = 3.f;
+    const double dx = 2;
+    const double dy = 1;
+
+    const Vec2d positions[] = {
+        hub_start + hub_scalar * Vec2d(0.0 * dx,  0.0 * dy),
+        hub_start + hub_scalar * Vec2d(1.0 * dx, -1.0 * dy),
+        hub_start + hub_scalar * Vec2d(1.0 * dx,  1.0 * dy),
+        hub_start + hub_scalar * Vec2d(2.0 * dx, -2.0 * dy),
+        hub_start + hub_scalar * Vec2d(2.0 * dx,  0.0 * dy),
+        hub_start + hub_scalar * Vec2d(2.0 * dx,  2.0 * dy),
+        hub_start + hub_scalar * Vec2d(3.0 * dx, -3.0 * dy),
+        hub_start + hub_scalar * Vec2d(3.0 * dx, -1.0 * dy),
+        hub_start + hub_scalar * Vec2d(3.0 * dx,  1.0 * dy),
+        hub_start + hub_scalar * Vec2d(3.0 * dx,  3.0 * dy),
+        hub_start + hub_scalar * Vec2d(4.0 * dx, -4.0 * dy),
+        hub_start + hub_scalar * Vec2d(4.0 * dx, -2.0 * dy),
+        hub_start + hub_scalar * Vec2d(4.0 * dx,  0.0 * dy),
+        hub_start + hub_scalar * Vec2d(4.0 * dx,  2.0 * dy),
+        hub_start + hub_scalar * Vec2d(4.0 * dx,  4.0 * dy)
+    };
+
     balls.clear();
-    for(int i=0; i<6; i++){
-        balls.push_back(Ball(2 + i * 8, 2 + i * 6, i * 1.0));
-        balls.back().vel = 100.0 * Vec2d(_randScalar(), _randScalar());
+    for(int i=0; i<sizeof(positions); i++){
+        balls.push_back(Ball(positions[i].x, positions[i].y, defaultBallRadius));
     }
+
+    balls.push_back(Ball(white_start.x, white_start.y, defaultBallRadius));
+    balls.back().vel = cueVelocity * Vec2d(1, 0);
 }
 
 void Game::DrawSphere(double x, double y, double r) 
@@ -76,7 +109,6 @@ void Game::DrawGame()
     for(Ball& ball : balls){
         DrawSphere(ball.pos.x, ball.pos.y, ball.radius);
     }
-    // DrawTestLuminosity();
 }
 
 void Game::HandleWallCollisions() 
@@ -101,19 +133,14 @@ void Game::HandleBallCollisions()
                 Vec2d collisionDirection = (b1.pos - b2.pos).unit();
 
                 double intersectionSize = (b1.radius + b2.radius) - distance;
-                // double distanceTravelled1 = b1.lastDeltaPosition.norm();
-                // double distanceTravelled2 = b2.lastDeltaPosition.norm();
 
                 Vec2d mirrorUnitVector = collisionDirection.unit();
 
+                // needs trasferrance of energy, currently will never lose/gain velocity to other balls in collision
                 b1.vel.reflect(mirrorUnitVector);
                 b2.vel.reflect(mirrorUnitVector);
 
-                // double goBackScale1 = intersectionSize / distanceTravelled1;
-                // double goBackScale2 = intersectionSize / distanceTravelled2;
-
-                // b1.pos -= goBackScale1 * b1.lastDeltaPosition + (1.0 - goBackScale1) * b1.lastDeltaPosition.reflected(mirrorUnitVector);
-                // b2.pos -= goBackScale2 * b2.lastDeltaPosition + (1.0 - goBackScale2) * b2.lastDeltaPosition.reflected(mirrorUnitVector);
+                // only works accurately when moving head on with same velocity or some other symmetric circumstances
                 b1.pos += 0.5 * intersectionSize * b1.lastDeltaPosition.reflected(mirrorUnitVector);
                 b2.pos += 0.5 * intersectionSize * b2.lastDeltaPosition.reflected(mirrorUnitVector);
             }
@@ -129,4 +156,9 @@ Ball::Ball(double x, double y, double radius) :
 bool Ball::CollidesWith(const Ball& other) const
 {
     return (other.pos - pos).norm() <= other.radius + radius;
+}
+
+Ball::Ball() 
+{
+    
 }

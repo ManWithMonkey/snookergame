@@ -24,7 +24,7 @@ double GetLuminosityFromCharacter(char c)
 
 Console::Console()
 {
-	ConsoleFullClear();
+	ConsoleClear();
 }
 
 Console::Console(int w, int h)
@@ -34,7 +34,7 @@ Console::Console(int w, int h)
     realWidth = w + 2; // add 2 for the border
 	realHeight = h + 2;
 	console = new char[realWidth * realHeight];
-	ConsoleFullClear();
+	ConsoleClear();
 }
 
 void Console::PlotPixel(int x, int y, double luminosity)
@@ -64,11 +64,11 @@ void Console::Draw()
 	}
 }
 
-void Console::ConsoleFullClear() 
+void Console::ConsoleClear() 
 {
 	// std::cout << "\n\n\n\n\n\n\n\n\n\n\n\n" << std::flush;
 	system("clear");
-	Clear();
+	// Clear();
 }
 
 void Console::Clear()
@@ -84,4 +84,8 @@ void Console::Clear()
 				console[y * realWidth + x] = ' ';
 		}
 	}
+}
+
+Console::~Console() {
+	ConsoleClear();
 }

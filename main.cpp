@@ -1,13 +1,13 @@
 #include "Game.h"
 
 #include <chrono>
-#include <thread>         // std::this_thread::sleep_for
+#include <thread> // std::this_thread::sleep_for
 
-#define SCREEN_WIDTH 60
-#define SCREEN_HEIGHT 40
+// #define SCREEN_WIDTH 60
+// #define SCREEN_HEIGHT 40
 
 int main(){
-    Game game(SCREEN_WIDTH, SCREEN_HEIGHT);
+    Game game;
     
     using clock = std::chrono::high_resolution_clock;
     auto time_start = clock::now();
@@ -25,5 +25,6 @@ int main(){
 
         std::this_thread::sleep_for(std::chrono::milliseconds(50));
     }
+    
     return 0;
 }

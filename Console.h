@@ -18,12 +18,14 @@ private:
 public:
     Console();
     Console(int w, int h);
+    ~Console();
+    
+    void ConsoleClear();
 
     void PlotPixel(int x, int y, double luminosity);
     void PlotPixelIfBrighter(int x, int y, double luminosity);
 
     void Draw();
-    void ConsoleFullClear();
     void Clear();
 };
 
