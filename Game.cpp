@@ -48,8 +48,8 @@ void Game::InitDefaultGame()
     };
 
     balls.clear();
-    for(int i=0; i<5; i++){
-        balls.push_back(Ball(2 + i * 4, 2 + i * 4, i * 1.0));
+    for(int i=0; i<6; i++){
+        balls.push_back(Ball(2 + i * 8, 2 + i * 6, i * 1.0));
         balls.back().vel = 100.0 * Vec2d(_randScalar(), _randScalar());
     }
 }
@@ -82,10 +82,10 @@ void Game::DrawGame()
 void Game::HandleWallCollisions() 
 {
     for(Ball& ball : balls){
-        if(ball.pos.x - ballRadius < 0)         { ball.vel.x *= -1.0; ball.pos.x = 2.0 * ballRadius - ball.pos.x; }
-        if(ball.pos.y - ballRadius < 0)         { ball.vel.y *= -1.0; ball.pos.y = 2.0 * ballRadius - ball.pos.y; }
-        if(ball.pos.x + ballRadius >= width)    { ball.vel.x *= -1.0; ball.pos.x = width - ((ball.pos.x + 2.0 * ballRadius) - width); }
-        if(ball.pos.y + ballRadius >= height)   { ball.vel.y *= -1.0; ball.pos.y = height - ((ball.pos.y + 2.0 * ballRadius) - height); }
+        if(ball.pos.x - ball.radius < 0)         { ball.vel.x *= -1.0; ball.pos.x = 2.0 * ball.radius - ball.pos.x; }
+        if(ball.pos.y - ball.radius < 0)         { ball.vel.y *= -1.0; ball.pos.y = 2.0 * ball.radius - ball.pos.y; }
+        if(ball.pos.x + ball.radius >= width)    { ball.vel.x *= -1.0; ball.pos.x = width - ((ball.pos.x + 2.0 * ball.radius) - width); }
+        if(ball.pos.y + ball.radius >= height)   { ball.vel.y *= -1.0; ball.pos.y = height - ((ball.pos.y + 2.0 * ball.radius) - height); }
     }
 }
 
@@ -98,15 +98,24 @@ void Game::HandleBallCollisions()
 
             if(b1.CollidesWith(b2)){
                 double distance = (b1.pos - b2.pos).norm();
-                Vec2d collisionDir = (b1.pos - b2.pos).unit();
+                Vec2d collisionDirection = (b1.pos - b2.pos).unit();
 
-                Vec2d mirrorUnit = collisionDir.unit();
+                double intersectionSize = (b1.radius + b2.radius) - distance;
+                // double distanceTravelled1 = b1.lastDeltaPosition.norm();
+                // double distanceTravelled2 = b2.lastDeltaPosition.norm();
 
-                b1.vel.reflect(mirrorUnit);
-                b2.vel.reflect(mirrorUnit);
+                Vec2d mirrorUnitVector = collisionDirection.unit();
 
-                b1.pos -= 0.5 * b1.lastDeltaPosition + 0.5 * b1.lastDeltaPosition.reflected(mirrorUnit);
-                b2.pos -= 0.5 * b2.lastDeltaPosition + 0.5 * b2.lastDeltaPosition.reflected(mirrorUnit);
+                b1.vel.reflect(mirrorUnitVector);
+                b2.vel.reflect(mirrorUnitVector);
+
+                // double goBackScale1 = intersectionSize / distanceTravelled1;
+                // double goBackScale2 = intersectionSize / distanceTravelled2;
+
+                // b1.pos -= goBackScale1 * b1.lastDeltaPosition + (1.0 - goBackScale1) * b1.lastDeltaPosition.reflected(mirrorUnitVector);
+                // b2.pos -= goBackScale2 * b2.lastDeltaPosition + (1.0 - goBackScale2) * b2.lastDeltaPosition.reflected(mirrorUnitVector);
+                b1.pos += 0.5 * intersectionSize * b1.lastDeltaPosition.reflected(mirrorUnitVector);
+                b2.pos += 0.5 * intersectionSize * b2.lastDeltaPosition.reflected(mirrorUnitVector);
             }
         }
     }
