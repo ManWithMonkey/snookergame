@@ -7,6 +7,7 @@
 #include <math.h>
 #include "Vec2d.h"
 #include "Console.h"
+#include <random>
 
 struct Ball{
     Vec2d pos;
@@ -17,7 +18,7 @@ struct Ball{
 
 class Game{
     // Screen
-    int width, height;
+    double width, height;
     Console screen;
 
     // Game
@@ -31,6 +32,9 @@ class Game{
     void DrawSphere(double x, double y, double r);
 
     void DrawGame();
+
+    // Logic
+    void HandleWallCollisions();
 
     // Init functions
     void InitDefaultGame();

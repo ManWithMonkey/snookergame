@@ -13,6 +13,7 @@ void Game::Update(double dt)
 {
     for(Ball& ball : balls){
         ball.pos += ball.vel * dt;
+        ball.vel *= (1.f - deacceleration * dt);
     }
 }
 
@@ -34,9 +35,14 @@ void Game::DrawTestLuminosity()
 
 void Game::InitDefaultGame() 
 {
+    auto _randScalar = []() -> double {
+        return (double)(rand()) / (double)RAND_MAX;
+    };
+
     balls.clear();
     for(int i=0; i<3; i++){
         balls.push_back(Ball(3 + i * 6, 3));
+        balls.back().vel = 10.0 * Vec2d(_randScalar(), _randScalar());
     }
 }
 
@@ -59,7 +65,18 @@ void Game::DrawGame()
     }
 }
 
+void Game::HandleWallCollisions() 
+{
+    for(Ball& ball : balls){
+        //left
+        if(ball.pos.x - ballRadius < 0)         { ball.vel.x *= -1.0; ball.pos.x = -ball.pos.x; }
+        if(ball.pos.y - ballRadius < 0)         { ball.vel.y *= -1.0; ball.pos.y = -ball.pos.y; }
+        if(ball.pos.x + ballRadius >= width)    { ball.vel.x *= -1.0; ball.pos.x = 2.0 * width  - ball.pos.x; }
+        if(ball.pos.y + ballRadius >= height)   { ball.vel.y *= -1.0; ball.pos.y = 2.0 * height - ball.pos.y; }
+    }
+}
+
 Ball::Ball(double x, double y) :
-    pos(Vec2d(x, y))
+    pos(Vec2d(x, y)), vel(Vec2d(0, 0))
 {
 }
