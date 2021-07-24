@@ -26,6 +26,14 @@ void Game::Update(double dt)
     if((HandleWallCollisions() || HandleBallCollisions()) && soundEnabled){
         screen->MakeBellSound();
     }
+
+    // Update white ball pos
+    for(Ball& ball : balls){
+        if(ball.white){
+            whiteBallPos = ball.pos;
+            break;
+        }
+    }
 }
 
 void Game::UpdateScreen() 
@@ -33,8 +41,8 @@ void Game::UpdateScreen()
     if(!screen)
         return;
 
+    // Window
     screen->Clear();
-
     for(Ball& ball : balls){
         if(ball.white){
             screen->DrawSphere(ball.pos.x, ball.pos.y, ball.radius);
@@ -48,6 +56,28 @@ void Game::UpdateScreen()
         else{
             screen->DrawHollowSphere(ball.pos.x, ball.pos.y, ball.radius, nameAreaRadius);
             screen->PlotPixel(ball.pos.x, ball.pos.y, ball.name);
+        }
+    }
+
+    // Zoom window
+    zoomWindow->Clear();
+    auto _translateToZoom = [&](Vec2d p) -> Vec2d {
+        return 0.5 * Vec2d(zoomWindow->GetWidth(), zoomWindow->GetHeight()) + (p - whiteBallPos) * zoomScale;
+    };
+
+    for(Ball& ball : balls){
+        if(ball.white){
+            zoomWindow->DrawSphere(_translateToZoom(ball.pos), zoomScale * ball.radius);
+        }
+        else if(ball.striped){
+            zoomWindow->DrawHollowSphere(_translateToZoom(ball.pos), zoomScale * ball.radius, zoomScale * nameAreaRadius / 5.0);
+            for(int x = ball.pos.x - ball.radius; x <= ball.pos.x + ball.radius; x++)
+                zoomWindow->PlotPixel(_translateToZoom(Vec2d(x, ball.pos.y)), ' ');
+            zoomWindow->PlotPixel(_translateToZoom(ball.pos), ball.name);
+        }
+        else{
+            zoomWindow->DrawHollowSphere(_translateToZoom(ball.pos), zoomScale * ball.radius, zoomScale * nameAreaRadius);
+            zoomWindow->PlotPixel(_translateToZoom(ball.pos), ball.name);
         }
     }
 }
@@ -152,8 +182,8 @@ bool Ball::CollidesWith(const Ball& other) const
     return (other.pos - pos).norm() <= other.radius + radius;
 }
 
-Game::Game(Window* screen) :
-    screen(screen), width(screen->GetWidth()), height(screen->GetHeight())
+Game::Game(Window* screen, Window* zoomWindow) :
+    screen(screen), zoomWindow(zoomWindow), width(screen->GetWidth()), height(screen->GetHeight())
 {
     InitDefaultGame();
 }

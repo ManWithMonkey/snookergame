@@ -1,13 +1,18 @@
 #include <chrono>
 #include <thread> // std::this_thread::sleep_for
 
-#define CONSOLE_WIDTH 106
+#define CONSOLE_WIDTH 140
 #define CONSOLE_HEIGHT 48
 
 #define GAME_X 6
 #define GAME_Y 4
-#define GAME_WIDTH 94
+#define GAME_WIDTH 80
 #define GAME_HEIGHT 40
+
+#define ZOOM_X (6 + 80 + 7)
+#define ZOOM_Y 4
+#define ZOOM_W 40
+#define ZOOM_H 30
 
 #include "Console.h"
 #include "Window.h"
@@ -16,8 +21,10 @@
 int main(){
     Console console(CONSOLE_WIDTH, CONSOLE_HEIGHT, " ---~:~--- [ BILLIARDS ] ---~:~--- ");
     Window* gameWindow = new Window(GAME_X, GAME_Y, GAME_WIDTH, GAME_HEIGHT);
-    Game game(gameWindow);
+    Window* zoomWindow = new Window(ZOOM_X, ZOOM_Y, ZOOM_W, ZOOM_H);
+    Game game(gameWindow, zoomWindow);
     console.AddWindow(gameWindow);
+    console.AddWindow(zoomWindow);
     
     using clock = std::chrono::high_resolution_clock;
     auto time_start = clock::now();

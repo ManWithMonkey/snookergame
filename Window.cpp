@@ -77,6 +77,16 @@ void Window::PlotPixelIfBrighter(int x, int y, double luminosity)
 		canvas[y * width + x] = GetLuminosityCharacter(luminosity);
 }
 
+void Window::PlotPixel(Vec2d p, char pixel) 
+{
+	PlotPixel(p.x, p.y, pixel);
+}
+
+void Window::PlotPixelIfBrighter(Vec2d p, double luminosity) 
+{
+	PlotPixelIfBrighter(p.x, p.y, luminosity);
+}
+
 void Window::DrawSphere(double x, double y, double r) 
 {
     double cx = (int)(x);
@@ -112,6 +122,16 @@ void Window::DrawHollowSphere(double x, double y, double r_outer, double r_inner
     }
 }
 
+void Window::DrawSphere(Vec2d p, double r) 
+{
+	DrawSphere(p.x, p.y, r);
+}
+
+void Window::DrawHollowSphere(Vec2d p, double r_outer, double r_inner) 
+{
+	DrawHollowSphere(p.x, p.y, r_outer, r_inner);
+}
+
 void Window::Draw()
 {
 	for(int y = 0; y < height; y++){
@@ -126,6 +146,8 @@ Window::Window(int x, int y, int w, int h) :
     x(x), y(y), width(w), height(h)
 {
 	canvas = new char[width * height];
+
+	Clear();
 }
 
 void Window::Clear()

@@ -1,3 +1,6 @@
+#ifndef __VEC2D_H__
+#define __VEC2D_H__
+
 #include <math.h>
 
 struct Vec2d{
@@ -35,3 +38,5 @@ struct Vec2d{
 };
 
 Vec2d operator*(double rhs, Vec2d lhs);
+
+#endif // __VEC2D_H__

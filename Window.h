@@ -6,6 +6,8 @@
 #include <math.h>
 #include <algorithm>
 
+#include "Vec2d.h"
+
 const char luminosityString[] = " .-~^*:;!xb(){}[]?XB&%#";
 
 char GetLuminosityCharacter(double luminosity);
@@ -31,9 +33,13 @@ public:
 
     void PlotPixel(int x, int y, char pixel);
     void PlotPixelIfBrighter(int x, int y, double luminosity);
+    void PlotPixel(Vec2d p, char pixel);
+    void PlotPixelIfBrighter(Vec2d p, double luminosity);
 
     void DrawSphere(double x, double y, double r);
     void DrawHollowSphere(double x, double y, double r_outer, double r_inner);
+    void DrawSphere(Vec2d p, double r);
+    void DrawHollowSphere(Vec2d p, double r_outer, double r_inner);
 
     void Draw();
     void Clear();

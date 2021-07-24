@@ -29,7 +29,7 @@ struct Ball{
 
 class Game{
 public:
-    Game(Window* screen);
+    Game(Window* screen, Window* zoomWindow);
     ~Game();
 
     void Update(double dt);
@@ -42,9 +42,13 @@ private:
     const double defaultBallRadius = 2.5;
     const double nameAreaRadius = 0.5;
     const double deacceleration = 0.05;
+    const double zoomScale = 1.6;
+
+    // Zoom stuff
+    Vec2d whiteBallPos = Vec2d(0, 0);
 
     // Screen
-    Window* screen;
+    Window *screen, *zoomWindow;
     double width, height;
 
     // Game
