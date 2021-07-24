@@ -2,12 +2,12 @@
 #include <thread> // std::this_thread::sleep_for
 
 #define CONSOLE_WIDTH 90
-#define CONSOLE_HEIGHT 40
+#define CONSOLE_HEIGHT 50
 
 #define GAME_X 7
 #define GAME_Y 5
 #define GAME_WIDTH 76
-#define GAME_HEIGHT 30
+#define GAME_HEIGHT 40
 
 #include "Console.h"
 #include "Window.h"

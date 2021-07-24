@@ -16,11 +16,12 @@ struct Ball{
     Vec2d vel; // per second
     double radius;
     bool white;
+    char name;
 
     Vec2d lastDeltaPosition; // movement at last iteration, useful for collisions
 
     Ball();
-    Ball(double x, double y, double radius);
+    Ball(double x, double y, double radius, char name);
 
     bool CollidesWith(const Ball& other) const;
 };
@@ -36,7 +37,8 @@ public:
 private:
     // Constants
     const int cueVelocity = 1000.0;
-    const double defaultBallRadius = 2.5;
+    const double defaultBallRadius = 3.5;
+    const double nameAreaRadius = 1.5;
     const double deacceleration = 0.05;
 
     // Screen

@@ -54,12 +54,12 @@ const char* Window::GetCanvas() const
     return canvas;
 }
 
-void Window::PlotPixel(int x, int y, double luminosity)
+void Window::PlotPixel(int x, int y, char pixel) 
 {
 	if(x < 0 || y < 0 || x >= width || y >= height)
 		return;
 
-	canvas[y * width + x] = GetLuminosityCharacter(luminosity);
+	canvas[y * width + x] = pixel;
 }
 
 void Window::PlotPixelIfBrighter(int x, int y, double luminosity) 
@@ -81,6 +81,25 @@ void Window::DrawSphere(double x, double y, double r)
 
             double distance = std::hypot(cx + ix - x, cy + iy - y);
             double luminosity = 1.0 - distance / r;
+            
+            PlotPixelIfBrighter(cx + ix, cy + iy, luminosity);
+        }
+    }
+}
+
+void Window::DrawHollowSphere(double x, double y, double r_outer, double r_inner) 
+{
+    double cx = (int)(x);
+    double cy = (int)(y);
+
+    double max_distance = r_outer - r_inner;
+    double mid_radius = (r_outer + r_inner) / 2.0;
+
+    for(double ix = -r_outer; ix <= r_outer; ix += 1.0){
+        for(double iy = -r_outer; iy <= r_outer; iy += 1.0){
+
+            double distance = std::hypot(cx + ix - x, cy + iy - y);
+            double luminosity = 0.25 - 0.75 * std::abs(distance - mid_radius) / max_distance;
             
             PlotPixelIfBrighter(cx + ix, cy + iy, luminosity);
         }

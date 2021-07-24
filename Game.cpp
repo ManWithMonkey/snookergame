@@ -34,7 +34,8 @@ void Game::UpdateScreen()
     screen->Clear();
 
     for(Ball& ball : balls){
-        screen->DrawSphere(ball.pos.x, ball.pos.y, ball.radius);
+        screen->DrawHollowSphere(ball.pos.x, ball.pos.y, ball.radius, nameAreaRadius);
+        screen->PlotPixel(ball.pos.x, ball.pos.y, ball.name);
     }
 }
 
@@ -42,7 +43,7 @@ void Game::InitDefaultGame()
 {
     const Vec2d white_start(6, height / 2);
     const Vec2d hub_start(40, height / 2);
-    const double hub_scalar = 2.0;
+    const double hub_scalar = 2.7;
     const double dx = 2;
     const double dy = 1;
 
@@ -66,10 +67,10 @@ void Game::InitDefaultGame()
 
     balls.clear();
     for(int i=0; i<1+2+3+4+5; i++){
-        balls.push_back(Ball(positions[i].x, positions[i].y, defaultBallRadius));
+        balls.push_back(Ball(positions[i].x, positions[i].y, defaultBallRadius, '0' + (i % 10)));
     }
 
-    balls.push_back(Ball(white_start.x, white_start.y, defaultBallRadius));
+    balls.push_back(Ball(white_start.x, white_start.y, defaultBallRadius, ' '));
     balls.back().vel = cueVelocity * Vec2d(1.0, 0.0).unit();
     balls.back().white = true;
 }
@@ -118,8 +119,8 @@ void Game::HandleBallCollisions()
     }
 }
 
-Ball::Ball(double x, double y, double radius) :
-    pos(Vec2d(x, y)), vel(Vec2d(0, 0)), radius(radius), lastDeltaPosition(Vec2d(0, 0)), white(false)
+Ball::Ball(double x, double y, double radius, char name) :
+    pos(Vec2d(x, y)), vel(Vec2d(0, 0)), radius(radius), lastDeltaPosition(Vec2d(0, 0)), white(false), name(name)
 {
 }
 
