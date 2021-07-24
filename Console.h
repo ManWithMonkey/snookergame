@@ -3,6 +3,8 @@
 
 #include <iostream>
 
+const char luminosityString[] = " .-~^*:;!xb(){}[]?XB&%#";
+
 class Console{
 private:
     int realWidth, realHeight;

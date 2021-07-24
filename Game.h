@@ -25,7 +25,7 @@ class Game{
     std::vector<Ball> balls;
 
     // Constants
-    const double ballRadius = 2.0;
+    const double ballRadius = 10.0;
     const double deacceleration = 0.3;
 
     //Drawing

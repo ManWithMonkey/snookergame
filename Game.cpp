@@ -72,8 +72,8 @@ void Game::HandleWallCollisions()
     for(Ball& ball : balls){
         if(ball.pos.x - ballRadius < 0)         { ball.vel.x *= -1.0; ball.pos.x = 2.0 * ballRadius - ball.pos.x; }
         if(ball.pos.y - ballRadius < 0)         { ball.vel.y *= -1.0; ball.pos.y = 2.0 * ballRadius - ball.pos.y; }
-        if(ball.pos.x + ballRadius >= width)    { ball.vel.x *= -1.0; ball.pos.x = width - ((ball.pos.x + ballRadius) - width); }
-        if(ball.pos.y + ballRadius >= height)   { ball.vel.y *= -1.0; ball.pos.y = height - ((ball.pos.y + ballRadius) - height); }
+        if(ball.pos.x + ballRadius >= width)    { ball.vel.x *= -1.0; ball.pos.x = width - ((ball.pos.x + 2.0 * ballRadius) - width); }
+        if(ball.pos.y + ballRadius >= height)   { ball.vel.y *= -1.0; ball.pos.y = height - ((ball.pos.y + 2.0 * ballRadius) - height); }
     }
 }
 
