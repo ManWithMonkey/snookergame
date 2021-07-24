@@ -1,4 +1,5 @@
 #include "Console.h"
+#include "ANSI-color-codes.h"
 
 void Console::ClearConsoleFully()
 {
@@ -116,8 +117,16 @@ void Console::Render()
 	ClearConsole();
 
 	// draw canvas
+
 	for (int y = 0; y < height; y++) {
 		for (int x = 0; x < width; x++) {
+	// hardcoded because i couldnt make sense of what windows is, why are there several ?
+			if (y >= 4 && y <= 43) {// game area
+				if (x == 6) {// start of a game line, we start using paint
+					std::cout << RED;
+				}else if (x == 86) // end of a game line, we stop using paint
+					std::cout << RESET;
+			}
 			std::cout << canvas[y * width + x];
 		}
 		std::cout << '\n';

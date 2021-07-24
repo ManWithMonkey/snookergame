@@ -13,6 +13,11 @@ Vec2d Vec2d::operator-() const
 	return Vec2d(-x, -y);
 }
 
+Vec2d Vec2d::operator+() const
+{
+	return Vec2d(x, y);
+}
+
 Vec2d Vec2d::operator-(Vec2d rhs) const
 {
 	return Vec2d(x - rhs.x, y - rhs.y);

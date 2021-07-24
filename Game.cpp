@@ -163,12 +163,12 @@ bool Game::HandleBallCollisions()
 
 				// needs trasferrance of energy, currently will never lose/gain velocity to other balls in collision
 				// or maybe not
-				b1.vel = 0.5 * velavg * collisionDirection + 0.5 * velavg * b1.vel.reflected(mirrorUnitVector).unit();
+				b1.vel = 0.5 * velavg * +collisionDirection + 0.5 * velavg * b1.vel.reflected(mirrorUnitVector).unit();
 				b2.vel = 0.5 * velavg * -collisionDirection + 0.5 * velavg * b2.vel.reflected(mirrorUnitVector).unit();
 
 				// only works accurately when moving head on with same velocity or some other symmetric circumstances
 				b1.pos += 0.5 * intersectionSize * -collisionDirection.reflected(mirrorUnitVector);
-				b2.pos += 0.5 * intersectionSize * collisionDirection.reflected(mirrorUnitVector);
+				b2.pos += 0.5 * intersectionSize * +collisionDirection.reflected(mirrorUnitVector);
 			}
 		}
 	}

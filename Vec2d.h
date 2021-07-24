@@ -10,6 +10,7 @@ struct Vec2d {
 	Vec2d(double x, double y);
 
 	Vec2d operator-() const;
+	Vec2d operator+() const;
 
 	Vec2d operator-(Vec2d rhs) const;
 	Vec2d operator+(Vec2d rhs) const;
