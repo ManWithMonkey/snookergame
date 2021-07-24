@@ -4,9 +4,9 @@
 #define CONSOLE_WIDTH 106
 #define CONSOLE_HEIGHT 46
 
-#define GAME_X 3
+#define GAME_X 5
 #define GAME_Y 3
-#define GAME_WIDTH 100
+#define GAME_WIDTH 96
 #define GAME_HEIGHT 40
 
 #include "Console.h"
@@ -14,7 +14,7 @@
 #include "Game.h"
 
 int main(){
-    Console console(CONSOLE_WIDTH, CONSOLE_HEIGHT);
+    Console console(CONSOLE_WIDTH, CONSOLE_HEIGHT, " ---~:~--- [ BILLIARDS ] ---~:~--- ");
     Window* gameWindow = new Window(GAME_X, GAME_Y, GAME_WIDTH, GAME_HEIGHT);
     Game game(gameWindow);
     console.AddWindow(gameWindow);

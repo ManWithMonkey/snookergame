@@ -14,13 +14,22 @@ void Console::ClearConsole()
 }
 
 void Console::InitBackground() 
-{
+{	
+	int titlex = -1, titley = -1;
+	if(title.size()){
+		titlex = (width - (int)title.size()) / 2;
+		titley = 1;
+	}
+
 	for(int y=0; y<height; y++)
 		for(int x=0; x<width; x++)
-			if (x == 0 || y == 0 || x == width - 1 || y == height - 1)
+			if(y == titley && x >= titlex && x < titlex + (int)title.size()){
+				background[y * width + x] = title[x - titlex];
+			}
+			else if (x == 0 || y == 0 || x == width - 1 || y == height - 1)
 				background[y * width + x] = '#';
 			else
-				background[y * width + x] = ((y + x) % 2 ? '+' : (x % 2 ? '-' : '|'));
+				background[y * width + x] = ((y + x) % 2 ? '.' : ' ');
 }
 
 void Console::DrawBorderAroundWindowOnBackground(Window* window) 
@@ -40,8 +49,8 @@ void Console::DrawBorderAroundWindowOnBackground(Window* window)
 	}
 }
 
-Console::Console(int w, int h) :
-	width(w), height(h)
+Console::Console(int w, int h, std::string title) :
+	width(w), height(h), title(title)
 {
 	background 	= new char[width * height];
 	canvas 		= new char[width * height];

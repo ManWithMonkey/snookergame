@@ -4,12 +4,14 @@
 #include "Window.h"
 #include <vector>
 #include <algorithm> // std::memcpy
+#include <string>
 
 class Console{
 public:
     int width, height;
     char* background;
     char* canvas;
+    std::string title;
 
     std::vector<Window*> windows;
 
@@ -20,7 +22,7 @@ public:
     void DrawBorderAroundWindowOnBackground(Window* window);
 
 public:
-    Console(int w, int h);
+    Console(int w, int h, std::string title = "");
     ~Console();
 
     void AddWindow(Window* window);

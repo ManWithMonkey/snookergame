@@ -12,12 +12,13 @@ void Game::Update(double dt)
         ball.pos                += deltaPosition;
         ball.lastDeltaPosition  =  deltaPosition;
 
-        // deacceleration
         if(ball.white){
-            ball.vel *= (1.0 + 2.0 * dt);
+            // remove this part
+            ball.vel *= (1.0 + 1.5 * dt);
             ball.vel.rotate(dt);
         }
         else{
+            // leave this part
             ball.vel *= (1.0 - deacceleration * dt);
         }
     }
