@@ -35,7 +35,7 @@ public:
 private:
     // Constants
     const int cueVelocity = 1000.0;
-    const double defaultBallRadius = 2.0;
+    const double defaultBallRadius = 2.5;
     const double deacceleration = 0.05;
 
     // Screen
