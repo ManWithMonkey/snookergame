@@ -25,10 +25,10 @@ void Console::InitBackground()
 
 void Console::DrawBorderAroundWindowOnBackground(Window* window) 
 {
-	int x1 = window->GetX() - 1;
-	int y1 = window->GetY() - 1;
-	int x2 = x1 + window->GetWidth() + 1;
-	int y2 = y1 + window->GetHeight() + 1;
+	int x1 = std::max(0, window->GetX() - 1);
+	int y1 = std::max(0, window->GetY() - 1);
+	int x2 = std::min(width,  x1 + window->GetWidth()  + 1);
+	int y2 = std::min(height, y1 + window->GetHeight() + 1);
 
 	for(int y=y1; y<=y2; y++){
 		background[y * width + x1] = '#';
