@@ -2,8 +2,12 @@
 #define __CONSOLE_H__
 
 #include <iostream>
+#include <cstring>
 
 const char luminosityString[] = " .-~^*:;!xb(){}[]?XB&%#";
+
+char GetLuminosityCharacter(double luminosity);
+double GetLuminosityFromCharacter(char c);
 
 class Console{
 private:
@@ -16,6 +20,7 @@ public:
     Console(int w, int h);
 
     void PlotPixel(int x, int y, double luminosity);
+    void PlotPixelIfBrighter(int x, int y, double luminosity);
 
     void Draw();
     void ConsoleFullClear();

@@ -54,7 +54,8 @@ void Game::DrawSphere(double x, double y, double r)
             double distance = std::hypot(ix - x, iy - y);
             double luminosity = 1.0 - distance / r;
             
-            screen.PlotPixel(ix, iy, luminosity);
+            // screen.PlotPixel(ix, iy, luminosity);
+            screen.PlotPixelIfBrighter(ix, iy, luminosity);
         }
     }
 }
