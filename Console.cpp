@@ -12,11 +12,11 @@ Console::Console(int w, int h) {
 
 void Console::PlotPixel(int x, int y, double luminocity) 
 {
-    if(x < 0 || y < 0 ||  x >= width || y >= height)
+    if(x < 0 || y < 0 || x >= width || y >= height)
         return;
 
     // luminocity is between 0.0-1.0
-    if(luminocity < 0 || luminocity > 1)
+    if(luminocity < 0 || luminocity >= 1)
         return;
 
     const char* options = " .-:;&%#";
@@ -28,8 +28,8 @@ void Console::PlotPixel(int x, int y, double luminocity)
 }
 
 void Console::Draw() {
-    for(int y = 0; y < height+1; y ++){
-        for(int x = 0; x < width+1; x ++){
+    for(int y = 0; y < height+2; y ++){
+        for(int x = 0; x < width+2; x ++){
             std::cout << console[y * width + x];
         }
         std::cout << '\n';
