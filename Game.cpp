@@ -61,10 +61,10 @@ void Game::DrawSphere(double x, double y, double r)
 
 void Game::DrawGame() 
 {
-    // for(Ball& ball : balls){
-    //     DrawSphere(ball.pos.x, ball.pos.y, ballRadius);
-    // }
-    DrawTestLuminosity();
+    for(Ball& ball : balls){
+        DrawSphere(ball.pos.x, ball.pos.y, ballRadius);
+    }
+    // DrawTestLuminosity();
 }
 
 void Game::HandleWallCollisions() 
