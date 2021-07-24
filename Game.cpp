@@ -13,7 +13,13 @@ void Game::Update(double dt)
         ball.lastDeltaPosition  =  deltaPosition;
 
         // deacceleration
-        ball.vel *= (1.f - deacceleration * dt);
+        if(ball.white){
+            ball.vel *= (1.0 + 2.0 * dt);
+            ball.vel.rotate(dt);
+        }
+        else{
+            ball.vel *= (1.0 - deacceleration * dt);
+        }
     }
 
     HandleWallCollisions();
@@ -36,7 +42,7 @@ void Game::InitDefaultGame()
 {
     const Vec2d white_start(6, height / 2);
     const Vec2d hub_start(40, height / 2);
-    const double hub_scalar = 2.0f;
+    const double hub_scalar = 2.0;
     const double dx = 2;
     const double dy = 1;
 
@@ -65,6 +71,7 @@ void Game::InitDefaultGame()
 
     balls.push_back(Ball(white_start.x, white_start.y, defaultBallRadius));
     balls.back().vel = cueVelocity * Vec2d(1.0, 0.0).unit();
+    balls.back().white = true;
 }
 
 void Game::HandleWallCollisions() 
@@ -112,7 +119,7 @@ void Game::HandleBallCollisions()
 }
 
 Ball::Ball(double x, double y, double radius) :
-    pos(Vec2d(x, y)), vel(Vec2d(0, 0)), radius(radius), lastDeltaPosition(Vec2d(0, 0))
+    pos(Vec2d(x, y)), vel(Vec2d(0, 0)), radius(radius), lastDeltaPosition(Vec2d(0, 0)), white(false)
 {
 }
 
@@ -129,5 +136,4 @@ Game::Game(Window* screen) :
 
 Ball::Ball() 
 {
-    
 }

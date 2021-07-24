@@ -15,6 +15,7 @@ struct Ball{
     Vec2d pos;
     Vec2d vel; // per second
     double radius;
+    bool white;
 
     Vec2d lastDeltaPosition; // movement at last iteration, useful for collisions
 

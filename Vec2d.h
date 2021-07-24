@@ -27,6 +27,10 @@ struct Vec2d{
     Vec2d& reflect(Vec2d mirrorNormalUnit);
     Vec2d reflected(Vec2d mirrorNormalUnit) const;
 
+    double angle() const;
+    Vec2d& rotate(double angle);
+    Vec2d rotated(double angle) const;
+
     bool isNull() const;
 };
 

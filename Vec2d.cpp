@@ -79,6 +79,27 @@ Vec2d Vec2d::reflected(Vec2d mirrorNormalUnit) const
     return *this - 2.0 * (*this * mirrorNormalUnit) * mirrorNormalUnit;
 }
 
+double Vec2d::angle() const
+{
+    return std::atan2(y, x);
+}
+
+Vec2d& Vec2d::rotate(double angle) 
+{
+    return *this = rotated(angle);
+}
+
+Vec2d Vec2d::rotated(double angle) const
+{
+    double a = Vec2d::angle();
+    double l = norm();
+
+    return Vec2d(
+        cos(a + angle) * l,
+        sin(a + angle) * l
+    );
+}
+
 bool Vec2d::isNull() const {
     return x == 0 && y == 0;
 }
