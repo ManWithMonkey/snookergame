@@ -34,7 +34,14 @@ void Game::UpdateScreen()
     screen->Clear();
 
     for(Ball& ball : balls){
-        screen->DrawHollowSphere(ball.pos.x, ball.pos.y, ball.radius, nameAreaRadius);
+        if(ball.striped){
+            screen->DrawHollowSphere(ball.pos.x, ball.pos.y, ball.radius, nameAreaRadius / 5.0);
+            for(int x = ball.pos.x - ball.radius; x <= ball.pos.x + ball.radius; x++)
+                screen->PlotPixel(x, ball.pos.y, ' ');
+        }
+        else{
+            screen->DrawHollowSphere(ball.pos.x, ball.pos.y, ball.radius, nameAreaRadius);
+        }
         screen->PlotPixel(ball.pos.x, ball.pos.y, ball.name);
     }
 }
@@ -67,10 +74,10 @@ void Game::InitDefaultGame()
 
     balls.clear();
     for(int i=0; i<1+2+3+4+5; i++){
-        balls.push_back(Ball(positions[i].x, positions[i].y, defaultBallRadius, '0' + (i % 10)));
+        balls.push_back(Ball(positions[i].x, positions[i].y, defaultBallRadius, '0' + (i % 10), i % 2));
     }
 
-    balls.push_back(Ball(white_start.x, white_start.y, defaultBallRadius, ' '));
+    balls.push_back(Ball(white_start.x, white_start.y, defaultBallRadius, ' ', false));
     balls.back().vel = cueVelocity * Vec2d(1.0, 0.0).unit();
     balls.back().white = true;
 }
@@ -119,8 +126,8 @@ void Game::HandleBallCollisions()
     }
 }
 
-Ball::Ball(double x, double y, double radius, char name) :
-    pos(Vec2d(x, y)), vel(Vec2d(0, 0)), radius(radius), lastDeltaPosition(Vec2d(0, 0)), white(false), name(name)
+Ball::Ball(double x, double y, double radius, char name, bool striped) :
+    pos(Vec2d(x, y)), vel(Vec2d(0, 0)), radius(radius), lastDeltaPosition(Vec2d(0, 0)), white(false), name(name), striped(striped)
 {
 }
 

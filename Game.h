@@ -17,11 +17,12 @@ struct Ball{
     double radius;
     bool white;
     char name;
+    bool striped;
 
     Vec2d lastDeltaPosition; // movement at last iteration, useful for collisions
 
     Ball();
-    Ball(double x, double y, double radius, char name);
+    Ball(double x, double y, double radius, char name, bool striped);
 
     bool CollidesWith(const Ball& other) const;
 };
