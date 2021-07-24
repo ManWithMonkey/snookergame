@@ -15,35 +15,36 @@
 // #define ZOOM_H 30
 
 #include "Console.h"
-#include "Window.h"
 #include "Game.h"
+#include "Window.h"
 
-int main(){
-    Console console(CONSOLE_WIDTH, CONSOLE_HEIGHT, " ---~:~--- [ BILLIARDS ] ---~:~--- ");
-    Window* gameWindow = new Window(GAME_X, GAME_Y, GAME_WIDTH, GAME_HEIGHT);
-    // Window* zoomWindow = new Window(ZOOM_X, ZOOM_Y, ZOOM_W, ZOOM_H);
-    Game game(gameWindow, nullptr);
-    console.AddWindow(gameWindow);
-    // console.AddWindow(zoomWindow);
-    
-    using clock = std::chrono::high_resolution_clock;
-    auto time_start = clock::now();
+int main()
+{
+	Console console(CONSOLE_WIDTH, CONSOLE_HEIGHT, " ---~:~--- [ BILLIARDS ] ---~:~--- ");
+	Window *gameWindow = new Window(GAME_X, GAME_Y, GAME_WIDTH, GAME_HEIGHT);
+	// Window* zoomWindow = new Window(ZOOM_X, ZOOM_Y, ZOOM_W, ZOOM_H);
+	Game game(gameWindow, nullptr);
+	console.AddWindow(gameWindow);
+	// console.AddWindow(zoomWindow);
 
-    while(true){
-        auto now = clock::now();
-        auto dt = now - time_start;
-        time_start = now;
+	using clock = std::chrono::high_resolution_clock;
+	auto time_start = clock::now();
 
-        double dt_seconds = (double)std::chrono::duration_cast<std::chrono::microseconds>(dt).count() / 1E+6;
-        // std::cout << dt_seconds << "\n";
+	while (true) {
+		auto now = clock::now();
+		auto dt = now - time_start;
+		time_start = now;
 
-        game.Update(dt_seconds);
-        game.UpdateScreen();
+		double dt_seconds = (double)std::chrono::duration_cast<std::chrono::microseconds>(dt).count() / 1E+6;
+		// std::cout << dt_seconds << "\n";
 
-        console.Render();
+		game.Update(dt_seconds);
+		game.UpdateScreen();
 
-        std::this_thread::sleep_for(std::chrono::milliseconds(10));
-    }
+		console.Render();
 
-    return 0;
+		std::this_thread::sleep_for(std::chrono::milliseconds(10));
+	}
+
+	return 0;
 }

@@ -2,31 +2,32 @@
 #define __CONSOLE_H__
 
 #include "Window.h"
-#include <vector>
 #include <algorithm> // std::memcpy
 #include <string>
+#include <vector>
 
-class Console{
+class Console
+{
 public:
-    int width, height;
-    char* background;
-    char* canvas;
-    std::string title;
+	int width, height;
+	char *background;
+	char *canvas;
+	std::string title;
 
-    std::vector<Window*> windows;
+	std::vector<Window *> windows;
 
-    void ClearConsoleFully();
-    void ClearConsole();
+	void ClearConsoleFully();
+	void ClearConsole();
 
-    void InitBackground();
-    void DrawBorderAroundWindowOnBackground(Window* window);
+	void InitBackground();
+	void DrawBorderAroundWindowOnBackground(Window *window);
 
 public:
-    Console(int w, int h, std::string title = "");
-    ~Console();
+	Console(int w, int h, std::string title = "");
+	~Console();
 
-    void AddWindow(Window* window);
-    void Render();
+	void AddWindow(Window *window);
+	void Render();
 };
 
 #endif // __CONSOLE_H__

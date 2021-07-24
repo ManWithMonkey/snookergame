@@ -1,0 +1,9 @@
+Language: Cpp
+IndentPPDirectives: BeforeHash
+IndentWidth: 8
+ColumnLimit: 666
+TabWidth: 8
+UseTab: Always
+BreakBeforeBraces: Linux
+AllowShortFunctionsOnASingleLine: None
+AccessModifierOffset: 0

@@ -1,11 +1,11 @@
 #include "Console.h"
 
-void Console::ClearConsoleFully() 
+void Console::ClearConsoleFully()
 {
 	system("clear");
 }
 
-void Console::ClearConsole() 
+void Console::ClearConsole()
 {
 	// std::cout << "\n\n\n\n\n\n\n\n\n\n\n\n" << std::flush;
 	// system("clear");
@@ -13,67 +13,65 @@ void Console::ClearConsole()
 	std::cout << "\e[3J\e[1;1H";
 }
 
-void Console::InitBackground() 
-{	
+void Console::InitBackground()
+{
 	int titlex = -1, titley = -1;
-	if(title.size()){
+	if (title.size()) {
 		titlex = (width - (int)title.size()) / 2;
 		titley = 1;
 	}
 
-	for(int y=0; y<height; y++)
-		for(int x=0; x<width; x++)
-			if(y == titley && x >= titlex && x < titlex + (int)title.size()){
+	for (int y = 0; y < height; y++)
+		for (int x = 0; x < width; x++)
+			if (y == titley && x >= titlex && x < titlex + (int)title.size()) {
 				background[y * width + x] = title[x - titlex];
-			}
-			else if (x == 0 || y == 0 || x == width - 1 || y == height - 1)
+			} else if (x == 0 || y == 0 || x == width - 1 || y == height - 1)
 				background[y * width + x] = '#';
 			else
 				background[y * width + x] = ((y + x) % 2 ? '.' : ' ');
 }
 
-void Console::DrawBorderAroundWindowOnBackground(Window* window) 
+void Console::DrawBorderAroundWindowOnBackground(Window *window)
 {
 	int x1 = std::max(0, window->GetX() - 1);
 	int y1 = std::max(0, window->GetY() - 1);
-	int x2 = std::min(width,  x1 + window->GetWidth()  + 1);
+	int x2 = std::min(width,  x1 + window->GetWidth() + 1);
 	int y2 = std::min(height, y1 + window->GetHeight() + 1);
 
-	for(int y=y1; y<=y2; y++){
+	for (int y = y1; y <= y2; y++) {
 		background[y * width + x1] = '#';
 		background[y * width + x2] = '#';
 	}
-	for(int x=x1; x<=x2; x++){
+	for (int x = x1; x <= x2; x++) {
 		background[y1 * width + x] = '#';
 		background[y2 * width + x] = '#';
 	}
 }
 
-Console::Console(int w, int h, std::string title) :
-	width(w), height(h), title(title)
+Console::Console(int w, int h, std::string title) : width(w), height(h), title(title)
 {
-	background 	= new char[width * height];
-	canvas 		= new char[width * height];
+	background = new char[width * height];
+	    canvas = new char[width * height];
 
 	InitBackground();
 
 	ClearConsoleFully();
 }
 
-Console::~Console() 
+Console::~Console()
 {
-	for(Window* window : windows){
-		if(window){
+	for (Window *window : windows) {
+		if (window) {
 			delete window;
 		}
 	}
 	windows.clear();
 
-	if(background){
+	if (background) {
 		delete[] background;
 		background = nullptr;
 	}
-	if(canvas){
+	if (canvas) {
 		delete[] canvas;
 		canvas = nullptr;
 	}
@@ -81,13 +79,13 @@ Console::~Console()
 	ClearConsoleFully();
 }
 
-void Console::AddWindow(Window* window) 
+void Console::AddWindow(Window *window)
 {
 	windows.push_back(window);
 	DrawBorderAroundWindowOnBackground(window);
 }
 
-void Console::Render() 
+void Console::Render()
 {
 	// clear canvas with background
 	std::memcpy(canvas, background, width * height * sizeof(char));
@@ -97,18 +95,18 @@ void Console::Render()
 	// }
 
 	// apply windows canvas to console canvas
-	for(Window* window : windows){
-		const char* window_canvas = window->GetCanvas();
+	for (Window *window : windows) {
+		const char *window_canvas = window->GetCanvas();
 		int x = window->GetX();
 		int y = window->GetY();
 		int w = window->GetWidth();
 		int h = window->GetHeight();
 
-		int sx = std::max(0, x), ex = std::min(width,  x + w);
+		int sx = std::max(0, x), ex = std::min(width, x + w);
 		int sy = std::max(0, y), ey = std::min(height, y + h);
 
-		for(int ix = sx; ix < ex; ix ++){
-			for(int iy = sy; iy < ey; iy ++){
+		for (int ix = sx; ix < ex; ix++) {
+			for (int iy = sy; iy < ey; iy++) {
 				canvas[iy * width + ix] = window_canvas[(iy - sy) * w + (ix - sx)];
 			}
 		}
@@ -118,8 +116,8 @@ void Console::Render()
 	ClearConsole();
 
 	// draw canvas
-	for(int y = 0; y < height; y++){
-		for (int x = 0; x < width; x++){
+	for (int y = 0; y < height; y++) {
+		for (int x = 0; x < width; x++) {
 			std::cout << canvas[y * width + x];
 		}
 		std::cout << '\n';
