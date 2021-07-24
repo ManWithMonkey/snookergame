@@ -13,8 +13,11 @@ struct Ball{
 };
 
 class Game{
+    int width, height;
     Console screen;
     std::vector<Ball> balls;
+
+    void DrawTestLuminocity();
 
 public:
     Game(int w, int h);

@@ -12,6 +12,8 @@ public:
     Console();
     Console(int w, int h);
 
+    void PlotPixel(int x, int y, double luminocity);
+
     void Draw();
     void Clear();
 };
