@@ -27,14 +27,14 @@ void Console::PlotPixel(int x, int y, double luminosity)
 		color = options[selected];
 	}
 
-	console[(y + 1) * width + (x + 1)] = color;
+	console[(y + 1) * realWidth + (x + 1)] = color;
 }
 
 void Console::Draw()
 {
-	for (int y = 0; y < realWidth; y++)
+	for (int y = 0; y < realHeight; y++)
 	{
-		for (int x = 0; x < realHeight; x++)
+		for (int x = 0; x < realWidth; x++)
 		{
 			std::cout << console[y * realWidth + x];
 		}
