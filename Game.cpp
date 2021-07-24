@@ -84,7 +84,7 @@ void Game::InitDefaultGame()
     }
 
     balls.push_back(Ball(white_start.x, white_start.y, defaultBallRadius));
-    balls.back().vel = cueVelocity * Vec2d(1, 0);
+    balls.back().vel = cueVelocity * Vec2d(1.0, 0.1).unit();
 }
 
 void Game::DrawSphere(double x, double y, double r) 
@@ -136,13 +136,19 @@ void Game::HandleBallCollisions()
 
                 Vec2d mirrorUnitVector = collisionDirection.unit();
 
+                double velTotal = b1.vel.norm() + b2.vel.norm();
+                double velDifferenceScale1 = b1.vel.norm() / velTotal;
+                double velDifferenceScale2 = 1.0 - velDifferenceScale1;
+
+                double velavg = 0.5 * velTotal;
+
                 // needs trasferrance of energy, currently will never lose/gain velocity to other balls in collision
-                b1.vel.reflect(mirrorUnitVector);
-                b2.vel.reflect(mirrorUnitVector);
+                b1.vel = 0.5 * velavg *  collisionDirection + 0.5 * velavg * b1.vel.reflected(mirrorUnitVector).unit();
+                b2.vel = 0.5 * velavg * -collisionDirection + 0.5 * velavg * b2.vel.reflected(mirrorUnitVector).unit();
 
                 // only works accurately when moving head on with same velocity or some other symmetric circumstances
-                b1.pos += 0.5 * intersectionSize * b1.lastDeltaPosition.reflected(mirrorUnitVector);
-                b2.pos += 0.5 * intersectionSize * b2.lastDeltaPosition.reflected(mirrorUnitVector);
+                b1.pos += 0.5 * intersectionSize * -collisionDirection.reflected(mirrorUnitVector);
+                b2.pos += 0.5 * intersectionSize *  collisionDirection.reflected(mirrorUnitVector);
             }
         }
     }
