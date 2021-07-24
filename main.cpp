@@ -1,12 +1,12 @@
 #include <chrono>
 #include <thread> // std::this_thread::sleep_for
 
-#define CONSOLE_WIDTH 90
-#define CONSOLE_HEIGHT 50
+#define CONSOLE_WIDTH 106
+#define CONSOLE_HEIGHT 46
 
-#define GAME_X 7
-#define GAME_Y 5
-#define GAME_WIDTH 76
+#define GAME_X 3
+#define GAME_Y 3
+#define GAME_WIDTH 100
 #define GAME_HEIGHT 40
 
 #include "Console.h"

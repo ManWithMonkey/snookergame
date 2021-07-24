@@ -52,11 +52,11 @@ void Game::UpdateScreen()
 
 void Game::InitDefaultGame() 
 {
-    const Vec2d white_start(6, height / 2);
-    const Vec2d hub_start(40, height / 2);
-    const double hub_scalar = 2.7;
     const double dx = 2;
     const double dy = 1;
+    const double hub_scalar = 2.7;
+    const Vec2d white_start(6, height / 2);
+    const Vec2d hub_start(width - dx * 7.0 * hub_scalar, height / 2);
 
     const Vec2d positions[] = {
         hub_start + hub_scalar * Vec2d(0.0 * dx,  0.0 * dy),
