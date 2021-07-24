@@ -12,14 +12,14 @@ Console::Console(int w, int h) {
 
 void Console::PlotPixel(int x, int y, double luminocity) 
 {
-    if(x < 0 || y < 0 || x >= width || y >= height)
+    if(x < 0 || y < 0 ||  x >= width || y >= height)
         return;
 
     // luminocity is between 0.0-1.0
     if(luminocity < 0 || luminocity > 1)
         return;
 
-    const char* options = " .-:;¤%&#";
+    const char* options = " .-:;&%#";
 
     int selected = luminocity * sizeof(options);
     char color = options[selected];
