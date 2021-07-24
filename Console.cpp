@@ -1,91 +1,100 @@
 #include "Console.h"
 
-char GetLuminosityCharacter(double luminosity) 
+void Console::ClearConsoleFully() 
 {
-	// luminosity is between 0.0-1.0
-	if(luminosity >= 0 && luminosity <= 1){
-		if(luminosity == 1) luminosity -= 0.0001; // crude fix
-		return luminosityString[(int)(luminosity * (sizeof(luminosityString) - 1))];
+	system("clear");
+}
+
+void Console::ClearConsole() 
+{
+	// std::cout << "\n\n\n\n\n\n\n\n\n\n\n\n" << std::flush;
+	// system("clear");
+	// Clear();
+	std::cout << "\e[3J\e[1;1H";
+}
+
+void Console::InitBackground() 
+{
+	for(int y=0; y<height; y++)
+		for(int x=0; x<width; x++)
+			if (x == 4 || x == width - 5 || y == 4 || y == height - 5 || x == 0 || y == 0 || x == width - 1 || y == height - 1)
+				background[y * width + x] = '#';
+			else
+				background[y * width + x] = ((y + x) % 2 ? '/' : '\\');
+}
+
+Console::Console(int w, int h) :
+	width(w), height(h)
+{
+	background 	= new char[width * height];
+	canvas 		= new char[width * height];
+
+	InitBackground();
+
+	ClearConsoleFully();
+}
+
+Console::~Console() 
+{
+	for(Window* window : windows){
+		if(window){
+			delete window;
+		}
 	}
-	else
-		return luminosityString[0];
-}
+	windows.clear();
 
-double GetLuminosityFromCharacter(char c) 
-{
-	const char* index = strchr(luminosityString, c);
-	if(index){
-		return (double)(index - luminosityString) / (double)(sizeof(luminosityString) - 1);
+	if(background){
+		delete[] background;
+		background = nullptr;
 	}
-	else{
-		return 0.f; // not found
+	if(canvas){
+		delete[] canvas;
+		canvas = nullptr;
 	}
+
+	ClearConsoleFully();
 }
 
-Console::Console()
+void Console::AddWindow(Window* window) 
 {
-	ConsoleClear();
+	windows.push_back(window);
 }
 
-Console::Console(int w, int h)
+void Console::Render() 
 {
-	width = w;
-	height = h;
-    realWidth = w + 2; // add 2 for the border
-	realHeight = h + 2;
-	console = new char[realWidth * realHeight];
-	ConsoleClear();
-}
+	// clear canvas with background
+	std::memcpy(canvas, background, width * height * sizeof(char));
+	// for(int ix = 0; ix < width; ix ++){
+	// 	for(int iy = 0; iy < height; iy ++){
+	// 	}
+	// }
 
-void Console::PlotPixel(int x, int y, double luminosity)
-{
-	if(x < 0 || y < 0 || x >= width || y >= height)
-		return;
+	// apply windows canvas to console canvas
+	for(Window* window : windows){
+		const char* window_canvas = window->GetCanvas();
+		int x = window->GetX();
+		int y = window->GetY();
+		int w = window->GetWidth();
+		int h = window->GetHeight();
 
-	console[(y + 1) * realWidth + (x + 1)] = GetLuminosityCharacter(luminosity);
-}
+		int sx = std::max(0, x), ex = std::min(width,  x + w);
+		int sy = std::max(0, y), ey = std::min(height, y + h);
 
-void Console::PlotPixelIfBrighter(int x, int y, double luminosity) 
-{
-	if(x < 0 || y < 0 || x >= width || y >= height)
-		return;
+		for(int ix = sx; ix < ex; ix ++){
+			for(int iy = sy; iy < ey; iy ++){
+				canvas[iy * width + ix] = window_canvas[(iy - sy) * w + (ix - sx)];
+			}
+		}
+	}
 
-	if(luminosity > GetLuminosityFromCharacter(console[(y + 1) * realWidth + (x + 1)]))
-		console[(y + 1) * realWidth + (x + 1)] = GetLuminosityCharacter(luminosity);
-}
+	// clear screen
+	ClearConsole();
 
-void Console::Draw()
-{
-	for(int y = 0; y < realHeight; y++){
-		for (int x = 0; x < realWidth; x++){
-			std::cout << console[y * realWidth + x];
+	// draw canvas
+	for(int y = 0; y < height; y++){
+		for (int x = 0; x < width; x++){
+			std::cout << canvas[y * width + x];
 		}
 		std::cout << '\n';
 	}
-}
-
-void Console::ConsoleClear() 
-{
-	// std::cout << "\n\n\n\n\n\n\n\n\n\n\n\n" << std::flush;
-	system("clear");
-	// Clear();
-}
-
-void Console::Clear()
-{
-	std::cout << "\e[3J\e[1;1H";
-
-	for (int y = 0; y < realHeight; y++){
-		for (int x = 0; x < realWidth; x++){
-			
-			if (x == 0 || x == realWidth - 1 || y == 0 || y == realHeight - 1)
-				console[y * realWidth + x] = '#';
-			else
-				console[y * realWidth + x] = ' ';
-		}
-	}
-}
-
-Console::~Console() {
-	ConsoleClear();
 }

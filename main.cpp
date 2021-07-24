@@ -1,13 +1,18 @@
-#include "Game.h"
-
 #include <chrono>
 #include <thread> // std::this_thread::sleep_for
 
-// #define SCREEN_WIDTH 60
-// #define SCREEN_HEIGHT 40
+#define CONSOLE_WIDTH 90
+#define CONSOLE_HEIGHT 40
+
+#include "Console.h"
+#include "Window.h"
+#include "Game.h"
 
 int main(){
-    Game game;
+    Console console(CONSOLE_WIDTH, CONSOLE_HEIGHT);
+    Window* gameWindow = new Window(5, 5, GAME_WIDTH, GAME_HEIGHT);
+    Game game(gameWindow);
+    console.AddWindow(gameWindow);
     
     using clock = std::chrono::high_resolution_clock;
     auto time_start = clock::now();
@@ -21,7 +26,9 @@ int main(){
         // std::cout << dt_seconds << "\n";
 
         game.Update(dt_seconds);
-        game.Draw();
+        game.UpdateScreen();
+
+        console.Render();
 
         std::this_thread::sleep_for(std::chrono::milliseconds(10));
     }

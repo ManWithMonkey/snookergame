@@ -1,32 +1,29 @@
 #ifndef __CONSOLE_H__
 #define __CONSOLE_H__
 
-#include <iostream>
-#include <cstring>
-
-const char luminosityString[] = " .-~^*:;!xb(){}[]?XB&%#";
-
-char GetLuminosityCharacter(double luminosity);
-double GetLuminosityFromCharacter(char c);
+#include "Window.h"
+#include <vector>
+#include <algorithm> // std::memcpy
 
 class Console{
-private:
-    int realWidth, realHeight;
+public:
     int width, height;
-    char* console;
+    char* background;
+    char* canvas;
+
+    std::vector<Window*> windows;
+
+    void ClearConsoleFully();
+    void ClearConsole();
+
+    void InitBackground();
 
 public:
-    Console();
     Console(int w, int h);
     ~Console();
-    
-    void ConsoleClear();
 
-    void PlotPixel(int x, int y, double luminosity);
-    void PlotPixelIfBrighter(int x, int y, double luminosity);
-
-    void Draw();
-    void Clear();
+    void AddWindow(Window* window);
+    void Render();
 };
 
 #endif // __CONSOLE_H__

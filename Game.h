@@ -9,6 +9,11 @@
 #include "Console.h"
 #include <random>
 
+#include "Window.h"
+
+const int GAME_WIDTH = 80;
+const int GAME_HEIGHT = 30;
+
 struct Ball{
     Vec2d pos;
     Vec2d vel; // per second
@@ -24,32 +29,24 @@ struct Ball{
 
 class Game{
 public:
-    Game();
-    Game(int w, int h);
+    Game(Window* screen);
     ~Game();
 
     void Update(double dt);
-    void Draw();
+    void UpdateScreen();
 
 private:
     // Constants
-    const int cueVelocity = 650.0;
-    const int defaultWidth = 100;
-    const int defaultHeight = 50;
-    const double defaultBallRadius = 2.;
+    const int cueVelocity = 1000.0;
+    const double defaultBallRadius = 2.0;
     const double deacceleration = 0.05;
 
     // Screen
     double width, height;
-    Console screen;
+    Window* screen = nullptr;
 
     // Game
     std::vector<Ball> balls;
-
-    //Drawing
-    void DrawSphere(double x, double y, double r);
-
-    void DrawGame();
 
     // Logic
     void HandleWallCollisions();
@@ -57,9 +54,6 @@ private:
 
     // Init functions
     void InitDefaultGame();
-
-    //Misc 
-    void DrawTestLuminosity();
 };
 
 #endif // __GAME_H__

@@ -1,17 +1,5 @@
 #include "Game.h"
 
-Game::Game(int w, int h) :
-    width(w), height(h), screen(width, height), balls(0)
-{
-    InitDefaultGame();
-}
-
-Game::Game() :
-    width(defaultWidth), height(defaultHeight), screen(defaultWidth, defaultHeight), balls(0)
-{
-    InitDefaultGame();
-}
-
 Game::~Game() 
 {
 }
@@ -32,19 +20,15 @@ void Game::Update(double dt)
     HandleBallCollisions();
 }
 
-void Game::Draw() 
+void Game::UpdateScreen() 
 {
-    screen.Clear();
-    DrawGame();
-    screen.Draw();
-}
+    if(!screen)
+        return;
 
-void Game::DrawTestLuminosity() 
-{
-    for(int x=0; x<width; x++){
-        for(int y=0; y<height; y++){
-            screen.PlotPixel(x, y, (double)(width - x) / (double)width);
-        }
+    screen->Clear();
+
+    for(Ball& ball : balls){
+        screen->DrawSphere(ball.pos.x, ball.pos.y, ball.radius);
     }
 }
 
@@ -54,9 +38,9 @@ void Game::InitDefaultGame()
         return 2.0 * (double)(rand()) / (double)RAND_MAX - 1.0;
     };
 
-    const Vec2d white_start(4, 25);
-    const Vec2d hub_start(55, 25);
-    const double hub_scalar = 3.f;
+    const Vec2d white_start(6, height / 2);
+    const Vec2d hub_start(40, height / 2);
+    const double hub_scalar = 2.0f;
     const double dx = 2;
     const double dy = 1;
 
@@ -84,31 +68,7 @@ void Game::InitDefaultGame()
     }
 
     balls.push_back(Ball(white_start.x, white_start.y, defaultBallRadius));
-    balls.back().vel = cueVelocity * Vec2d(1.0, 0.1).unit();
-}
-
-void Game::DrawSphere(double x, double y, double r) 
-{
-    double cx = (int)(x);
-    double cy = (int)(y);
-
-    for(double ix = -r; ix <= r; ix += 1.0){
-        for(double iy = -r; iy <= r; iy += 1.0){
-
-            double distance = std::hypot(cx + ix - x, cy + iy - y);
-            double luminosity = 1.0 - distance / r;
-            
-            // screen.PlotPixel(ix, iy, luminosity);
-            screen.PlotPixelIfBrighter(cx + ix, cy + iy, luminosity);
-        }
-    }
-}
-
-void Game::DrawGame() 
-{
-    for(Ball& ball : balls){
-        DrawSphere(ball.pos.x, ball.pos.y, ball.radius);
-    }
+    balls.back().vel = cueVelocity * Vec2d(1.0, 0.0).unit();
 }
 
 void Game::HandleWallCollisions() 
@@ -143,6 +103,7 @@ void Game::HandleBallCollisions()
                 double velavg = 0.5 * velTotal;
 
                 // needs trasferrance of energy, currently will never lose/gain velocity to other balls in collision
+                // or maybe not
                 b1.vel = 0.5 * velavg *  collisionDirection + 0.5 * velavg * b1.vel.reflected(mirrorUnitVector).unit();
                 b2.vel = 0.5 * velavg * -collisionDirection + 0.5 * velavg * b2.vel.reflected(mirrorUnitVector).unit();
 
@@ -162,6 +123,12 @@ Ball::Ball(double x, double y, double radius) :
 bool Ball::CollidesWith(const Ball& other) const
 {
     return (other.pos - pos).norm() <= other.radius + radius;
+}
+
+Game::Game(Window* screen) :
+    screen(screen), width(screen->GetWidth()), height(screen->GetHeight())
+{
+    InitDefaultGame();
 }
 
 Ball::Ball() 
