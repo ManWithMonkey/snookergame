@@ -14,7 +14,7 @@ void Game::Update(double dt)
 
         if(ball.white){
             // remove this part
-            ball.vel *= (1.0 + 1.5 * dt);
+            ball.vel *= (1.0 + 1.0 * dt);
             ball.vel.rotate(dt);
         }
         else{
@@ -23,8 +23,9 @@ void Game::Update(double dt)
         }
     }
 
-    HandleWallCollisions();
-    HandleBallCollisions();
+    if((HandleWallCollisions() || HandleBallCollisions()) && soundEnabled){
+        screen->MakeBellSound();
+    }
 }
 
 void Game::UpdateScreen() 
@@ -87,24 +88,32 @@ void Game::InitDefaultGame()
     balls.back().white = true;
 }
 
-void Game::HandleWallCollisions() 
+bool Game::HandleWallCollisions() 
 {
+    bool result = false;
+
     for(Ball& ball : balls){
-        if(ball.pos.x - ball.radius < 0)         { ball.vel.x *= -1.0; ball.pos.x = 2.0 * ball.radius - ball.pos.x; }
-        if(ball.pos.y - ball.radius < 0)         { ball.vel.y *= -1.0; ball.pos.y = 2.0 * ball.radius - ball.pos.y; }
-        if(ball.pos.x + ball.radius >= width)    { ball.vel.x *= -1.0; ball.pos.x = width - ((ball.pos.x + 2.0 * ball.radius) - width); }
-        if(ball.pos.y + ball.radius >= height)   { ball.vel.y *= -1.0; ball.pos.y = height - ((ball.pos.y + 2.0 * ball.radius) - height); }
+        if(ball.pos.x - ball.radius < 0)         { if(ball.white) result = true; ball.vel.x *= -1.0; ball.pos.x = 2.0 * ball.radius - ball.pos.x; }
+        if(ball.pos.y - ball.radius < 0)         { if(ball.white) result = true; ball.vel.y *= -1.0; ball.pos.y = 2.0 * ball.radius - ball.pos.y; }
+        if(ball.pos.x + ball.radius >= width)    { if(ball.white) result = true; ball.vel.x *= -1.0; ball.pos.x = width - ((ball.pos.x + 2.0 * ball.radius) - width); }
+        if(ball.pos.y + ball.radius >= height)   { if(ball.white) result = true; ball.vel.y *= -1.0; ball.pos.y = height - ((ball.pos.y + 2.0 * ball.radius) - height); }
     }
+
+    return result;
 }
 
-void Game::HandleBallCollisions() 
+bool Game::HandleBallCollisions() 
 {
+    bool result = false;
+
     for(int i=0; i<balls.size(); i++){
         for(int j=i+1; j<balls.size(); j++){
             Ball& b1 = balls[i];
             Ball& b2 = balls[j];
 
             if(b1.CollidesWith(b2)){
+                if(b1.white || b2.white) result = true;
+
                 double distance = (b1.pos - b2.pos).norm();
                 Vec2d collisionDirection = (b1.pos - b2.pos).unit();
 
@@ -129,6 +138,8 @@ void Game::HandleBallCollisions()
             }
         }
     }
+
+    return result;
 }
 
 Ball::Ball(double x, double y, double radius, char name, bool striped) :

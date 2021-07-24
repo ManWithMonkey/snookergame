@@ -37,6 +37,7 @@ public:
 
 private:
     // Constants
+    const bool soundEnabled = true;
     const int cueVelocity = 10.0;
     const double defaultBallRadius = 2.5;
     const double nameAreaRadius = 0.5;
@@ -50,8 +51,8 @@ private:
     std::vector<Ball> balls;
 
     // Logic
-    void HandleWallCollisions();
-    void HandleBallCollisions();
+    bool HandleWallCollisions();
+    bool HandleBallCollisions();
 
     // Init functions
     void InitDefaultGame();

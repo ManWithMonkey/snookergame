@@ -21,6 +21,8 @@ public:
     Window(int x, int y, int w, int h);
     ~Window();
 
+    void MakeBellSound();
+
     int GetX() const;
     int GetY() const;
     int GetWidth() const;

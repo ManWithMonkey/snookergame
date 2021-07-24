@@ -29,6 +29,12 @@ Window::~Window(){
     }
 }
 
+void Window::MakeBellSound() 
+{
+	// system("echo -ne \007");
+	system("echo \007");
+}
+
 int Window::GetX() const
 {
     return x;
