@@ -19,7 +19,7 @@ void Console::PlotPixel(int x, int y, double luminocity)
     if(luminocity < 0 || luminocity > 1)
         return;
 
-    const char* options = ".-:;¤%&#";
+    const char* options = " .-:;¤%&#";
 
     int selected = luminocity * sizeof(options);
     char color = options[selected];

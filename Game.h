@@ -4,6 +4,7 @@
 #include <iostream>
 #include <cstdlib>
 #include <vector>
+#include <math.h>
 #include "Vec2d.h"
 #include "Console.h"
 
@@ -17,6 +18,7 @@ class Game{
     Console screen;
     std::vector<Ball> balls;
 
+    void DrawSphere(double x, double y, double r);
     void DrawTestLuminocity();
 
 public:
