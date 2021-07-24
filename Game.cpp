@@ -12,10 +12,17 @@ Game::Game(int w, int h)
 void Game::Update(double dt) 
 {
     for(Ball& ball : balls){
-        ball.pos += ball.vel * dt;
+        Vec2d deltaPosition = ball.vel * dt;
+
+        ball.pos                += deltaPosition;
+        ball.lastDeltaPosition  =  deltaPosition;
+
+        // deacceleration
         ball.vel *= (1.f - deacceleration * dt);
-        HandleWallCollisions();
     }
+
+    HandleWallCollisions();
+    HandleBallCollisions();
 }
 
 void Game::Draw() 
@@ -41,8 +48,8 @@ void Game::InitDefaultGame()
     };
 
     balls.clear();
-    for(int i=0; i<10; i++){
-        balls.push_back(Ball(2 + i * 6, 3));
+    for(int i=0; i<5; i++){
+        balls.push_back(Ball(2 + i * 4, 2 + i * 4, i * 1.0));
         balls.back().vel = 100.0 * Vec2d(_randScalar(), _randScalar());
     }
 }
@@ -67,7 +74,7 @@ void Game::DrawSphere(double x, double y, double r)
 void Game::DrawGame() 
 {
     for(Ball& ball : balls){
-        DrawSphere(ball.pos.x, ball.pos.y, ballRadius);
+        DrawSphere(ball.pos.x, ball.pos.y, ball.radius);
     }
     // DrawTestLuminosity();
 }
@@ -82,7 +89,35 @@ void Game::HandleWallCollisions()
     }
 }
 
-Ball::Ball(double x, double y) :
-    pos(Vec2d(x, y)), vel(Vec2d(0, 0))
+void Game::HandleBallCollisions() 
 {
+    for(int i=0; i<balls.size(); i++){
+        for(int j=i+1; j<balls.size(); j++){
+            Ball& b1 = balls[i];
+            Ball& b2 = balls[j];
+
+            if(b1.CollidesWith(b2)){
+                double distance = (b1.pos - b2.pos).norm();
+                Vec2d collisionDir = (b1.pos - b2.pos).unit();
+
+                Vec2d mirrorUnit = collisionDir.unit();
+
+                b1.vel.reflect(mirrorUnit);
+                b2.vel.reflect(mirrorUnit);
+
+                b1.pos -= 0.5 * b1.lastDeltaPosition + 0.5 * b1.lastDeltaPosition.reflected(mirrorUnit);
+                b2.pos -= 0.5 * b2.lastDeltaPosition + 0.5 * b2.lastDeltaPosition.reflected(mirrorUnit);
+            }
+        }
+    }
+}
+
+Ball::Ball(double x, double y, double radius) :
+    pos(Vec2d(x, y)), vel(Vec2d(0, 0)), radius(radius), lastDeltaPosition(Vec2d(0, 0))
+{
+}
+
+bool Ball::CollidesWith(const Ball& other) const
+{
+    return (other.pos - pos).norm() <= other.radius + radius;
 }

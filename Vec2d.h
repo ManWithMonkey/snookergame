@@ -13,18 +13,21 @@ struct Vec2d{
     Vec2d operator*(double f) const;
     Vec2d operator/(double f) const;
 
-    double operator*(Vec2d rhs); // dot product
+    double operator*(Vec2d rhs) const; // dot product
 
     Vec2d& operator+=(Vec2d rhs);
     Vec2d& operator-=(Vec2d rhs);
 
     Vec2d& operator*=(double rhs);
 
-    Vec2d unit();
-    double norm();
-    Vec2d normal();
+    Vec2d unit() const;
+    double norm() const;
+    Vec2d normal() const;
 
-    bool isNull();
+    Vec2d& reflect(Vec2d mirrorNormalUnit);
+    Vec2d reflected(Vec2d mirrorNormalUnit) const;
+
+    bool isNull() const;
 };
 
 Vec2d operator*(double rhs, Vec2d lhs);

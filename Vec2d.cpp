@@ -31,7 +31,7 @@ Vec2d Vec2d::operator/(double f) const {
     return Vec2d(x / f, y / f);
 }
 
-double Vec2d::operator*(Vec2d rhs) {
+double Vec2d::operator*(Vec2d rhs) const {
     return x * rhs.x + y * rhs.y;
 }
 
@@ -53,22 +53,33 @@ Vec2d& Vec2d::operator*=(double rhs) {
     return *this;
 }
 
-Vec2d Vec2d::unit() {
+Vec2d Vec2d::unit() const {
     if(isNull())
         return Vec2d(0, 0);
     else
         return *this / norm();
 }
 
-double Vec2d::norm() {
+double Vec2d::norm() const {
     return std::hypot(x, y);
 }
 
-Vec2d Vec2d::normal() {
+Vec2d Vec2d::normal() const {
     return Vec2d(y, -x);
 }
 
-bool Vec2d::isNull() {
+Vec2d& Vec2d::reflect(Vec2d mirrorNormalUnit) 
+{
+    *this = reflected(mirrorNormalUnit);
+    return *this;
+}
+
+Vec2d Vec2d::reflected(Vec2d mirrorNormalUnit) const
+{
+    return *this - 2.0 * (*this * mirrorNormalUnit) * mirrorNormalUnit;
+}
+
+bool Vec2d::isNull() const {
     return x == 0 && y == 0;
 }
 

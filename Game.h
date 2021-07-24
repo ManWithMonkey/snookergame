@@ -12,8 +12,13 @@
 struct Ball{
     Vec2d pos;
     Vec2d vel; // per second
+    double radius;
 
-    Ball(double x, double y);
+    Vec2d lastDeltaPosition; // movement at last iteration, useful for collisions
+
+    Ball(double x, double y, double radius);
+
+    bool CollidesWith(const Ball& other) const;
 };
 
 class Game{
@@ -25,7 +30,7 @@ class Game{
     std::vector<Ball> balls;
 
     // Constants
-    const double ballRadius = 6.0;
+    const double ballRadius = 2.0;
     const double deacceleration = 0.3;
 
     //Drawing
@@ -35,6 +40,7 @@ class Game{
 
     // Logic
     void HandleWallCollisions();
+    void HandleBallCollisions();
 
     // Init functions
     void InitDefaultGame();
