@@ -16,6 +16,7 @@ public:
     void PlotPixel(int x, int y, double luminosity);
 
     void Draw();
+    void ConsoleFullClear();
     void Clear();
 };
 

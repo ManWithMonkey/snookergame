@@ -2,6 +2,7 @@
 
 Console::Console()
 {
+	ConsoleFullClear();
 }
 
 Console::Console(int w, int h)
@@ -11,6 +12,7 @@ Console::Console(int w, int h)
     realWidth = w + 2; // add 2 for the border
 	realHeight = h + 2;
 	console = new char[realWidth * realHeight];
+	ConsoleFullClear();
 }
 
 void Console::PlotPixel(int x, int y, double luminosity)
@@ -42,9 +44,15 @@ void Console::Draw()
 	}
 }
 
+void Console::ConsoleFullClear() 
+{
+	// std::cout << "\n\n\n\n\n\n\n\n\n\n\n\n" << std::flush;
+	system("clear");
+	Clear();
+}
+
 void Console::Clear()
 {
-	//system("clear");
 	std::cout << "\e[3J\e[1;1H";
 
 	for (int y = 0; y < realHeight; y++)
