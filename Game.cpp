@@ -29,7 +29,7 @@ void Game::DrawTestLuminosity()
 {
     for(int x=0; x<width; x++){
         for(int y=0; y<height; y++){
-            screen.PlotPixel(x, y, (double)x / (double)width);
+            screen.PlotPixel(x, y, (double)(width - x) / (double)width);
         }
     }
 }
@@ -41,8 +41,8 @@ void Game::InitDefaultGame()
     };
 
     balls.clear();
-    for(int i=0; i<3; i++){
-        balls.push_back(Ball(3 + i * 6, 3));
+    for(int i=0; i<10; i++){
+        balls.push_back(Ball(2 + i * 6, 3));
         balls.back().vel = 100.0 * Vec2d(_randScalar(), _randScalar());
     }
 }
@@ -61,9 +61,10 @@ void Game::DrawSphere(double x, double y, double r)
 
 void Game::DrawGame() 
 {
-    for(Ball& ball : balls){
-        DrawSphere(ball.pos.x, ball.pos.y, ballRadius);
-    }
+    // for(Ball& ball : balls){
+    //     DrawSphere(ball.pos.x, ball.pos.y, ballRadius);
+    // }
+    DrawTestLuminosity();
 }
 
 void Game::HandleWallCollisions() 

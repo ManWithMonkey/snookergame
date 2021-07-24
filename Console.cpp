@@ -23,9 +23,10 @@ void Console::PlotPixel(int x, int y, double luminosity)
 	char color = ' ';
 
 	// luminosity is between 0.0-1.0
-	if(luminosity >= 0 && luminosity < 1){ 
-		const char *options = " .-:;&%#";
-		int selected = luminosity * sizeof(options);
+	if(luminosity >= 0 && luminosity <= 1){ 
+		if(luminosity == 1) luminosity -= 0.00001; //crude hack
+		const char options[] = " .-~^*:;!xb(){}[]?XB&%#";
+		int selected = luminosity * (sizeof(options) - 1);
 		color = options[selected];
 	}
 
