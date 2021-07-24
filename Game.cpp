@@ -46,49 +46,55 @@ void Game::UpdateScreen()
     for(Ball& ball : balls){
         if(ball.white){
             screen->DrawSphere(ball.pos.x, ball.pos.y, ball.radius);
+            screen->DrawCircleOutline(ball.pos, ball.radius);
         }
         else if(ball.striped){
-            screen->DrawHollowSphere(ball.pos.x, ball.pos.y, ball.radius, nameAreaRadius / 5.0);
+            // screen->DrawHollowSphere(ball.pos.x, ball.pos.y, ball.radius, nameAreaRadius / 5.0);
+            screen->DrawSphere(ball.pos, ball.radius);
+            screen->DrawCircleOutline(ball.pos.x, ball.pos.y, ball.radius);
             for(int x = ball.pos.x - ball.radius; x <= ball.pos.x + ball.radius; x++)
                 screen->PlotPixel(x, ball.pos.y, ' ');
             screen->PlotPixel(ball.pos.x, ball.pos.y, ball.name);
         }
         else{
-            screen->DrawHollowSphere(ball.pos.x, ball.pos.y, ball.radius, nameAreaRadius);
+            screen->DrawCircleOutline(ball.pos.x, ball.pos.y, ball.radius);
+            // screen->DrawHollowSphere(ball.pos.x, ball.pos.y, ball.radius, nameAreaRadius);
             screen->PlotPixel(ball.pos.x, ball.pos.y, ball.name);
         }
     }
 
     // Zoom window
-    zoomWindow->Clear();
-    auto _translateToZoom = [&](Vec2d p) -> Vec2d {
-        return 0.5 * Vec2d(zoomWindow->GetWidth(), zoomWindow->GetHeight()) + (p - whiteBallPos) * zoomScale;
-    };
-
-    for(Ball& ball : balls){
-        if(ball.white){
-            zoomWindow->DrawSphere(_translateToZoom(ball.pos), zoomScale * ball.radius);
-        }
-        else if(ball.striped){
-            zoomWindow->DrawHollowSphere(_translateToZoom(ball.pos), zoomScale * ball.radius, zoomScale * nameAreaRadius / 5.0);
-            for(int x = ball.pos.x - ball.radius; x <= ball.pos.x + ball.radius; x++)
-                zoomWindow->PlotPixel(_translateToZoom(Vec2d(x, ball.pos.y)), ' ');
-            zoomWindow->PlotPixel(_translateToZoom(ball.pos), ball.name);
-        }
-        else{
-            zoomWindow->DrawHollowSphere(_translateToZoom(ball.pos), zoomScale * ball.radius, zoomScale * nameAreaRadius);
-            zoomWindow->PlotPixel(_translateToZoom(ball.pos), ball.name);
-        }
-    }
+    // zoomWindow->Clear();
+    // auto _translateToZoom = [&](Vec2d p) -> Vec2d {
+    //     return 0.5 * Vec2d(zoomWindow->GetWidth(), zoomWindow->GetHeight()) + (p - whiteBallPos) * zoomScale;
+    // };
+    // for(Ball& ball : balls){
+    //     if(ball.white){
+    //         zoomWindow->DrawSphere(_translateToZoom(ball.pos), zoomScale * ball.radius);
+    //         zoomWindow->DrawCircleOutline(_translateToZoom(ball.pos), zoomScale * ball.radius);
+    //     }
+    //     else if(ball.striped){
+    //         zoomWindow->DrawHollowSphere(_translateToZoom(ball.pos), zoomScale * ball.radius, zoomScale * nameAreaRadius / 5.0);
+    //         zoomWindow->DrawSphere(_translateToZoom(ball.pos), zoomScale * ball.radius);
+    //         for(int x = ball.pos.x - ball.radius; x <= ball.pos.x + ball.radius; x++)
+    //             zoomWindow->PlotPixel(_translateToZoom(Vec2d(x, ball.pos.y)), ' ');
+    //         zoomWindow->PlotPixel(_translateToZoom(ball.pos), ball.name);
+    //     }
+    //     else{
+    //         zoomWindow->DrawCircleOutline(_translateToZoom(ball.pos), zoomScale * ball.radius);
+    //         // zoomWindow->DrawHollowSphere(_translateToZoom(ball.pos), zoomScale * ball.radius, zoomScale * nameAreaRadius);
+    //         zoomWindow->PlotPixel(_translateToZoom(ball.pos), ball.name);
+    //     }
+    // }
 }
 
 void Game::InitDefaultGame() 
 {
     const double dx = 2;
     const double dy = 1;
-    const double hub_scalar = 2.7;
+    const double hub_scalar = 3.7;
     const Vec2d white_start(6, height / 2);
-    const Vec2d hub_start(width - dx * 7.0 * hub_scalar, height / 2);
+    const Vec2d hub_start(width - dx * 4.5 * hub_scalar, height / 2);
 
     const Vec2d positions[] = {
         hub_start + hub_scalar * Vec2d(0.0 * dx,  0.0 * dy),
@@ -100,16 +106,17 @@ void Game::InitDefaultGame()
         hub_start + hub_scalar * Vec2d(3.0 * dx, -3.0 * dy),
         hub_start + hub_scalar * Vec2d(3.0 * dx, -1.0 * dy),
         hub_start + hub_scalar * Vec2d(3.0 * dx,  1.0 * dy),
-        hub_start + hub_scalar * Vec2d(3.0 * dx,  3.0 * dy),
-        hub_start + hub_scalar * Vec2d(4.0 * dx, -4.0 * dy),
-        hub_start + hub_scalar * Vec2d(4.0 * dx, -2.0 * dy),
-        hub_start + hub_scalar * Vec2d(4.0 * dx,  0.0 * dy),
-        hub_start + hub_scalar * Vec2d(4.0 * dx,  2.0 * dy),
-        hub_start + hub_scalar * Vec2d(4.0 * dx,  4.0 * dy)
+        hub_start + hub_scalar * Vec2d(3.0 * dx,  3.0 * dy)
+        // hub_start + hub_scalar * Vec2d(4.0 * dx, -4.0 * dy),
+        // hub_start + hub_scalar * Vec2d(4.0 * dx, -2.0 * dy),
+        // hub_start + hub_scalar * Vec2d(4.0 * dx,  0.0 * dy),
+        // hub_start + hub_scalar * Vec2d(4.0 * dx,  2.0 * dy),
+        // hub_start + hub_scalar * Vec2d(4.0 * dx,  4.0 * dy)
     };
 
     balls.clear();
-    for(int i=0; i<1+2+3+4+5; i++){
+    // for(int i=0; i<1+2+3+4+5; i++){
+    for(int i=0; i<1+2+3+4; i++){
         balls.push_back(Ball(positions[i].x, positions[i].y, defaultBallRadius, '0' + (i % 10), i % 2));
     }
 

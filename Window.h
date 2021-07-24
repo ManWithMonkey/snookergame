@@ -37,9 +37,12 @@ public:
     void PlotPixelIfBrighter(Vec2d p, double luminosity);
 
     void DrawSphere(double x, double y, double r);
-    void DrawHollowSphere(double x, double y, double r_outer, double r_inner);
     void DrawSphere(Vec2d p, double r);
+    void DrawHollowSphere(double x, double y, double r_outer, double r_inner);
     void DrawHollowSphere(Vec2d p, double r_outer, double r_inner);
+
+    void DrawCircleOutline(double x, double y, double r);
+    void DrawCircleOutline(Vec2d p, double r);
 
     void Draw();
     void Clear();

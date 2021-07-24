@@ -132,6 +132,51 @@ void Window::DrawHollowSphere(Vec2d p, double r_outer, double r_inner)
 	DrawHollowSphere(p.x, p.y, r_outer, r_inner);
 }
 
+void Window::DrawCircleOutline(double x, double y, double r) 
+{
+/* 
+	   ----\
+     /		\
+    (		 )
+     \       /
+	  \----/
+*/
+
+	double two_PI = 2.0*3.14159;
+
+	double angles[] = 	 {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,  0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,  0.0, 0.0};
+	const char chars[] = {'-', '~', '\\', '|', ')', '|', '/', '~', '-', '~', '\\', '|', '(', '|', '/', '~'};
+	double dangle = two_PI / (double)(sizeof(chars));
+	
+	// Initialize angles
+	for(int i=0; i<sizeof(chars); i++){
+		angles[i] = (double)i * dangle;
+	}
+
+	int pointsize = two_PI * r;
+	double deltaAngle = two_PI / (double)pointsize;
+
+	int charIndex = 0;
+
+	for(double angle = 0.0; angle < two_PI; angle += deltaAngle){
+		// skip characters that dont describe current angle
+		while(angles[charIndex] < angle)
+			charIndex++;
+		
+		char c = chars[(charIndex + 4) % sizeof(chars)];
+
+		double cx = x + r * cos(angle);
+		double cy = y + r * sin(angle);
+
+		PlotPixel(cx, cy, c);
+	}
+}
+
+void Window::DrawCircleOutline(Vec2d p, double r) 
+{
+	DrawCircleOutline(p.x, p.y, r);
+}
+
 void Window::Draw()
 {
 	for(int y = 0; y < height; y++){
