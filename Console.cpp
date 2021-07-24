@@ -42,7 +42,8 @@ void Console::Draw()
 
 void Console::Clear()
 {
-    std::cout << "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n" << std::flush; 
+	//system("clear");
+	std::cout << "\e[3J\e[1;1H";
 
 	for (int y = 0; y < height + 2; y++)
 	{
