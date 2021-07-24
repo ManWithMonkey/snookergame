@@ -2,7 +2,12 @@
 #include <thread> // std::this_thread::sleep_for
 
 #define CONSOLE_WIDTH 90
-#define CONSOLE_HEIGHT 43
+#define CONSOLE_HEIGHT 40
+
+#define GAME_X 7
+#define GAME_Y 5
+#define GAME_WIDTH 76
+#define GAME_HEIGHT 30
 
 #include "Console.h"
 #include "Window.h"
@@ -10,7 +15,7 @@
 
 int main(){
     Console console(CONSOLE_WIDTH, CONSOLE_HEIGHT);
-    Window* gameWindow = new Window(5, 4, GAME_WIDTH, GAME_HEIGHT);
+    Window* gameWindow = new Window(GAME_X, GAME_Y, GAME_WIDTH, GAME_HEIGHT);
     Game game(gameWindow);
     console.AddWindow(gameWindow);
     

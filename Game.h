@@ -11,9 +11,6 @@
 
 #include "Window.h"
 
-const int GAME_WIDTH = 80;
-const int GAME_HEIGHT = 36;
-
 struct Ball{
     Vec2d pos;
     Vec2d vel; // per second

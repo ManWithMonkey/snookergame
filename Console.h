@@ -17,6 +17,7 @@ public:
     void ClearConsole();
 
     void InitBackground();
+    void DrawBorderAroundWindowOnBackground(Window* window);
 
 public:
     Console(int w, int h);

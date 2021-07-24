@@ -17,10 +17,27 @@ void Console::InitBackground()
 {
 	for(int y=0; y<height; y++)
 		for(int x=0; x<width; x++)
-			if (x == 4 || x == width - 5 || y == 3 || y == height - 3 || x == 0 || y == 0 || x == width - 1 || y == height - 1)
+			if (x == 0 || y == 0 || x == width - 1 || y == height - 1)
 				background[y * width + x] = '#';
 			else
-				background[y * width + x] = ((y + x) % 2 ? '/' : '\\');
+				background[y * width + x] = ((y + x) % 2 ? '+' : (x % 2 ? '-' : '|'));
+}
+
+void Console::DrawBorderAroundWindowOnBackground(Window* window) 
+{
+	int x1 = window->GetX() - 1;
+	int y1 = window->GetY() - 1;
+	int x2 = x1 + window->GetWidth() + 1;
+	int y2 = y1 + window->GetHeight() + 1;
+
+	for(int y=y1; y<=y2; y++){
+		background[y * width + x1] = '#';
+		background[y * width + x2] = '#';
+	}
+	for(int x=x1; x<=x2; x++){
+		background[y1 * width + x] = '#';
+		background[y2 * width + x] = '#';
+	}
 }
 
 Console::Console(int w, int h) :
@@ -58,6 +75,7 @@ Console::~Console()
 void Console::AddWindow(Window* window) 
 {
 	windows.push_back(window);
+	DrawBorderAroundWindowOnBackground(window);
 }
 
 void Console::Render() 

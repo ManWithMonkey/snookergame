@@ -15,7 +15,7 @@ private:
     int x, y;
     int width, height;
     char* canvas;
-
+    
 public:
     Window(int x, int y, int w, int h);
     ~Window();
