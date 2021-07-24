@@ -79,7 +79,7 @@ void Game::InitDefaultGame()
     };
 
     balls.clear();
-    for(int i=0; i<sizeof(positions); i++){
+    for(int i=0; i<1+2+3+4+5; i++){
         balls.push_back(Ball(positions[i].x, positions[i].y, defaultBallRadius));
     }
 
