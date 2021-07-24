@@ -26,3 +26,5 @@ struct Vec2d{
 
     bool isNull();
 };
+
+Vec2d operator*(double rhs, Vec2d lhs);

@@ -71,3 +71,8 @@ Vec2d Vec2d::normal() {
 bool Vec2d::isNull() {
     return x == 0 && y == 0;
 }
+
+Vec2d operator*(double rhs, Vec2d lhs) 
+{
+    return lhs * rhs;
+}

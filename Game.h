@@ -26,7 +26,7 @@ class Game{
 
     // Constants
     const double ballRadius = 3.0;
-    const double deacceleration = 0.8;
+    const double deacceleration = 0.3;
 
     //Drawing
     void DrawSphere(double x, double y, double r);

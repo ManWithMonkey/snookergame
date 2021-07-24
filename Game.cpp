@@ -14,6 +14,7 @@ void Game::Update(double dt)
     for(Ball& ball : balls){
         ball.pos += ball.vel * dt;
         ball.vel *= (1.f - deacceleration * dt);
+        HandleWallCollisions();
     }
 }
 
@@ -36,13 +37,13 @@ void Game::DrawTestLuminosity()
 void Game::InitDefaultGame() 
 {
     auto _randScalar = []() -> double {
-        return (double)(rand()) / (double)RAND_MAX;
+        return 2.0 * (double)(rand()) / (double)RAND_MAX - 1.0;
     };
 
     balls.clear();
     for(int i=0; i<3; i++){
         balls.push_back(Ball(3 + i * 6, 3));
-        balls.back().vel = 10.0 * Vec2d(_randScalar(), _randScalar());
+        balls.back().vel = 100.0 * Vec2d(_randScalar(), _randScalar());
     }
 }
 
@@ -68,11 +69,10 @@ void Game::DrawGame()
 void Game::HandleWallCollisions() 
 {
     for(Ball& ball : balls){
-        //left
-        if(ball.pos.x - ballRadius < 0)         { ball.vel.x *= -1.0; ball.pos.x = -ball.pos.x; }
-        if(ball.pos.y - ballRadius < 0)         { ball.vel.y *= -1.0; ball.pos.y = -ball.pos.y; }
-        if(ball.pos.x + ballRadius >= width)    { ball.vel.x *= -1.0; ball.pos.x = 2.0 * width  - ball.pos.x; }
-        if(ball.pos.y + ballRadius >= height)   { ball.vel.y *= -1.0; ball.pos.y = 2.0 * height - ball.pos.y; }
+        if(ball.pos.x - ballRadius < 0)         { ball.vel.x *= -1.0; ball.pos.x = 2.0 * ballRadius - ball.pos.x; }
+        if(ball.pos.y - ballRadius < 0)         { ball.vel.y *= -1.0; ball.pos.y = 2.0 * ballRadius - ball.pos.y; }
+        if(ball.pos.x + ballRadius >= width)    { ball.vel.x *= -1.0; ball.pos.x = width - ((ball.pos.x + ballRadius) - width); }
+        if(ball.pos.y + ballRadius >= height)   { ball.vel.y *= -1.0; ball.pos.y = height - ((ball.pos.y + ballRadius) - height); }
     }
 }
 
