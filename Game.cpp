@@ -34,15 +34,19 @@ void Game::UpdateScreen()
     screen->Clear();
 
     for(Ball& ball : balls){
-        if(ball.striped){
+        if(ball.white){
+            screen->DrawSphere(ball.pos.x, ball.pos.y, ball.radius);
+        }
+        else if(ball.striped){
             screen->DrawHollowSphere(ball.pos.x, ball.pos.y, ball.radius, nameAreaRadius / 5.0);
             for(int x = ball.pos.x - ball.radius; x <= ball.pos.x + ball.radius; x++)
                 screen->PlotPixel(x, ball.pos.y, ' ');
+            screen->PlotPixel(ball.pos.x, ball.pos.y, ball.name);
         }
         else{
             screen->DrawHollowSphere(ball.pos.x, ball.pos.y, ball.radius, nameAreaRadius);
+            screen->PlotPixel(ball.pos.x, ball.pos.y, ball.name);
         }
-        screen->PlotPixel(ball.pos.x, ball.pos.y, ball.name);
     }
 }
 
