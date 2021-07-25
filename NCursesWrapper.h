@@ -1,10 +1,18 @@
+#ifndef __NCURSESWRAPPER_H__
+#define __NCURSESWRAPPER_H__
+
 #include <ncurses.h>
 
-static int CONSOLE_WIDTH, CONSOLE_HEIGHT;
+static int CONSOLE_WIDTH, CONSOLE_HEIGHT; // should be constants
 
-void InitNCurses();
+void InitNCurses(int w, int h);
+void QuitNCurses();
+
+void Clear(char pixel);
+
 void SetPixel(int x, int y, char pixel);
-// void SetColor()
+
+void Render();
 
 // void MakeBellSound();
 
@@ -124,3 +132,5 @@ void SetPixel(int x, int y, char pixel);
 // 		}
 // 	}
 // }
+
+#endif // __NCURSESWRAPPER_H__

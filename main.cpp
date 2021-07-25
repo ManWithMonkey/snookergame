@@ -12,6 +12,7 @@
 int main()
 {
     Game game(GAME_X, GAME_Y, GAME_W, GAME_H);
+	InitNCurses(GAME_W, GAME_H);
 
 	using clock = std::chrono::high_resolution_clock;
 	auto time_start = clock::now();
@@ -23,12 +24,18 @@ int main()
 
 		double dt_seconds = (double)std::chrono::duration_cast<std::chrono::microseconds>(dt).count() / 1E+6;
 
+		Clear(' ');
+
 		game.Update(dt_seconds);
-		game.UpdateScreen();
+		game.Draw();
 		// console.Render();
+
+		Render();
 
 		std::this_thread::sleep_for(std::chrono::milliseconds(10));
 	}
+
+	QuitNCurses();
 
 	return 0;
 }

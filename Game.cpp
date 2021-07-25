@@ -87,19 +87,16 @@ void Game::Update(double dt)
 	}
 }
 
-void Game::UpdateScreen()
+void Game::Draw()
 {
-
-	// Clear
-
 	// Draw table
 	for (int y = 0; y < height; y++){
 		for (int x = 0; x < width; x++){
 			if (x < table_x || y < table_y || x >= table_x + table_w || y >= table_y + table_h){
-				// screen->PlotPixel(x, y, '%', RED);
+				SetPixel(game_x + x, game_y + y, '#');
 			}
 			else{
-				// screen->PlotPixel(x, y, ((y + x) % 2 ? '.' : ' '), GRN);
+				SetPixel(game_x + x, game_y + y, ((y + x) % 2 ? '.' : ' '));
 			}
 		}
 	}

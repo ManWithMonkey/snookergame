@@ -11,6 +11,8 @@
 #include "Ball.h"
 #include "Cue.h"
 
+#include "NCursesWrapper.h"
+
 const double nameAreaRadius = 1.5;
 const double deacceleration = 1.5;
 
@@ -26,7 +28,7 @@ public:
 	void ReleaseCue();
 
 	void Update(double dt);
-	void UpdateScreen();
+	void Draw();
 
 private:
 	double cueMultiplier = 20.0;
