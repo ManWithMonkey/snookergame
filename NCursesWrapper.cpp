@@ -7,7 +7,7 @@ void InitNCurses(int w, int h)
     keypad(stdscr,true);
     noecho();
     curs_set(0);
-    getmaxyx(stdscr,w,h);
+    // getmaxyx(stdscr,w,h);
 
     CONSOLE_WIDTH = w;
     CONSOLE_HEIGHT = h;
@@ -30,14 +30,12 @@ void Clear(char pixel)
     }
 }
 
-
-
 void SetPixel(int x, int y, char pixel) 
 {
     if(x < 0 || y < 0 || x >= CONSOLE_WIDTH || y >= CONSOLE_HEIGHT)
         return;
 
-    move(x, y);
+    move(y, x);
     addch(pixel);
 }
 
