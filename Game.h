@@ -34,7 +34,7 @@ public:
 	void UpdateScreen();
 
 private:
-	double cueMultiplier = 50.0;
+	double cueMultiplier = 20.0;
 
 	// Zoom window
 	ConsolePanel *zoomWindow;
