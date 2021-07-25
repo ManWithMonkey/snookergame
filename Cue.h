@@ -1,7 +1,6 @@
 #ifndef __CUE_H__
 #define __CUE_H__
 
-
 #include "Ball.h"
 
 struct Cue{

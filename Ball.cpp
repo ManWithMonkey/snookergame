@@ -27,25 +27,3 @@ BallInfo::BallInfo(bool isCueBall, char id, int type)
 	this->id = id;
 	this->type = type;
 }
-
-COLOR BallInfo::GetColor() const
-{
-    // balls should have color as member !!
-
-    if(cueball){
-        return WHT;
-    }
-    int i = (id - '0') % 8;
-
-    switch(i){
-        case 0: return RED;
-        case 1: return GRN;
-        case 2: return YEL;
-        case 3: return BLU;
-        case 4: return MAG;
-        case 5: return CYN;
-        case 6: return WHT;
-        case 7: return BLK;
-        default: return WHT;
-    }
-}

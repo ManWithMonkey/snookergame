@@ -1,7 +1,6 @@
 #ifndef __GAME_H__
 #define __GAME_H__
 
-#include "Console.h"
 #include "Vec2d.h"
 #include <cstdlib>
 #include <iostream>
@@ -9,19 +8,15 @@
 #include <random>
 #include <vector>
 
-#include "Window.h"
 #include "Ball.h"
 #include "Cue.h"
 
-const bool soundEnabled = true;
-
 const double nameAreaRadius = 1.5;
 const double deacceleration = 1.5;
-const double zoomScale = 1.6;
 
 class Game{
 public:
-	Game(int w, int h, ConsolePanel *screen, ConsolePanel *zoomWindow);
+	Game(int x, int y, int w, int h);
 	~Game();
 
 	void KeyPressed(char c);
@@ -36,15 +31,11 @@ public:
 private:
 	double cueMultiplier = 20.0;
 
-	// Zoom window
-	ConsolePanel *zoomWindow;
-
-	// Screen
-	ConsolePanel *screen;
+	// 
+	int game_x, game_y;
 	double width, height;
 
 	// Game
-	COLOR cueColor = WHT;
 	Cue cue;
 	Vec2d cueBallPosition = Vec2d(0, 0);
 	double cueBallVel = 0.0;

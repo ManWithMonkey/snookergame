@@ -53,6 +53,8 @@ void Game::ReleaseCue()
 
 void Game::Update(double dt)
 {
+	// std::cout << "Updating...\n";
+	
 	for (Ball &ball : balls) {
 		Vec2d deltaPosition = ball.vel * dt;
 
@@ -62,9 +64,9 @@ void Game::Update(double dt)
 		ball.vel *= (1.0 - deacceleration * dt);
 	}
 
-	if ((HandleWallCollisions() || HandleBallCollisions()) && soundEnabled) {
-		screen->MakeBellSound();
-	}
+	// if ((HandleWallCollisions() || HandleBallCollisions()) && soundEnabled) {
+		// screen->MakeBellSound();
+	// }
 
 	// Update cueball ball pos and cue pos
 	for (Ball &ball : balls) {
@@ -87,27 +89,24 @@ void Game::Update(double dt)
 
 void Game::UpdateScreen()
 {
-	if (!screen)
-		return;
 
 	// Clear
-	screen->Clear();
 
 	// Draw table
 	for (int y = 0; y < height; y++){
 		for (int x = 0; x < width; x++){
 			if (x < table_x || y < table_y || x >= table_x + table_w || y >= table_y + table_h){
-				screen->PlotPixel(x, y, '%', RED);
+				// screen->PlotPixel(x, y, '%', RED);
 			}
 			else{
-				screen->PlotPixel(x, y, ((y + x) % 2 ? '.' : ' '), GRN);
+				// screen->PlotPixel(x, y, ((y + x) % 2 ? '.' : ' '), GRN);
 			}
 		}
 	}
 
 	// Draw balls
 	for (Ball &ball : balls) {
-		DrawBall(ball);
+		// DrawBall(ball);
 	}
 
 	// Draw cue
@@ -121,31 +120,25 @@ void Game::UpdateScreen()
 		double y1 = cue.y + cueStartDistance * sin(cue.angle);
 		double x2 = cue.x + cueEndDistance * cos(cue.angle);
 		double y2 = cue.y + cueEndDistance * sin(cue.angle);
-		screen->DrawLine(x1, y1, x2, y2, '#', cueColor);
+		// screen->DrawLine(x1, y1, x2, y2, '#');
 	}
 }
 
 void Game::DrawBall(Ball& ball) 
 {
-	COLOR base_color = ball.GetColor();
-
-	// same for all balls
-	COLOR edge_color = WHT;
-	COLOR id_color = WHT; //the number
-
 	double bx = ball.pos.x;
 	double by = ball.pos.y;
 	double r = ball.radius;
 	
 	if(ball.cueball){
-		screen->DrawSphere(bx, by, r, WHT); // cue ball always white
-		screen->DrawCircleOutline(bx, by, r, edge_color);
+		// DrawSphere(bx, by, r, WHT); // cue ball always white
+		// DrawCircleOutline(bx, by, r);
 		return;
 	}
 
-	screen->DrawSphere(bx, by, r, base_color);
-	screen->DrawCircleOutline(bx, by, r, edge_color);
-	screen->PlotPixel(bx, by, ball.id, id_color);
+	// DrawSphere(bx, by, r);
+	// DrawCircleOutline(bx, by, r);
+	// PlotPixel(bx, by, ball.id);
 
 	// switch (ball.type){
 	// 	case STRIPED:
@@ -261,8 +254,8 @@ bool Game::HandleBallCollisions()
 	return result;
 }
 
-Game::Game(int w, int h, ConsolePanel *screen, ConsolePanel *zoomWindow) :
-	screen(screen), zoomWindow(zoomWindow), width(w), height(h)
+Game::Game(int x, int y, int w, int h) :
+	game_x(x), game_y(y), width(w), height(h)
 {
 	table_x = table_side_x;
 	table_y = table_side_y;

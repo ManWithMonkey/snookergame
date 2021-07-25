@@ -2,8 +2,6 @@
 #define __BALL_H__
 
 #include "Vec2d.h"
-#include "ColorPixel.h"
-#include "ANSI-color-codes.h"
 
 const int STRIPED 	= 0;
 const int OTHER 	= 1; //rename this to something else
@@ -13,11 +11,8 @@ public:
 	bool cueball; 	// white ball
 	char id;		// number on ball
 	int type;
-    // COLOR color;
 
 public:
-    COLOR GetColor() const; 
-
 	BallInfo();
 	BallInfo(bool isCueBall, char id, int type);
 };
