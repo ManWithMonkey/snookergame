@@ -13,7 +13,7 @@ void QuitNCurses();
 void Clear(char pixel);
 
 void SetPixel(int x, int y, char pixel);
-// void SetPixel(int x, int y, char pixel, color);
+void SetPixel(int x, int y, char pixel, int color);
 
 void Render();
 
@@ -25,9 +25,9 @@ void Render();
 // 	system("echo \007");
 // }
 
-void DrawCircleOutline(double x, double y, double radius);
+void DrawCircleOutline(double x, double y, double radius, int color);
 
-void DrawLine(double x1, double y1, double x2, double y2, char pixel = '#');
+void DrawLine(double x1, double y1, double x2, double y2, char pixel, int color);
 
 // void ConsolePanel::DrawSphere(double x, double y, double r, COLOR color)
 // {

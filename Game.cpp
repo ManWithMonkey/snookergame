@@ -61,12 +61,20 @@ void Game::Update(double dt)
 		ball.pos += deltaPosition;
 		ball.lastDeltaPosition = deltaPosition;
 
-		ball.vel *= (1.0 - deacceleration * dt);
+        if(ball.cueball){
+            // remove this part
+            ball.vel *= (1.0 + 1.5 * dt);
+            ball.vel *= (1.0 + 1.0 * dt);
+            ball.vel.rotate(dt);
+        }
+        else{
+			ball.vel *= (1.0 - deacceleration * dt);
+        }
 	}
 
-	// if ((HandleWallCollisions() || HandleBallCollisions()) && soundEnabled) {
+	if ((HandleWallCollisions() || HandleBallCollisions()) ) {
 		// screen->MakeBellSound();
-	// }
+	}
 
 	// Update cueball ball pos and cue pos
 	for (Ball &ball : balls) {
@@ -117,9 +125,11 @@ void Game::Draw()
 		double y1 = cue.y + cueStartDistance * sin(cue.angle);
 		double x2 = cue.x + cueEndDistance * cos(cue.angle);
 		double y2 = cue.y + cueEndDistance * sin(cue.angle);
-		DrawLine(x1, y1, x2, y2, '#');
+		DrawLine(x1, y1, x2, y2, '#', COLOR_WHITE);
 	}
 }
+
+static int yes = 0;
 
 void Game::DrawBall(Ball& ball) 
 {
@@ -129,12 +139,12 @@ void Game::DrawBall(Ball& ball)
 	
 	if(ball.cueball){
 		// DrawSphere(bx, by, r, WHT); // cue ball always white
-		DrawCircleOutline(bx, by, r);
+		DrawCircleOutline(bx, by, r, COLOR_WHITE);
 		return;
 	}
 
 	// DrawSphere(bx, by, r);
-	DrawCircleOutline(bx, by, r);
+	DrawCircleOutline(bx, by, r, (yes++) % 8);
 	SetPixel(bx, by, ball.id);
 
 	// switch (ball.type){
@@ -190,6 +200,9 @@ void Game::InitDefaultGame()
 
 	balls.push_back(Ball(white_start.x, white_start.y, r, ' ', false));
 	balls.back().cueball = true;
+
+	//remove this
+    balls.back().vel = 100.0 * Vec2d(1.0, 0.0).unit();
 }
 
 bool Game::HandleWallCollisions()

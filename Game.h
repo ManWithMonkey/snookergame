@@ -43,8 +43,8 @@ private:
 	double cueBallVel = 0.0;
 
 	std::vector<Ball> balls;
-	int table_side_x = 20;
-	int table_side_y = 10;
+	int table_side_x = 12;
+	int table_side_y = 8;
 	double ballRadius = 0.0;
 	int table_x, table_y, table_w, table_h;
 

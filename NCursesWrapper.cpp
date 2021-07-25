@@ -7,11 +7,10 @@ void InitNCurses(int w, int h)
     keypad(stdscr,true);
     noecho();
     curs_set(0);
-        start_color();
+    start_color();
     nl();
     // getmaxyx(stdscr,w,h);
-
-
+    
     int colors[8] = {
         COLOR_BLACK,
         COLOR_RED,
@@ -52,8 +51,16 @@ void SetPixel(int x, int y, char pixel)
     if(x < 0 || y < 0 || x >= CONSOLE_WIDTH || y >= CONSOLE_HEIGHT)
         return;
 
-    // chtype color = colors[(y+x)%8];
-    chtype color = COLOR_PAIR((y+x)%8);
+    move(y, x);
+    addch(pixel);
+}
+    
+void SetPixel(int x, int y, char pixel, int c) 
+{
+    if(x < 0 || y < 0 || x >= CONSOLE_WIDTH || y >= CONSOLE_HEIGHT)
+        return;
+
+    chtype color = COLOR_PAIR(c);
     color |= A_BOLD;
 
     move(y, x);
@@ -66,7 +73,7 @@ void Render()
     refresh();
 }
 
-void DrawCircleOutline(double x, double y, double radius) 
+void DrawCircleOutline(double x, double y, double radius, int color) 
 {
 	/*
 		   ----\
@@ -102,11 +109,11 @@ void DrawCircleOutline(double x, double y, double radius)
 		double cx = x + radius * std::cos(angle);
 		double cy = y + radius * std::sin(angle);
 
-		SetPixel(cx, cy, c);
+		SetPixel(cx, cy, c, color);
 	}
 }
 
-void DrawLine(double x1, double y1, double x2, double y2, char pixel) 
+void DrawLine(double x1, double y1, double x2, double y2, char pixel, int color) 
 {
 	if(y2 < y1){
 		std::swap(y1, y2);
@@ -118,7 +125,7 @@ void DrawLine(double x1, double y1, double x2, double y2, char pixel)
 
 	if(dx == 0){
 		for(int y = y1; y < y2; y++){
-			SetPixel(x1, y, pixel);
+			SetPixel(x1, y, pixel, color);
 		}
 		return;
 	}
