@@ -1,52 +1,49 @@
-#ifndef __WINDOW_H__
-#define __WINDOW_H__
+#ifndef __CONSOLEPANEL_H__
+#define __CONSOLEPANEL_H__
 
 #include <algorithm>
 #include <cstring>
 #include <iostream>
 #include <math.h>
 
-#include "Vec2d.h"
+#include "ANSI-color-codes.h"
+#include "ColorCanvas.h"
 
+
+// these are homeless
 const char luminosityString[] = " .-~^*:;!xb(){}[]?XB&%#";
 
 char GetLuminosityCharacter(double luminosity);
 double GetLuminosityFromCharacter(char c);
+// 
 
-class Window
+
+struct ConsolePanel
 {
-	private:
 	int x, y;
 	int width, height;
-	char *canvas;
+	ColorCanvas canvas;
 
-	public:
-	Window(int x, int y, int w, int h);
-	~Window();
+	ConsolePanel(int x, int y, int w, int h);
+	~ConsolePanel();
+
+	void Clear();
+
+	const char* GetPaint(int x, int y) const;
+	char GetPixel(int x, int y) const;
 
 	void MakeBellSound();
 
-	int GetX() const;
-	int GetY() const;
-	int GetWidth() const;
-	int GetHeight() const;
-	const char *GetCanvas() const;
+	void PlotPixel(int x, int y, char pixel, COLOR color = nullptr);
+	bool PlotPixelIfBrighter(int x, int y, double luminosity, COLOR color = nullptr);
+	void DrawSphere(double x, double y, double r, COLOR color = nullptr);
+	void DrawCircleOutline(double x, double y, double r, COLOR color = nullptr);
 
-	void PlotPixel(int x, int y, char pixel);
-	void PlotPixelIfBrighter(int x, int y, double luminosity);
-	void PlotPixel(Vec2d p, char pixel);
-	void PlotPixelIfBrighter(Vec2d p, double luminosity);
-
-	void DrawSphere(double x, double y, double r);
-	void DrawSphere(Vec2d p, double r);
-	void DrawHollowSphere(double x, double y, double r_outer, double r_inner);
-	void DrawHollowSphere(Vec2d p, double r_outer, double r_inner);
-
-	void DrawCircleOutline(double x, double y, double r);
-	void DrawCircleOutline(Vec2d p, double r);
-
-	void Draw();
-	void Clear();
+	// wrappers
+	// void PlotPixel(Vec2d p, char pixel);
+	// bool PlotPixelIfBrighter(Vec2d p, double luminosity);
+	// void DrawSphere(Vec2d p, double r, COLOR color = nullptr);
+	// void DrawCircleOutline(Vec2d p, double r);
 };
 
-#endif // __WINDOW_H__
+#endif // __CONSOLEPANEL_H__

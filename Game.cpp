@@ -12,7 +12,7 @@ void Game::Update(double dt)
 		ball.pos += deltaPosition;
 		ball.lastDeltaPosition = deltaPosition;
 
-		if (ball.white) {
+		if (ball.cueball) {
 			// remove this part
 			ball.vel *= (1.0 + 1.0 * dt);
 			ball.vel.rotate(dt);
@@ -26,10 +26,10 @@ void Game::Update(double dt)
 		screen->MakeBellSound();
 	}
 
-	// Update white ball pos
+	// Update cueball ball pos
 	for (Ball &ball : balls) {
-		if (ball.white) {
-			whiteBallPos = ball.pos;
+		if (ball.cueball) {
+			cueBallPosition = ball.pos;
 			break;
 		}
 	}
@@ -40,48 +40,65 @@ void Game::UpdateScreen()
 	if (!screen)
 		return;
 
-	// Window
+	// ConsolePanel
 	screen->Clear();
 	for (Ball &ball : balls) {
-		if (ball.white) {
-			screen->DrawSphere(ball.pos.x, ball.pos.y, ball.radius);
-			screen->DrawCircleOutline(ball.pos, ball.radius);
-		} else if (ball.striped) {
-			// screen->DrawHollowSphere(ball.pos.x, ball.pos.y, ball.radius, nameAreaRadius / 5.0);
-			screen->DrawSphere(ball.pos, ball.radius);
-			screen->DrawCircleOutline(ball.pos.x, ball.pos.y, ball.radius);
-			for (int x = ball.pos.x - ball.radius; x <= ball.pos.x + ball.radius; x++)
-				screen->PlotPixel(x, ball.pos.y, ' ');
-			screen->PlotPixel(ball.pos.x, ball.pos.y, ball.name);
-		} else {
-			screen->DrawCircleOutline(ball.pos.x, ball.pos.y, ball.radius);
-			// screen->DrawHollowSphere(ball.pos.x, ball.pos.y, ball.radius, nameAreaRadius);
-			screen->PlotPixel(ball.pos.x, ball.pos.y, ball.name);
-		}
+
+		DrawBall(ball);
 	}
 
 	// Zoom window
 	// zoomWindow->Clear();
 	// auto _translateToZoom = [&](Vec2d p) -> Vec2d {
-	//     return 0.5 * Vec2d(zoomWindow->GetWidth(), zoomWindow->GetHeight()) + (p - whiteBallPos) * zoomScale;
+	//     return 0.5 * Vec2d(zoomWindow->width, zoomWindow->height) + (p - cueBallPosition) * zoomScale;
 	// };
 	// for(Ball& ball : balls){
-	//     if(ball.white){
+	//     if(ball.cueball){
 	//         zoomWindow->DrawSphere(_translateToZoom(ball.pos), zoomScale * ball.radius);
 	//         zoomWindow->DrawCircleOutline(_translateToZoom(ball.pos), zoomScale * ball.radius);
 	//     }
-	//     else if(ball.striped){
-	//         zoomWindow->DrawHollowSphere(_translateToZoom(ball.pos), zoomScale * ball.radius, zoomScale * nameAreaRadius / 5.0);
+	//     else if(ball.type == STRIPED){
 	//         zoomWindow->DrawSphere(_translateToZoom(ball.pos), zoomScale * ball.radius);
 	//         for(int x = ball.pos.x - ball.radius; x <= ball.pos.x + ball.radius; x++)
 	//             zoomWindow->PlotPixel(_translateToZoom(Vec2d(x, ball.pos.y)), ' ');
-	//         zoomWindow->PlotPixel(_translateToZoom(ball.pos), ball.name);
+	//         zoomWindow->PlotPixel(_translateToZoom(ball.pos), ball.id);
 	//     }
 	//     else{
 	//         zoomWindow->DrawCircleOutline(_translateToZoom(ball.pos), zoomScale * ball.radius);
-	//         // zoomWindow->DrawHollowSphere(_translateToZoom(ball.pos), zoomScale * ball.radius, zoomScale * nameAreaRadius);
-	//         zoomWindow->PlotPixel(_translateToZoom(ball.pos), ball.name);
+	//         zoomWindow->PlotPixel(_translateToZoom(ball.pos), ball.id);
 	//     }
+	// }
+}
+
+void Game::DrawBall(Ball& ball) 
+{
+	COLOR base_color = ball.GetColor();
+
+	// same for all balls
+	COLOR edge_color = WHT;
+	COLOR id_color = WHT; //the number
+
+	double bx = ball.pos.x;
+	double by = ball.pos.y;
+	double r = ball.radius;
+	
+	if(ball.cueball){
+		screen->DrawSphere(bx, by, r, WHT); // cue ball always white
+		screen->DrawCircleOutline(bx, by, r, edge_color);
+		return;
+	}
+
+	screen->DrawSphere(bx, by, r, base_color);
+	screen->DrawCircleOutline(bx, by, r, edge_color);
+	screen->PlotPixel(bx, by, ball.id, id_color);
+
+	// switch (ball.type){
+	// 	case STRIPED:
+	// 		break;
+	// 	case OTHER:
+	// 		break;
+	// 	default:
+	// 		break;
 	// }
 }
 
@@ -91,7 +108,7 @@ void Game::InitDefaultGame()
 	const double dy = 1;
 	const double hub_scalar = 3.7;
 	const Vec2d white_start(6, height / 2);
-	const Vec2d hub_start(width - dx * 4.5 * hub_scalar, height / 2);
+	const Vec2d hub_start(width - dx * 5.5 * hub_scalar, height / 2);
 
 	const Vec2d positions[] = {
 		hub_start + hub_scalar * Vec2d(0.0 * dx, 0.0 * dy),
@@ -104,22 +121,21 @@ void Game::InitDefaultGame()
 		hub_start + hub_scalar * Vec2d(3.0 * dx, -1.0 * dy),
 		hub_start + hub_scalar * Vec2d(3.0 * dx, 1.0 * dy),
 		hub_start + hub_scalar * Vec2d(3.0 * dx, 3.0 * dy),
-		// hub_start + hub_scalar * Vec2d(4.0 * dx, -4.0 * dy),
-		// hub_start + hub_scalar * Vec2d(4.0 * dx, -2.0 * dy),
-		// hub_start + hub_scalar * Vec2d(4.0 * dx,  0.0 * dy),
-		// hub_start + hub_scalar * Vec2d(4.0 * dx,  2.0 * dy),
-		// hub_start + hub_scalar * Vec2d(4.0 * dx,  4.0 * dy),
+		hub_start + hub_scalar * Vec2d(4.0 * dx, -4.0 * dy),
+		hub_start + hub_scalar * Vec2d(4.0 * dx, -2.0 * dy),
+		hub_start + hub_scalar * Vec2d(4.0 * dx,  0.0 * dy),
+		hub_start + hub_scalar * Vec2d(4.0 * dx,  2.0 * dy),
+		hub_start + hub_scalar * Vec2d(4.0 * dx,  4.0 * dy),
 	};
 
 	balls.clear();
-	// for(int i=0; i<1+2+3+4+5; i++){
-	for (int i = 0; i < 1 + 2 + 3 + 4; i++) {
+	for(int i=0; i<1+2+3+4+5; i++){
 		balls.push_back(Ball(positions[i].x, positions[i].y, defaultBallRadius, '0' + (i % 10), i % 2));
 	}
 
 	balls.push_back(Ball(white_start.x, white_start.y, defaultBallRadius, ' ', false));
 	balls.back().vel = cueVelocity * Vec2d(1.0, 0.0).unit();
-	balls.back().white = true;
+	balls.back().cueball = true;
 }
 
 bool Game::HandleWallCollisions()
@@ -127,10 +143,10 @@ bool Game::HandleWallCollisions()
 	bool result = false;
 
 	for(Ball& ball : balls) {
-		if(ball.pos.x - ball.radius < 0)       { if(ball.white) result = true; ball.vel.x *= -1.0; ball.pos.x = 2.0 * ball.radius - ball.pos.x; }
-		if(ball.pos.y - ball.radius < 0)       { if(ball.white) result = true; ball.vel.y *= -1.0; ball.pos.y = 2.0 * ball.radius - ball.pos.y; }
-		if(ball.pos.x + ball.radius >= width)  { if(ball.white) result = true; ball.vel.x *= -1.0; ball.pos.x = width - ((ball.pos.x + 2.0 * ball.radius) - width); }
-		if(ball.pos.y + ball.radius >= height) { if(ball.white) result = true; ball.vel.y *= -1.0; ball.pos.y = height - ((ball.pos.y + 2.0 * ball.radius) - height); }
+		if(ball.pos.x - ball.radius < 0)       { if(ball.cueball) result = true; ball.vel.x *= -1.0; ball.pos.x = 2.0 * ball.radius - ball.pos.x; }
+		if(ball.pos.y - ball.radius < 0)       { if(ball.cueball) result = true; ball.vel.y *= -1.0; ball.pos.y = 2.0 * ball.radius - ball.pos.y; }
+		if(ball.pos.x + ball.radius >= width)  { if(ball.cueball) result = true; ball.vel.x *= -1.0; ball.pos.x = width - ((ball.pos.x + 2.0 * ball.radius) - width); }
+		if(ball.pos.y + ball.radius >= height) { if(ball.cueball) result = true; ball.vel.y *= -1.0; ball.pos.y = height - ((ball.pos.y + 2.0 * ball.radius) - height); }
 	}
 	return result;
 }
@@ -145,7 +161,7 @@ bool Game::HandleBallCollisions()
 			Ball &b2 = balls[j];
 
 			if (b1.CollidesWith(b2)) {
-				if (b1.white || b2.white)
+				if (b1.cueball || b2.cueball)
 					result = true;
 
 				double distance = (b1.pos - b2.pos).norm();
@@ -176,22 +192,8 @@ bool Game::HandleBallCollisions()
 	return result;
 }
 
-Ball::Ball(double x, double y, double radius, char name, bool striped) :
-	pos(Vec2d(x, y)), vel(Vec2d(0, 0)), radius(radius), white(false), name(name), striped(striped), lastDeltaPosition(Vec2d(0, 0))
-{
-}
-
-bool Ball::CollidesWith(const Ball &other) const
-{
-	return (other.pos - pos).norm() <= other.radius + radius;
-}
-
-Game::Game(Window *screen, Window *zoomWindow) :
-	screen(screen), zoomWindow(zoomWindow), width(screen->GetWidth()), height(screen->GetHeight())
+Game::Game(ConsolePanel *screen, ConsolePanel *zoomWindow) :
+	screen(screen), zoomWindow(zoomWindow), width(screen->width), height(screen->height)
 {
 	InitDefaultGame();
-}
-
-Ball::Ball()
-{
 }

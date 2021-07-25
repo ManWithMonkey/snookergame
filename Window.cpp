@@ -17,77 +17,38 @@ double GetLuminosityFromCharacter(char c)
 	if (index) {
 		return (double)(index - luminosityString) / (double)(sizeof(luminosityString) - 1);
 	} else {
-		return 0.f; // not found
+		return 0.0; // not found
 	}
 }
 
-Window::~Window()
+ConsolePanel::~ConsolePanel()
 {
-	if (canvas) {
-		delete[] canvas;
-		canvas = nullptr;
-	}
 }
 
-void Window::MakeBellSound()
+void ConsolePanel::MakeBellSound()
 {
 	// system("echo -ne \007");
 	system("echo \007");
 }
 
-int Window::GetX() const
+void ConsolePanel::PlotPixel(int x, int y, char pixel, COLOR color)
 {
-	return x;
+	canvas.ChangePixelAndColor(x, y, pixel, color);
 }
 
-int Window::GetY() const
-{
-	return y;
-}
-
-int Window::GetWidth() const
-{
-	return width;
-}
-
-int Window::GetHeight() const
-{
-	return height;
-}
-
-const char *Window::GetCanvas() const
-{
-	return canvas;
-}
-
-void Window::PlotPixel(int x, int y, char pixel)
-{
+bool ConsolePanel::PlotPixelIfBrighter(int x, int y, double luminosity, COLOR color){
 	if (x < 0 || y < 0 || x >= width || y >= height)
-		return;
+		return false;
 
-	canvas[y * width + x] = pixel;
+	if (luminosity > GetLuminosityFromCharacter(canvas.pixelAt(x, y))){
+		canvas.ChangePixelAndColor(x, y, GetLuminosityCharacter(luminosity), color);
+		return true;
+	}
+
+	return false;
 }
 
-void Window::PlotPixelIfBrighter(int x, int y, double luminosity)
-{
-	if (x < 0 || y < 0 || x >= width || y >= height)
-		return;
-
-	if (luminosity > GetLuminosityFromCharacter(canvas[y * width + x]))
-		canvas[y * width + x] = GetLuminosityCharacter(luminosity);
-}
-
-void Window::PlotPixel(Vec2d p, char pixel)
-{
-	PlotPixel(p.x, p.y, pixel);
-}
-
-void Window::PlotPixelIfBrighter(Vec2d p, double luminosity)
-{
-	PlotPixelIfBrighter(p.x, p.y, luminosity);
-}
-
-void Window::DrawSphere(double x, double y, double r)
+void ConsolePanel::DrawSphere(double x, double y, double r, COLOR color)
 {
 	double cx = (int)(x);
 	double cy = (int)(y);
@@ -98,41 +59,17 @@ void Window::DrawSphere(double x, double y, double r)
 			double distance = std::hypot(cx + ix - x, cy + iy - y);
 			double luminosity = 1.0 - distance / r;
 
-			PlotPixelIfBrighter(cx + ix, cy + iy, luminosity);
+			int sx = cx + ix;
+			int sy = cy + iy;
+
+			if(PlotPixelIfBrighter(sx, sy, luminosity) && color != nullptr){
+				canvas.ChangeColor(sx, sy, color);
+			}
 		}
 	}
 }
 
-void Window::DrawHollowSphere(double x, double y, double r_outer, double r_inner)
-{
-	double cx = (int)(x);
-	double cy = (int)(y);
-
-	double max_distance = r_outer - r_inner;
-	double mid_radius = (r_outer + r_inner) / 2.0;
-
-	for (double ix = -r_outer; ix <= r_outer; ix += 1.0) {
-		for (double iy = -r_outer; iy <= r_outer; iy += 1.0) {
-
-			double distance = std::hypot(cx + ix - x, cy + iy - y);
-			double luminosity = 0.25 - 0.75 * std::abs(distance - mid_radius) / max_distance;
-
-			PlotPixelIfBrighter(cx + ix, cy + iy, luminosity);
-		}
-	}
-}
-
-void Window::DrawSphere(Vec2d p, double r)
-{
-	DrawSphere(p.x, p.y, r);
-}
-
-void Window::DrawHollowSphere(Vec2d p, double r_outer, double r_inner)
-{
-	DrawHollowSphere(p.x, p.y, r_outer, r_inner);
-}
-
-void Window::DrawCircleOutline(double x, double y, double r)
+void ConsolePanel::DrawCircleOutline(double x, double y, double r, COLOR color)
 {
 	/*
 		   ----\
@@ -168,37 +105,20 @@ void Window::DrawCircleOutline(double x, double y, double r)
 		double cx = x + r * cos(angle);
 		double cy = y + r * sin(angle);
 
-		PlotPixel(cx, cy, c);
+		PlotPixel(cx, cy, c, color);
 	}
 }
 
-void Window::DrawCircleOutline(Vec2d p, double r)
+ConsolePanel::ConsolePanel(int x, int y, int w, int h) : x(x), y(y), width(w), height(h), canvas(width, height)
 {
-	DrawCircleOutline(p.x, p.y, r);
-}
-
-void Window::Draw()
-{
-	for (int y = 0; y < height; y++) {
-		for (int x = 0; x < width; x++) {
-			std::cout << canvas[y * width + x];
-		}
-		std::cout << '\n';
-	}
-}
-
-Window::Window(int x, int y, int w, int h) : x(x), y(y), width(w), height(h)
-{
-	canvas = new char[width * height];
-
 	Clear();
 }
 
-void Window::Clear()
+void ConsolePanel::Clear()
 {
 	for (int y = 0; y < height; y++) {
 		for (int x = 0; x < width; x++) {
-			canvas[y * width + x] = ' ';
+			canvas.ChangePixelAndColor(x, y, ' ', WHT);
 		}
 	}
 }

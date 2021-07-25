@@ -1,133 +1,122 @@
 #include "Console.h"
 #include "ANSI-color-codes.h"
 
-void Console::ClearConsoleFully()
+void Console::UpdateCanvas() 
 {
-	system("clear");
-}
-
-void Console::ClearConsole()
-{
-	// std::cout << "\n\n\n\n\n\n\n\n\n\n\n\n" << std::flush;
-	// system("clear");
-	// Clear();
-	std::cout << "\e[3J\e[1;1H";
-}
-
-void Console::InitBackground()
-{
-	int titlex = -1, titley = -1;
-	if (title.size()) {
-		titlex = (width - (int)title.size()) / 2;
-		titley = 1;
+	// draw background
+	for (int y = 0; y < height; y++){
+		for (int x = 0; x < width; x++){
+			if (x == 0 || y == 0 || x == width - 1 || y == height - 1){
+				pixelData[y * width + x] = BORDER_PIXEL;
+				colorData[y * width + x] = BORDER_COLOR;
+			}
+			else{
+				pixelData[y * width + x] = ((y + x) % 2 ? '.' : ' ');
+				colorData[y * width + x] = BACKGROUND_COLOR;
+			}
+		}
 	}
 
-	for (int y = 0; y < height; y++)
-		for (int x = 0; x < width; x++)
-			if (y == titley && x >= titlex && x < titlex + (int)title.size()) {
-				background[y * width + x] = title[x - titlex];
-			} else if (x == 0 || y == 0 || x == width - 1 || y == height - 1)
-				background[y * width + x] = '#';
-			else
-				background[y * width + x] = ((y + x) % 2 ? '.' : ' ');
+	// draw title
+	{
+		for (int y = 0; y < height; y++){
+			for (int x = 0; x < width; x++){
+				if (y == title_y && x >= title_x_start && x <= title_x_end) {
+					pixelData[y * width + x] = title[x - title_x_start];
+					colorData[y * width + x] = TITLE_COLOR;
+				}
+			}
+		}
+	}
+	
+	// draw window content
+	for (ConsolePanel *window : windows) {
+		int x = window->x;
+		int y = window->y;
+		int w = window->width;
+		int h = window->height;
+
+		int sx = std::max(0, x), ex = std::min(width - 1, x + w);
+		int sy = std::max(0, y), ey = std::min(height - 1, y + h);
+
+		for (int ix = sx; ix <= ex; ix++) {
+			for (int iy = sy; iy <= ey; iy++) {
+				
+				char pixel = window->canvas.pixelAt(ix - sx, iy - sy);
+				const char* color = window->canvas.colorAt(ix - sx, iy - sy);
+
+				pixelData[(iy) * width + ix] = pixel;
+				colorData[(iy) * width + ix] = (color == nullptr ? DEFAULT_DRAW_COLOR : color);
+			}
+		}
+
+		// draw border, will cause seg err!!!!
+		for (int y = sy - 1; y <= ey + 1; y++) {
+			pixelData[y * width + sx - 1] = BORDER_PIXEL;
+			pixelData[y * width + ex + 1] = BORDER_PIXEL;
+			colorData[y * width + sx - 1] = BORDER_COLOR;
+			colorData[y * width + ex + 1] = BORDER_COLOR;
+		}
+		for (int x = sx - 1; x <= ex + 1; x++) {
+			pixelData[(sy - 1) * width + x] = BORDER_PIXEL;
+			pixelData[(ey + 1) * width + x] = BORDER_PIXEL;
+			colorData[(sy - 1) * width + x] = BORDER_COLOR;
+			colorData[(ey + 1) * width + x] = BORDER_COLOR;
+		}
+	}
 }
 
-void Console::DrawBorderAroundWindowOnBackground(Window *window)
+Console::Console(int w, int h, std::string title) :
+	width(w), height(h), title(title),
+	// center title in the middle of the top of the screen
+	title_y(1),
+	title_x_start((width - title.size()) / 2),
+	title_x_end(title_x_start + (int)title.size() - 1)
 {
-	int x1 = std::max(0, window->GetX() - 1);
-	int y1 = std::max(0, window->GetY() - 1);
-	int x2 = std::min(width,  x1 + window->GetWidth() + 1);
-	int y2 = std::min(height, y1 + window->GetHeight() + 1);
-
-	for (int y = y1; y <= y2; y++) {
-		background[y * width + x1] = '#';
-		background[y * width + x2] = '#';
-	}
-	for (int x = x1; x <= x2; x++) {
-		background[y1 * width + x] = '#';
-		background[y2 * width + x] = '#';
-	}
-}
-
-Console::Console(int w, int h, std::string title) : width(w), height(h), title(title)
-{
-	background = new char[width * height];
-	    canvas = new char[width * height];
-
-	InitBackground();
-
-	ClearConsoleFully();
+	Terminal::ClearHard();
+	
+	pixelData = new PIXEL[width * height];
+	colorData = new COLOR[width * height];
 }
 
 Console::~Console()
 {
-	for (Window *window : windows) {
+	Terminal::ClearHard();
+
+	for (ConsolePanel *window : windows) {
 		if (window) {
 			delete window;
 		}
 	}
 	windows.clear();
 
-	if (background) {
-		delete[] background;
-		background = nullptr;
+	if (pixelData) {
+		delete[] pixelData;
+		pixelData = nullptr;
 	}
-	if (canvas) {
-		delete[] canvas;
-		canvas = nullptr;
+	if (colorData) {
+		delete[] colorData;
+		colorData = nullptr;
 	}
-
-	ClearConsoleFully();
 }
 
-void Console::AddWindow(Window *window)
+void Console::AddWindow(ConsolePanel *window)
 {
 	windows.push_back(window);
-	DrawBorderAroundWindowOnBackground(window);
 }
 
 void Console::Render()
 {
-	// clear canvas with background
-	std::memcpy(canvas, background, width * height * sizeof(char));
-	// for(int ix = 0; ix < width; ix ++){
-	// 	for(int iy = 0; iy < height; iy ++){
-	// 	}
-	// }
-
-	// apply windows canvas to console canvas
-	for (Window *window : windows) {
-		const char *window_canvas = window->GetCanvas();
-		int x = window->GetX();
-		int y = window->GetY();
-		int w = window->GetWidth();
-		int h = window->GetHeight();
-
-		int sx = std::max(0, x), ex = std::min(width, x + w);
-		int sy = std::max(0, y), ey = std::min(height, y + h);
-
-		for (int ix = sx; ix < ex; ix++) {
-			for (int iy = sy; iy < ey; iy++) {
-				canvas[iy * width + ix] = window_canvas[(iy - sy) * w + (ix - sx)];
-			}
-		}
-	}
+	// update canvas
+	UpdateCanvas();
 
 	// clear screen
-	ClearConsole();
+	Terminal::ClearSoft();
 
 	// draw canvas
-
 	for (int y = 0; y < height; y++) {
 		for (int x = 0; x < width; x++) {
-	// hardcoded because i couldnt make sense of what windows is, why are there several ?
-			if (y >= 4 && y <= 43) {// game area
-				if (x == 6) {// start of a game line, we start using paint
-					std::cout << RED;
-				}else if (x == 86) // end of a game line, we stop using paint
-					std::cout << RESET;
-			}
-			std::cout << canvas[y * width + x];
+			std::cout << colorData[y * width + x] << pixelData[y * width + x];
 		}
 		std::cout << '\n';
 	}

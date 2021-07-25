@@ -10,50 +10,37 @@
 #include <vector>
 
 #include "Window.h"
+#include "Ball.h"
 
-struct Ball {
-	Vec2d pos;
-	Vec2d vel; // per second
-	double radius;
-	bool white;
-	char name;
-	bool striped;
+const bool soundEnabled = true;
 
-	Vec2d lastDeltaPosition; // movement at last iteration, useful for collisions
+const int cueVelocity = 10.0;
+const double defaultBallRadius = 2.5;
+const double nameAreaRadius = 1.5;
+const double deacceleration = 0.05;
+const double zoomScale = 1.6;
 
-	Ball();
-	Ball(double x, double y, double radius, char name, bool striped);
-
-	bool CollidesWith(const Ball &other) const;
-};
-
-class Game
-{
-	public:
-	Game(Window *screen, Window *zoomWindow);
+class Game{
+public:
+	Game(ConsolePanel *screen, ConsolePanel *zoomWindow);
 	~Game();
 
 	void Update(double dt);
 	void UpdateScreen();
 
-	private:
-	// Constants
-	const bool soundEnabled = true;
-	const int cueVelocity = 10.0;
-	const double defaultBallRadius = 2.5;
-	const double nameAreaRadius = 1.5;
-	const double deacceleration = 0.05;
-	const double zoomScale = 1.6;
-
-	// Zoom stuff
-	Vec2d whiteBallPos = Vec2d(0, 0);
+private:
+	// Zoom window
+	ConsolePanel *zoomWindow;
 
 	// Screen
-	Window *screen, *zoomWindow;
+	ConsolePanel *screen;
 	double width, height;
 
 	// Game
 	std::vector<Ball> balls;
+	Vec2d cueBallPosition = Vec2d(0, 0);
+
+	void DrawBall(Ball& ball);
 
 	// Logic
 	bool HandleWallCollisions();
