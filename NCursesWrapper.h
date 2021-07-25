@@ -2,6 +2,8 @@
 #define __NCURSESWRAPPER_H__
 
 #include <ncurses.h>
+#include <math.h>
+#include <algorithm> //std::swap
 
 static int CONSOLE_WIDTH, CONSOLE_HEIGHT; // should be constants
 
@@ -22,7 +24,9 @@ void Render();
 // 	system("echo \007");
 // }
 
+void DrawCircleOutline(double x, double y, double radius);
 
+void DrawLine(double x1, double y1, double x2, double y2, char pixel = '#');
 
 // void ConsolePanel::DrawSphere(double x, double y, double r, COLOR color)
 // {
@@ -42,46 +46,6 @@ void Render();
 // 				canvas.ChangeColor(sx, sy, color);
 // 			}
 // 		}
-// 	}
-// }
-
-// void ConsolePanel::DrawCircleOutline(double x, double y, double r, COLOR color)
-// {
-// 	/*
-// 		   ----\
-// 	     /		\
-// 	    (		 )
-// 	     \       /
-// 		  \----/
-// 	*/
-
-// 	double two_PI = 2.0 * 3.14159;
-
-// 	double angles[] = {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
-// 	const char chars[] = {'-', '~', '\\', '|', ')', '|', '/', '~', '-', '~', '\\', '|', '(', '|', '/', '~'};
-// 	double dangle = two_PI / (double)(sizeof(chars));
-
-// 	// Initialize angles
-// 	for (size_t i = 0; i < sizeof(chars); i++) {
-// 		angles[i] = (double)i * dangle;
-// 	}
-
-// 	int pointsize = two_PI * r;
-// 	double deltaAngle = two_PI / (double)pointsize;
-
-// 	int charIndex = 0;
-
-// 	for (double angle = 0.0; angle < two_PI; angle += deltaAngle) {
-// 		// skip characters that dont describe current angle
-// 		while (angles[charIndex] < angle)
-// 			charIndex++;
-
-// 		char c = chars[(charIndex + 4) % sizeof(chars)];
-
-// 		double cx = x + r * cos(angle);
-// 		double cy = y + r * sin(angle);
-
-// 		PlotPixel(cx, cy, c, color);
 // 	}
 // }
 

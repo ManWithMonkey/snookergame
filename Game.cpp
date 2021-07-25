@@ -103,7 +103,7 @@ void Game::Draw()
 
 	// Draw balls
 	for (Ball &ball : balls) {
-		// DrawBall(ball);
+		DrawBall(ball);
 	}
 
 	// Draw cue
@@ -117,7 +117,7 @@ void Game::Draw()
 		double y1 = cue.y + cueStartDistance * sin(cue.angle);
 		double x2 = cue.x + cueEndDistance * cos(cue.angle);
 		double y2 = cue.y + cueEndDistance * sin(cue.angle);
-		// screen->DrawLine(x1, y1, x2, y2, '#');
+		DrawLine(x1, y1, x2, y2, '#');
 	}
 }
 
@@ -129,13 +129,13 @@ void Game::DrawBall(Ball& ball)
 	
 	if(ball.cueball){
 		// DrawSphere(bx, by, r, WHT); // cue ball always white
-		// DrawCircleOutline(bx, by, r);
+		DrawCircleOutline(bx, by, r);
 		return;
 	}
 
 	// DrawSphere(bx, by, r);
-	// DrawCircleOutline(bx, by, r);
-	// PlotPixel(bx, by, ball.id);
+	DrawCircleOutline(bx, by, r);
+	SetPixel(bx, by, ball.id);
 
 	// switch (ball.type){
 	// 	case STRIPED:
