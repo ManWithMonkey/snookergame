@@ -40,34 +40,25 @@ void Game::UpdateScreen()
 	if (!screen)
 		return;
 
-	// ConsolePanel
+	// Clear
 	screen->Clear();
-	for (Ball &ball : balls) {
 
-		DrawBall(ball);
+	// Draw table
+	for (int y = 0; y < height; y++){
+		for (int x = 0; x < width; x++){
+			if (x < table_x || y < table_y || x >= table_x + table_w || y >= table_y + table_h){
+				screen->PlotPixel(x, y, '%', RED);
+			}
+			else{
+				screen->PlotPixel(x, y, ((y + x) % 2 ? '.' : ' '), GRN);
+			}
+		}
 	}
 
-	// Zoom window
-	// zoomWindow->Clear();
-	// auto _translateToZoom = [&](Vec2d p) -> Vec2d {
-	//     return 0.5 * Vec2d(zoomWindow->width, zoomWindow->height) + (p - cueBallPosition) * zoomScale;
-	// };
-	// for(Ball& ball : balls){
-	//     if(ball.cueball){
-	//         zoomWindow->DrawSphere(_translateToZoom(ball.pos), zoomScale * ball.radius);
-	//         zoomWindow->DrawCircleOutline(_translateToZoom(ball.pos), zoomScale * ball.radius);
-	//     }
-	//     else if(ball.type == STRIPED){
-	//         zoomWindow->DrawSphere(_translateToZoom(ball.pos), zoomScale * ball.radius);
-	//         for(int x = ball.pos.x - ball.radius; x <= ball.pos.x + ball.radius; x++)
-	//             zoomWindow->PlotPixel(_translateToZoom(Vec2d(x, ball.pos.y)), ' ');
-	//         zoomWindow->PlotPixel(_translateToZoom(ball.pos), ball.id);
-	//     }
-	//     else{
-	//         zoomWindow->DrawCircleOutline(_translateToZoom(ball.pos), zoomScale * ball.radius);
-	//         zoomWindow->PlotPixel(_translateToZoom(ball.pos), ball.id);
-	//     }
-	// }
+	// Draw balls
+	for (Ball &ball : balls) {
+		DrawBall(ball);
+	}
 }
 
 void Game::DrawBall(Ball& ball) 
@@ -104,11 +95,20 @@ void Game::DrawBall(Ball& ball)
 
 void Game::InitDefaultGame()
 {
-	const double dx = 2;
-	const double dy = 1;
-	const double hub_scalar = 3.7;
-	const Vec2d white_start(6, height / 2);
-	const Vec2d hub_start(width - dx * 5.5 * hub_scalar, height / 2);
+	double s = ((double)table_w / 120.0);
+
+	double r = 3.0 * s;
+	double dx = 2.4 * s;
+	double dy = 1.0 * s;
+	double hub_scalar = 3.7;
+	Vec2d white_start(
+		(double)table_x + s * 6.0,
+		(double)table_y + s * (height / 2)
+	);
+	Vec2d hub_start(
+		(double)table_x + s * width - dx * 3.5 * hub_scalar,
+		(double)table_y + s * height / 2
+	);
 
 	const Vec2d positions[] = {
 		hub_start + hub_scalar * Vec2d(0.0 * dx, 0.0 * dy),
@@ -130,10 +130,10 @@ void Game::InitDefaultGame()
 
 	balls.clear();
 	for(int i=0; i<1+2+3+4+5; i++){
-		balls.push_back(Ball(positions[i].x, positions[i].y, defaultBallRadius, '0' + (i % 10), i % 2));
+		balls.push_back(Ball(positions[i].x, positions[i].y, r, '0' + (i % 10), i % 2));
 	}
 
-	balls.push_back(Ball(white_start.x, white_start.y, defaultBallRadius, ' ', false));
+	balls.push_back(Ball(white_start.x, white_start.y, r, ' ', false));
 	balls.back().vel = cueVelocity * Vec2d(1.0, 0.0).unit();
 	balls.back().cueball = true;
 }
@@ -143,10 +143,10 @@ bool Game::HandleWallCollisions()
 	bool result = false;
 
 	for(Ball& ball : balls) {
-		if(ball.pos.x - ball.radius < 0)       { if(ball.cueball) result = true; ball.vel.x *= -1.0; ball.pos.x = 2.0 * ball.radius - ball.pos.x; }
-		if(ball.pos.y - ball.radius < 0)       { if(ball.cueball) result = true; ball.vel.y *= -1.0; ball.pos.y = 2.0 * ball.radius - ball.pos.y; }
-		if(ball.pos.x + ball.radius >= width)  { if(ball.cueball) result = true; ball.vel.x *= -1.0; ball.pos.x = width - ((ball.pos.x + 2.0 * ball.radius) - width); }
-		if(ball.pos.y + ball.radius >= height) { if(ball.cueball) result = true; ball.vel.y *= -1.0; ball.pos.y = height - ((ball.pos.y + 2.0 * ball.radius) - height); }
+		if(ball.pos.x - ball.radius < table_x)       { if(ball.cueball) result = true; ball.vel.x *= -1.0; ball.pos.x = table_x + 2.0 * ball.radius - (ball.pos.x - table_x); }
+		if(ball.pos.y - ball.radius < table_y)       { if(ball.cueball) result = true; ball.vel.y *= -1.0; ball.pos.y = table_y + 2.0 * ball.radius - (ball.pos.y - table_y); }
+		if(ball.pos.x + ball.radius >= table_x + table_w)  { if(ball.cueball) result = true; ball.vel.x *= -1.0; ball.pos.x = table_x + table_w - ((ball.pos.x + 2.0 * ball.radius) - (table_x + table_w)); }
+		if(ball.pos.y + ball.radius >= table_y + table_h) { if(ball.cueball) result = true; ball.vel.y *= -1.0; ball.pos.y = table_y + table_h - ((ball.pos.y + 2.0 * ball.radius) - (table_y + table_h)); }
 	}
 	return result;
 }
@@ -192,8 +192,13 @@ bool Game::HandleBallCollisions()
 	return result;
 }
 
-Game::Game(ConsolePanel *screen, ConsolePanel *zoomWindow) :
-	screen(screen), zoomWindow(zoomWindow), width(screen->width), height(screen->height)
+Game::Game(int w, int h, ConsolePanel *screen, ConsolePanel *zoomWindow) :
+	screen(screen), zoomWindow(zoomWindow), width(w), height(h)
 {
+	table_x = table_side;
+	table_y = table_side;
+	table_w = (double)width - 2.0 * table_side;
+	table_h = (double)height - 2.0 * table_side;
+
 	InitDefaultGame();
 }

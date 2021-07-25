@@ -36,8 +36,8 @@ void Console::UpdateCanvas()
 		int w = window->width;
 		int h = window->height;
 
-		int sx = std::max(0, x), ex = std::min(width - 1, x + w);
-		int sy = std::max(0, y), ey = std::min(height - 1, y + h);
+		int sx = std::max(0, x), ex = std::min(width - 1, x + w - 1);
+		int sy = std::max(0, y), ey = std::min(height - 1, y + h - 1);
 
 		for (int ix = sx; ix <= ex; ix++) {
 			for (int iy = sy; iy <= ey; iy++) {
