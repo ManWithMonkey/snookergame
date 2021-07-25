@@ -13,6 +13,7 @@ void QuitNCurses();
 void Clear(char pixel);
 
 void SetPixel(int x, int y, char pixel);
+// void SetPixel(int x, int y, char pixel, color);
 
 void Render();
 

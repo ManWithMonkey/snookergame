@@ -7,7 +7,24 @@ void InitNCurses(int w, int h)
     keypad(stdscr,true);
     noecho();
     curs_set(0);
+        start_color();
+    nl();
     // getmaxyx(stdscr,w,h);
+
+
+    int colors[8] = {
+        COLOR_BLACK,
+        COLOR_RED,
+        COLOR_GREEN,
+        COLOR_YELLOW,
+        COLOR_BLUE,
+        COLOR_MAGENTA,
+        COLOR_CYAN,
+        COLOR_WHITE
+    };
+
+    for(int i=0; i<8; i++)
+        init_pair(i, colors[i], COLOR_BLACK);
 
     CONSOLE_WIDTH = w;
     CONSOLE_HEIGHT = h;
@@ -35,7 +52,12 @@ void SetPixel(int x, int y, char pixel)
     if(x < 0 || y < 0 || x >= CONSOLE_WIDTH || y >= CONSOLE_HEIGHT)
         return;
 
+    // chtype color = colors[(y+x)%8];
+    chtype color = COLOR_PAIR((y+x)%8);
+    color |= A_BOLD;
+
     move(y, x);
+    attrset(color);
     addch(pixel);
 }
 

@@ -4,21 +4,21 @@ Game::~Game()
 {
 }
 
-void Game::KeyPressed(char c) 
+void Game::KeyPressed(int key) 
 {
-	if(c == 'a'){
+	if(key == 'a'){
 		cue.angle += 0.2;
 	}
-	if(c == 'd'){
+	if(key == 'd'){
 		cue.angle -= 0.2;
 	}
-	if(c == 'w'){
+	if(key == 'w'){
 		DragCue(-1.75);
 	}
-	if(c == 's'){
+	if(key == 's'){
 		DragCue(1.75);
 	}
-	if(c == ' '){
+	if(key == ' '){
 		if(!cue.beingDragged){
 			ResetAndActivateCue();
 		}

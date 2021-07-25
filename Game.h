@@ -21,7 +21,7 @@ public:
 	Game(int x, int y, int w, int h);
 	~Game();
 
-	void KeyPressed(char c);
+	void KeyPressed(int key);
 
 	void DragCue(double amount);
 	void ResetAndActivateCue();
