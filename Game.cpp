@@ -4,6 +4,23 @@ Game::~Game()
 {
 }
 
+void Game::AngleCue(double delta_angle) 
+{
+	cue.angle += delta_angle;
+}
+
+void Game::DragCue() 
+{
+	cue.beingDragged = true;
+	cue.oscillationAngle = 0.0;
+}
+
+void Game::ReleaseCue() 
+{
+	cue.beingDragged = false;
+	// balls.back().vel = cue.strength * Vec2d(1.0, 0.0).unit();
+}
+
 void Game::Update(double dt)
 {
 	for (Ball &ball : balls) {
@@ -12,27 +29,36 @@ void Game::Update(double dt)
 		ball.pos += deltaPosition;
 		ball.lastDeltaPosition = deltaPosition;
 
-		if (ball.cueball) {
-			// remove this part
-			ball.vel *= (1.0 + 1.0 * dt);
-			ball.vel.rotate(dt);
-		} else {
+		// if (ball.cueball) {
+		// 	// remove this part
+		// 	ball.vel *= (1.0 + 1.0 * dt);
+		// 	ball.vel.rotate(dt);
+		// } else {
 			// leave this part
-			ball.vel *= (1.0 - deacceleration * dt);
-		}
+		ball.vel *= (1.0 - deacceleration * dt);
+		// }
 	}
 
 	if ((HandleWallCollisions() || HandleBallCollisions()) && soundEnabled) {
 		screen->MakeBellSound();
 	}
 
-	// Update cueball ball pos
+	// Update cueball ball pos and cue pos
 	for (Ball &ball : balls) {
 		if (ball.cueball) {
 			cueBallPosition = ball.pos;
+			cue.x = ball.pos.x;
+			cue.y = ball.pos.y;
 			break;
 		}
 	}
+
+	// cue logic
+	if(cue.beingDragged = true){
+		cue.oscillationAngle += dt * 3.14159f;
+		cue.strength = 10.0 * (0.5 * sin(cue.oscillationAngle) + 0.5);
+	}
+	AngleCue(dt * 3.14159f * 0.15f);
 }
 
 void Game::UpdateScreen()
@@ -59,6 +85,18 @@ void Game::UpdateScreen()
 	for (Ball &ball : balls) {
 		DrawBall(ball);
 	}
+
+	// Draw cue
+	double cueStrengthDrawScale = 1.0;
+
+	double cueStartDistance = ballRadius + cueStrengthDrawScale * cue.strength;
+	double cueEndDistance = cue.lengthOnScreen + cueStartDistance;
+
+	double x1 = cue.x + cueStartDistance * cos(cue.angle);
+	double y1 = cue.y + cueStartDistance * sin(cue.angle);
+	double x2 = cue.x + cueEndDistance * cos(cue.angle);
+	double y2 = cue.y + cueEndDistance * sin(cue.angle);
+	screen->DrawLine(x1, y1, x2, y2, cueColor);
 }
 
 void Game::DrawBall(Ball& ball) 
@@ -97,7 +135,7 @@ void Game::InitDefaultGame()
 {
 	double s = ((double)table_w / 120.0);
 
-	double r = 3.0 * s;
+	double r = ballRadius = 3.0 * s;
 	double dx = 2.4 * s;
 	double dy = 1.0 * s;
 	double hub_scalar = 3.7;
@@ -134,7 +172,6 @@ void Game::InitDefaultGame()
 	}
 
 	balls.push_back(Ball(white_start.x, white_start.y, r, ' ', false));
-	balls.back().vel = cueVelocity * Vec2d(1.0, 0.0).unit();
 	balls.back().cueball = true;
 }
 
@@ -143,6 +180,11 @@ bool Game::HandleWallCollisions()
 	bool result = false;
 
 	for(Ball& ball : balls) {
+		// add more general linecollision system when adding holes
+		//
+		// if(CollidesWithLine(borderlines[0])) 
+		//   ...
+
 		if(ball.pos.x - ball.radius < table_x)       { if(ball.cueball) result = true; ball.vel.x *= -1.0; ball.pos.x = table_x + 2.0 * ball.radius - (ball.pos.x - table_x); }
 		if(ball.pos.y - ball.radius < table_y)       { if(ball.cueball) result = true; ball.vel.y *= -1.0; ball.pos.y = table_y + 2.0 * ball.radius - (ball.pos.y - table_y); }
 		if(ball.pos.x + ball.radius >= table_x + table_w)  { if(ball.cueball) result = true; ball.vel.x *= -1.0; ball.pos.x = table_x + table_w - ((ball.pos.x + 2.0 * ball.radius) - (table_x + table_w)); }
@@ -195,10 +237,10 @@ bool Game::HandleBallCollisions()
 Game::Game(int w, int h, ConsolePanel *screen, ConsolePanel *zoomWindow) :
 	screen(screen), zoomWindow(zoomWindow), width(w), height(h)
 {
-	table_x = table_side;
-	table_y = table_side;
-	table_w = (double)width - 2.0 * table_side;
-	table_h = (double)height - 2.0 * table_side;
+	table_x = table_side_x;
+	table_y = table_side_y;
+	table_w = (double)width - 2.0 * table_side_x;
+	table_h = (double)height - 2.0 * table_side_y;
 
 	InitDefaultGame();
 }

@@ -109,6 +109,19 @@ void ConsolePanel::DrawCircleOutline(double x, double y, double r, COLOR color)
 	}
 }
 
+void ConsolePanel::DrawLine(double x1, double y1, double x2, double y2, COLOR color) 
+{
+	// add algo
+
+
+
+	// temp
+	char pixel = '#';
+	PlotPixel(x1, y1, pixel, color);
+	PlotPixel((x1+x2)/2.0, (y1+y2)/2.0, pixel, color);
+	PlotPixel(x2, y2, pixel, color);
+}
+
 ConsolePanel::ConsolePanel(int x, int y, int w, int h) : x(x), y(y), width(w), height(h), canvas(width, height)
 {
 	Clear();

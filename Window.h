@@ -39,6 +39,8 @@ struct ConsolePanel
 	void DrawSphere(double x, double y, double r, COLOR color = nullptr);
 	void DrawCircleOutline(double x, double y, double r, COLOR color = nullptr);
 
+	void DrawLine(double x1, double y1, double x2, double y2, COLOR color = nullptr);
+
 	// wrappers
 	// void PlotPixel(Vec2d p, char pixel);
 	// bool PlotPixelIfBrighter(Vec2d p, double luminosity);

@@ -11,10 +11,10 @@
 
 #include "Window.h"
 #include "Ball.h"
+#include "Cue.h"
 
 const bool soundEnabled = true;
 
-const int cueVelocity = 10.0;
 const double nameAreaRadius = 1.5;
 const double deacceleration = 0.05;
 const double zoomScale = 1.6;
@@ -23,6 +23,10 @@ class Game{
 public:
 	Game(int w, int h, ConsolePanel *screen, ConsolePanel *zoomWindow);
 	~Game();
+
+	void AngleCue(double delta_angle);
+	void DragCue();
+	void ReleaseCue();
 
 	void Update(double dt);
 	void UpdateScreen();
@@ -36,9 +40,14 @@ private:
 	double width, height;
 
 	// Game
-	std::vector<Ball> balls;
+	COLOR cueColor = WHT;
+	Cue cue;
 	Vec2d cueBallPosition = Vec2d(0, 0);
-	int table_side = 4;
+
+	std::vector<Ball> balls;
+	int table_side_x = 5;
+	int table_side_y = 3;
+	double ballRadius = 0.0;
 	int table_x, table_y, table_w, table_h;
 
 	void DrawBall(Ball& ball);
