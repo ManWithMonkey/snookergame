@@ -3,7 +3,7 @@
 static int CONSOLE_WIDTH, CONSOLE_HEIGHT;
 
 void InitNCurses();
-void SetPixel(int x, int y);
+void SetPixel(int x, int y, char pixel);
 // void SetColor()
 
 // void MakeBellSound();
