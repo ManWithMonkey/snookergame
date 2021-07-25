@@ -100,6 +100,12 @@ Console::~Console()
 	}
 }
 
+void Console::KeyDown(int c) 
+{
+	
+}
+
+
 void Console::AddWindow(ConsolePanel *window)
 {
 	windows.push_back(window);
@@ -118,6 +124,6 @@ void Console::Render()
 		for (int x = 0; x < width; x++) {
 			std::cout << colorData[y * width + x] << pixelData[y * width + x];
 		}
-		std::cout << '\n';
+		std::cout << "\n";
 	}
 }

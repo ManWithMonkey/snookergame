@@ -33,6 +33,8 @@ public:
 	Console(int w, int h, std::string title = "");
 	~Console();
 
+	void KeyDown(int c);
+
 	void AddWindow(ConsolePanel *window);
 	void Render();
 };

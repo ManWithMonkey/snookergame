@@ -4,21 +4,51 @@ Game::~Game()
 {
 }
 
-void Game::AngleCue(double delta_angle) 
+void Game::KeyPressed(char c) 
 {
-	cue.angle += delta_angle;
+	if(c == 'a'){
+		cue.angle += 0.2;
+	}
+	if(c == 'd'){
+		cue.angle -= 0.2;
+	}
+	if(c == 'w'){
+		DragCue(-1.75);
+	}
+	if(c == 's'){
+		DragCue(1.75);
+	}
+	if(c == ' '){
+		if(!cue.beingDragged){
+			ResetAndActivateCue();
+		}
+		else{
+			ReleaseCue();
+		}
+	}
 }
 
-void Game::DragCue() 
+void Game::DragCue(double amount) 
 {
+	cue.strength += amount;
+	if(cue.strength < 5.0)
+		cue.strength = 5.0;
+
 	cue.beingDragged = true;
-	cue.oscillationAngle = 0.0;
+}
+
+void Game::ResetAndActivateCue() 
+{
+	cue.strength = 5.0;
+	cue.angle = 3.14159;
+
+	cue.beingDragged = true;
 }
 
 void Game::ReleaseCue() 
 {
 	cue.beingDragged = false;
-	// balls.back().vel = cue.strength * Vec2d(1.0, 0.0).unit();
+	balls.back().vel = cueMultiplier * cue.strength * Vec2d(1.0, 0.0).rotated(3.14159 + cue.angle);
 }
 
 void Game::Update(double dt)
@@ -29,14 +59,7 @@ void Game::Update(double dt)
 		ball.pos += deltaPosition;
 		ball.lastDeltaPosition = deltaPosition;
 
-		// if (ball.cueball) {
-		// 	// remove this part
-		// 	ball.vel *= (1.0 + 1.0 * dt);
-		// 	ball.vel.rotate(dt);
-		// } else {
-			// leave this part
 		ball.vel *= (1.0 - deacceleration * dt);
-		// }
 	}
 
 	if ((HandleWallCollisions() || HandleBallCollisions()) && soundEnabled) {
@@ -49,16 +72,17 @@ void Game::Update(double dt)
 			cueBallPosition = ball.pos;
 			cue.x = ball.pos.x;
 			cue.y = ball.pos.y;
+			cueBallVel = ball.vel.norm();
 			break;
 		}
 	}
 
 	// cue logic
-	if(cue.beingDragged = true){
-		cue.oscillationAngle += dt * 3.14159f;
-		cue.strength = 10.0 * (0.5 * sin(cue.oscillationAngle) + 0.5);
+	if(!cue.beingDragged){
+		if(cueBallVel < 1.0){
+			ResetAndActivateCue();
+		}
 	}
-	AngleCue(dt * 3.14159f * 0.15f);
 }
 
 void Game::UpdateScreen()
@@ -87,16 +111,18 @@ void Game::UpdateScreen()
 	}
 
 	// Draw cue
-	double cueStrengthDrawScale = 1.0;
+	if(cue.beingDragged){
+		double cueStrengthDrawScale = 1.0;
 
-	double cueStartDistance = ballRadius + cueStrengthDrawScale * cue.strength;
-	double cueEndDistance = cue.lengthOnScreen + cueStartDistance;
+		double cueStartDistance = ballRadius + cueStrengthDrawScale * cue.strength;
+		double cueEndDistance = cue.lengthOnScreen + cueStartDistance;
 
-	double x1 = cue.x + cueStartDistance * cos(cue.angle);
-	double y1 = cue.y + cueStartDistance * sin(cue.angle);
-	double x2 = cue.x + cueEndDistance * cos(cue.angle);
-	double y2 = cue.y + cueEndDistance * sin(cue.angle);
-	screen->DrawLine(x1, y1, x2, y2, cueColor);
+		double x1 = cue.x + cueStartDistance * cos(cue.angle);
+		double y1 = cue.y + cueStartDistance * sin(cue.angle);
+		double x2 = cue.x + cueEndDistance * cos(cue.angle);
+		double y2 = cue.y + cueEndDistance * sin(cue.angle);
+		screen->DrawLine(x1, y1, x2, y2, '#', cueColor);
+	}
 }
 
 void Game::DrawBall(Ball& ball) 
@@ -133,19 +159,20 @@ void Game::DrawBall(Ball& ball)
 
 void Game::InitDefaultGame()
 {
-	double s = ((double)table_w / 120.0);
+	double sx = ((double)table_w / 120.0);
+	double sy = ((double)table_h / 80.0);
 
-	double r = ballRadius = 3.0 * s;
-	double dx = 2.4 * s;
-	double dy = 1.0 * s;
+	double r = ballRadius = 3.0 * sx;
+	double dx = 2.4 * sx;
+	double dy = 1.0 * sy;
 	double hub_scalar = 3.7;
 	Vec2d white_start(
-		(double)table_x + s * 6.0,
-		(double)table_y + s * (height / 2)
+		(double)table_x + sx * 6.0,
+		(double)table_y + sy * (table_w / 2)
 	);
 	Vec2d hub_start(
-		(double)table_x + s * width - dx * 3.5 * hub_scalar,
-		(double)table_y + s * height / 2
+		(double)table_x + table_w - dx * 6.0 * hub_scalar,
+		(double)table_y + table_h / 2
 	);
 
 	const Vec2d positions[] = {
@@ -243,4 +270,5 @@ Game::Game(int w, int h, ConsolePanel *screen, ConsolePanel *zoomWindow) :
 	table_h = (double)height - 2.0 * table_side_y;
 
 	InitDefaultGame();
+	ResetAndActivateCue();
 }

@@ -109,17 +109,51 @@ void ConsolePanel::DrawCircleOutline(double x, double y, double r, COLOR color)
 	}
 }
 
-void ConsolePanel::DrawLine(double x1, double y1, double x2, double y2, COLOR color) 
+void ConsolePanel::DrawLine(double x1, double y1, double x2, double y2, PIXEL pixel, COLOR color) 
 {
-	// add algo
+	if(y2 < y1){
+		std::swap(y1, y2);
+		std::swap(x1, x2);
+	}
 
+	double dx = x2 - x1;
+	double dy = y2 - y1;
 
+	if(dx == 0){
+		for(int y = y1; y < y2; y++){
+			PlotPixel(x1, y, pixel);
+		}
+		return;
+	}
 
-	// temp
-	char pixel = '#';
-	PlotPixel(x1, y1, pixel, color);
-	PlotPixel((x1+x2)/2.0, (y1+y2)/2.0, pixel, color);
-	PlotPixel(x2, y2, pixel, color);
+	double stepx = (dx > 0 ? 1.0 : -1.0);
+
+	// y = kx + b
+	double k = dy / dx;
+	double b = y1 - x1 * k;
+
+	// x = (y - b) / k
+
+	if(std::abs(dx) >= std::abs(dy)){
+		if(dx > 0){
+			for(int x = x1; x < x2; x++){
+				double y = k * x + b;
+				PlotPixel(x, y, pixel, color);
+			}
+		}
+		else{
+			for(int x = x2; x < x1; x++){
+				double y = k * x + b;
+				PlotPixel(x, y, pixel, color);
+			}
+		}
+	}
+	else{
+		for(int y = y1; y < y2; y++){
+			double x = (y - b) / k;
+			PlotPixel(x, y, pixel, color);
+		}
+	}
 }
 
 ConsolePanel::ConsolePanel(int x, int y, int w, int h) : x(x), y(y), width(w), height(h), canvas(width, height)
