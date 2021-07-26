@@ -100,7 +100,7 @@ double Vec2d::angle() const
 
 Vec2d &Vec2d::rotate(double angle)
 {
-	return *this = rotated(angle);
+	return (*this = rotated(angle));
 }
 
 Vec2d Vec2d::rotated(double angle) const

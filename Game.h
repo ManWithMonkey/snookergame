@@ -22,7 +22,7 @@ public:
 
 	void KeyPressed(int key);
 
-	void Update(double dt);
+	void Update(double dt); 
 	void Draw(int w, int h);
 
 private:
@@ -46,6 +46,7 @@ private:
 	const int PLAYAREA_COLOR_PAIR 	= FG_BG(COLOR_BLACK, COLOR_WHITE);
 	const int CUE_COLOR_PAIR 		= FG_BG(COLOR_WHITE, COLOR_YELLOW);
 	const int CUE_TARGET_COLOR_PAIR = FG_BG(COLOR_RED, COLOR_WHITE);
+
 	const int BALL_ID_COLOR			= COLOR_BLACK;
 
 	const double deacceleration = 1.5;

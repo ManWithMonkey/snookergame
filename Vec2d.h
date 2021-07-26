@@ -21,7 +21,6 @@ struct Vec2d {
 
 	Vec2d &operator+=(Vec2d rhs);
 	Vec2d &operator-=(Vec2d rhs);
-
 	Vec2d &operator*=(double rhs);
 
 	Vec2d unit() const;

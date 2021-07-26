@@ -185,7 +185,6 @@ void DrawSphere(double x, double y, double r, char pixel, int color)
 
 			int sx = cx + ix;
 			int sy = cy + iy;
-
 			if(distance <= r + 0.3){
 				SetPixel(sx, sy, pixel, color);
 			}

@@ -75,7 +75,7 @@ void Game::Draw(int w, int h)
 				SetPixel(x, y, (y + x) % 2 ? '+' : '-', TABLE_COLOR_PAIR);
 			}
 			else{
-				SetPixel(x, y, ((y + x) % 5 ? ' ' : '.'), PLAYAREA_COLOR_PAIR);
+				SetPixel(x, y, ((y + x) % 5 ? ' ' : '.'), PLAYAREA_COLOR_PAIR); 
 			}
 		}
 	}

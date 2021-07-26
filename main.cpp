@@ -38,7 +38,6 @@ int main()
 		// mvprintw(1, 1, "%d, %d", w, h);
 
 		Render();
-
 		std::this_thread::sleep_for(std::chrono::milliseconds(5));
 	}
 

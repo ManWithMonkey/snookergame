@@ -11,6 +11,7 @@ struct Cue{
     const double lengthOnScreen = 0.5;
 
     Cue();
+    
 	void Apply(Ball& ball) const;
 };
 
