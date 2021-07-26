@@ -3,32 +3,32 @@
 
 #include "Vec2d.h"
 
-const int STRIPED 	= 0;
-const int OTHER 	= 1; //rename this to something else
-
 struct BallInfo{
 public:
-	bool cueball; 	// white ball
-	char id;		// number on ball
+	bool cueball;
+	char id;
 	int type;
+	int color;
+	int color2;
 
 public:
 	BallInfo();
-	BallInfo(bool isCueBall, char id, int type);
+	BallInfo(bool isCueBall, char id, int type, int color, int color2);
 };
 
 struct Ball : public BallInfo{
 public:
 	Vec2d pos;
-	Vec2d vel; // per second
 	double radius;
-	Vec2d lastDeltaPosition; // movement at last iteration, useful for collisions
+
+	Vec2d vel;
+	Vec2d lastPositionChange;
 
 public:
 	bool CollidesWith(const Ball &other) const;
 
 	Ball();
-	Ball(double x, double y, double radius, char name, bool striped);
+	Ball(double x, double y, double radius, char id, int type, int color, int color2);
 };
 
 #endif // __BALL_H__

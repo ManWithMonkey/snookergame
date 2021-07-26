@@ -35,6 +35,8 @@ struct Vec2d {
 	Vec2d &rotate(double angle);
 	Vec2d rotated(double angle) const;
 
+	bool operator==(const Vec2d& rhs) const;
+
 	bool isNull() const;
 };
 

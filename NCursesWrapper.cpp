@@ -1,6 +1,6 @@
 #include "NCursesWrapper.h"
 
-void InitNCurses(int w, int h) 
+void InitNCurses() 
 {
     initscr();
     nodelay(stdscr,true);
@@ -9,7 +9,6 @@ void InitNCurses(int w, int h)
     curs_set(0);
     start_color();
     nl();
-    // getmaxyx(stdscr,w,h);
     
     int colors[8] = {
         COLOR_BLACK,
@@ -22,11 +21,9 @@ void InitNCurses(int w, int h)
         COLOR_WHITE
     };
 
-    for(int i=0; i<8; i++)
-        init_pair(i, colors[i], COLOR_BLACK);
-
-    CONSOLE_WIDTH = w;
-    CONSOLE_HEIGHT = h;
+    for(int bg=0; bg<8; bg++)
+    	for(int fg=0; fg<8; fg++)
+        	init_pair(FG_BG(fg, bg), colors[fg], colors[bg]);
 }
 
 void QuitNCurses() 
@@ -36,11 +33,15 @@ void QuitNCurses()
     endwin();
 }
 
-void Clear(char pixel) 
+void Clear(char pixel, int color) 
 {
-    for(int x=0; x<CONSOLE_WIDTH; x++){
-        for(int y=0; y<CONSOLE_HEIGHT; y++){
-            move(x, y);
+	int w, h;
+	getmaxyx(stdscr, h, w);
+
+    for(int x=0; x<w; x++){
+        for(int y=0; y<h; y++){
+            move(y, x);
+    		attrset(color);
             addch(pixel);
         }
     }
@@ -48,7 +49,10 @@ void Clear(char pixel)
 
 void SetPixel(int x, int y, char pixel) 
 {
-    if(x < 0 || y < 0 || x >= CONSOLE_WIDTH || y >= CONSOLE_HEIGHT)
+	int w, h;
+	getmaxyx(stdscr, h, w);
+	
+    if(x < 0 || y < 0 || x >= w || y >= h)
         return;
 
     move(y, x);
@@ -57,11 +61,14 @@ void SetPixel(int x, int y, char pixel)
     
 void SetPixel(int x, int y, char pixel, int c) 
 {
-    if(x < 0 || y < 0 || x >= CONSOLE_WIDTH || y >= CONSOLE_HEIGHT)
+	int w, h;
+	getmaxyx(stdscr, h, w);
+
+    if(x < 0 || y < 0 || x >= w || y >= h)
         return;
 
     chtype color = COLOR_PAIR(c);
-    color |= A_BOLD;
+    // color |= A_BOLD;
 
     move(y, x);
     attrset(color);
@@ -71,6 +78,11 @@ void SetPixel(int x, int y, char pixel, int c)
 void Render() 
 {
     refresh();
+}
+
+void MakeBellSound() 
+{
+	system("echo \007");
 }
 
 void DrawCircleOutline(double x, double y, double radius, int color) 
@@ -95,7 +107,7 @@ void DrawCircleOutline(double x, double y, double radius, int color)
 	}
 
 	int pointsize = two_PI * radius;
-	double deltaAngle = two_PI / (double)pointsize;
+	double deltaAngle = 0.999 * two_PI / (double)pointsize;
 
 	int charIndex = 0;
 
@@ -142,20 +154,41 @@ void DrawLine(double x1, double y1, double x2, double y2, char pixel, int color)
 		if(dx > 0){
 			for(int x = x1; x < x2; x++){
 				double y = k * x + b;
-				SetPixel(x, y, pixel);
+				SetPixel(x, y, pixel, color);
 			}
 		}
 		else{
 			for(int x = x2; x < x1; x++){
 				double y = k * x + b;
-				SetPixel(x, y, pixel);
+				SetPixel(x, y, pixel, color);
 			}
 		}
 	}
 	else{
 		for(int y = y1; y < y2; y++){
 			double x = (y - b) / k;
-            SetPixel(x, y, pixel);
+            SetPixel(x, y, pixel, color);
+		}
+	}
+}
+
+void DrawSphere(double x, double y, double r, char pixel, int color) 
+{
+	double cx = x;
+	double cy = y;
+
+	for (double ix = -r; ix <= r; ix += 1.0) {
+		for (double iy = -r; iy <= r; iy += 1.0) {
+
+			double distance = std::hypot(cx + ix - x, cy + iy - y);
+			double luminosity = 1.0 - distance / r;
+
+			int sx = cx + ix;
+			int sy = cy + iy;
+
+			if(distance <= r + 0.3){
+				SetPixel(sx, sy, pixel, color);
+			}
 		}
 	}
 }

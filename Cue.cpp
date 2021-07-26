@@ -2,11 +2,22 @@
 
 void Cue::Apply(Ball& ball) const
 {
-	
+    if(target == ball.pos)
+        return;
+        
+    Vec2d delta = target - ball.pos;
+
+    double length = delta.norm();
+    double angle = delta.angle();
+
+    ball.vel += strength * Vec2d(
+        cos(angle),
+        sin(angle)
+    );
 }
 
 Cue::Cue() :
-    x(0), y(0), angle(0), strength(0), beingDragged(false)
+    target(0, 0), inAction(false)
 {
     
 }

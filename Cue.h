@@ -4,17 +4,13 @@
 #include "Ball.h"
 
 struct Cue{
-	double x, y;
-	double angle;
-	double strength;
-    bool beingDragged;
-
-    double lengthOnScreen = 8.0;
-
-    double oscillationAngle = 0.0; // for game logic when figuring out how much being dragged
+    Vec2d target;
+    bool inAction;
+    
+    double strength = 5.0;
+    const double lengthOnScreen = 0.5;
 
     Cue();
-
 	void Apply(Ball& ball) const;
 };
 

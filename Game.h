@@ -13,49 +13,60 @@
 
 #include "NCursesWrapper.h"
 
-const double nameAreaRadius = 1.5;
-const double deacceleration = 1.5;
+const bool useSounds = false;
 
 class Game{
 public:
-	Game(int x, int y, int w, int h);
+	Game();
 	~Game();
 
 	void KeyPressed(int key);
 
-	void DragCue(double amount);
-	void ResetAndActivateCue();
-	void ReleaseCue();
-
 	void Update(double dt);
-	void Draw();
+	void Draw(int w, int h);
 
 private:
-	double cueMultiplier = 20.0;
+	void InitDefaultGame();
 
-	// 
-	int game_x, game_y;
-	double width, height;
+	bool CollidesWithWalls(const Ball& ball) const;
+	bool CollidesWithOtherBalls(const Ball& ball) const;
 
-	// Game
-	Cue cue;
-	Vec2d cueBallPosition = Vec2d(0, 0);
-	double cueBallVel = 0.0;
-
-	std::vector<Ball> balls;
-	int table_side_x = 12;
-	int table_side_y = 8;
-	double ballRadius = 0.0;
-	int table_x, table_y, table_w, table_h;
-
-	void DrawBall(Ball& ball);
-
-	// Logic
+	// returns true if cueball was in a collision
 	bool HandleWallCollisions();
 	bool HandleBallCollisions();
 
-	// Init functions
-	void InitDefaultGame();
+	void DrawBall(Ball& ball);
+
+	void MoveCue(double dx, double dy);
+	void ResetAndActivateCue();
+	void ReleaseCue();
+
+private:
+	const int TABLE_COLOR_PAIR 		= FG_BG(COLOR_BLACK, COLOR_RED);
+	const int PLAYAREA_COLOR_PAIR 	= FG_BG(COLOR_BLACK, COLOR_WHITE);
+	const int CUE_COLOR_PAIR 		= FG_BG(COLOR_WHITE, COLOR_YELLOW);
+	const int CUE_TARGET_COLOR_PAIR = FG_BG(COLOR_RED, COLOR_WHITE);
+	const int BALL_ID_COLOR			= COLOR_BLACK;
+
+	const double deacceleration = 1.5;
+
+	const int table_side_x = 12;
+	const int table_side_y = 8;
+
+	// normalized values
+	double game_width = 2.0;
+	double game_height = 1.0;
+	double x_scalar = 1.0;
+	double y_scalar = 1.0;
+	double table_x = 0.15;
+	double table_y = 0.1;
+	double table_w = 1.7;
+	double table_h = 0.8;
+
+	// game variables
+	std::vector<Ball> balls;
+	Cue cue;
+	int cueBallIndex = 0;
 };
 
 #endif // __GAME_H__

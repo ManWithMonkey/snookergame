@@ -120,3 +120,7 @@ Vec2d operator*(double rhs, Vec2d lhs)
 {
 	return lhs * rhs;
 }
+
+bool Vec2d::operator==(const Vec2d& rhs) const {
+	return x == rhs.x && y == rhs.y;
+}
