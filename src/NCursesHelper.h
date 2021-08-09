@@ -15,10 +15,17 @@ static int SCREEN_DATA[SCREEN_WIDTH_MAX * SCREEN_HEIGHT_MAX];
 static int CURRENT_SCREEN_WIDTH = 0;
 static int CURRENT_SCREEN_HEIGHT = 0;
 
+static bool SHOULD_QUIT = false;
+
 void Init();
 void Quit();
-void UpdateScreenVariables();
 void Refresh();
+
+bool ShouldQuit();
+
+void UpdateNCurses();
+void HandleScreenResizing();
+void HandleInput();
 
 void DefaultScreenTest();
 

@@ -4,12 +4,13 @@
 int main(){
     Init();
 
-    while(true){
-        UpdateScreenVariables();
+    while(!ShouldQuit()){
+        UpdateNCurses();
+
         DefaultScreenTest();
         Refresh();
 
-        usleep(100000);
+        usleep(1000);
     }
 
     Quit();
