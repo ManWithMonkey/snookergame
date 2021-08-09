@@ -1,4 +1,9 @@
+Done:
 - Ncurses screen
+
+Undone:
+- Ball draw on screen
+- Line draw on screen
 
 - Ball-line collision
 - Ball-ball collision
