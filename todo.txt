@@ -1,0 +1,10 @@
+- Ncurses screen
+
+- Ball-line collision
+- Ball-ball collision
+
+- Cue action
+
+- Table layout
+
+- Game logic
