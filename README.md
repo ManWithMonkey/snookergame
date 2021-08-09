@@ -1,2 +1,0 @@
-# snookergame
-in ascii
