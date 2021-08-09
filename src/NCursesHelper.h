@@ -21,6 +21,5 @@ void UpdateScreenVariables();
 void Refresh();
 
 void DefaultScreenTest();
-void TestPlotScreenResize();
 
 #endif // __NCURSESHELPER_H__

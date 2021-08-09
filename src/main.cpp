@@ -6,7 +6,7 @@ int main(){
 
     while(true){
         UpdateScreenVariables();
-        TestPlotScreenResize();
+        DefaultScreenTest();
         Refresh();
 
         usleep(100000);

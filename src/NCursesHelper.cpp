@@ -45,13 +45,17 @@ void DefaultScreenTest(){
     int w = std::min(CURRENT_SCREEN_WIDTH,  SCREEN_WIDTH_MAX);
     int h = std::min(CURRENT_SCREEN_HEIGHT, SCREEN_HEIGHT_MAX);
 
+    char b = '#';
     char a[] = {
-        ' ', '!', '#'
+        '.', '-', '!'
     };
 
     for(int y=0; y<h; y++){
         for(int x=0; x<w; x++){
-            SCREEN_DATA[y * SCREEN_WIDTH_MAX + x] = a[(y + x) % sizeof(a)];
+            if(x == 0 || y == 0 || x == CURRENT_SCREEN_WIDTH - 1 || y == CURRENT_SCREEN_HEIGHT - 1)
+                SCREEN_DATA[y * SCREEN_WIDTH_MAX + x] = b;
+            else
+                SCREEN_DATA[y * SCREEN_WIDTH_MAX + x] = a[(y + x) % sizeof(a)];
         }
     }
 }
