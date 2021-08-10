@@ -1,18 +1,21 @@
 #include "NCursesHelper.hpp"
 #include "DrawFunctions.hpp"
+#include "Canvas.hpp"
 #include <unistd.h>
+
+#include "demos.hpp"
 
 int main(){
     Init();
 
     while(!ShouldQuit()){
         UpdateNCurses();
+        DefaultScreen();
 
-        DefaultScreenTest();
-        // BouncingBallTest();
+        BouncingBallTest();
         CanvasTest();
-        Refresh();
 
+        Refresh();
         usleep(1000);
     }
 

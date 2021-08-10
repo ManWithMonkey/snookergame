@@ -70,6 +70,14 @@ int GetHeight(){
     return CURRENT_SCREEN_HEIGHT;
 }
 
+int GetMaxWidth(){
+    return SCREEN_WIDTH_MAX;
+}
+
+int GetMaxHeight(){
+    return SCREEN_HEIGHT_MAX;
+}
+
 void PlotPixel(int x, int y, char c){
     if(x < 0 || y < 0 || x >= GetWidth() || y >= GetHeight()){
         return;
@@ -78,7 +86,7 @@ void PlotPixel(int x, int y, char c){
     SCREEN_DATA[y * SCREEN_WIDTH_MAX + x] = c;
 }
 
-void DefaultScreenTest(){
+void DefaultScreen(){
     int w = std::min(CURRENT_SCREEN_WIDTH,  SCREEN_WIDTH_MAX);
     int h = std::min(CURRENT_SCREEN_HEIGHT, SCREEN_HEIGHT_MAX);
 
