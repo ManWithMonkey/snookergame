@@ -9,6 +9,7 @@ vec2 Normal(vec2 v);
 float Norm(vec2 v);
 vec2 UnitVector(vec2 v);
 
+bool AABB(vec2 a1, vec2 b1, vec2 a2, vec2 b2);
 bool LineLineCollision(vec2 a1, vec2 b1, vec2 a2, vec2 b2);
 
 float PointPointDistance(vec2 a, vec2 b);
