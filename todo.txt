@@ -5,6 +5,8 @@ Done:
 - Ball, line architectures
 
 Undone:
+- Line-line collision/distance
+- Point-line collision
 - Ball-line collision
 - Ball-ball collision
 
