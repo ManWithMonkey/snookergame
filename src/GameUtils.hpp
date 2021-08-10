@@ -20,7 +20,4 @@ struct Ball{
     vec2 vel;
 };
 
-void DrawBall(const Ball& ball);
-void DrawLine(const Line& line);
-
 #endif // __GAMEUTILS_H__

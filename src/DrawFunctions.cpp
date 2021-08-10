@@ -1,5 +1,7 @@
 #include "DrawFunctions.hpp"
 
+namespace DrawFunctions{
+
 void DrawLine(float x1, float y1, float x2, float y2, char c){
 	if(y2 < y1){
 		std::swap(y1, y2);
@@ -79,3 +81,5 @@ void DrawSolidBall(float x, float y, float r, char c){
         iy += 1.f;
     }
 }
+
+};

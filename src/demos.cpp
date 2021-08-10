@@ -1,5 +1,7 @@
 #include "demos.hpp"
 
+using namespace DrawFunctions;
+
 static float x = 0;
 static float y = 0;
 

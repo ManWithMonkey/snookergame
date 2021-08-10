@@ -7,17 +7,24 @@
 #include <chrono>
 
 class Game{
-    std::chrono::steady_clock::time_point lastUpdate;
-    float deltaTime = 0.f;
-
-    std::vector<Ball> balls;
-    std::vector<Line> lines;
-
 public:
     Game();
 
     void Update();
     void Draw();
+
+private:
+    std::chrono::steady_clock::time_point lastUpdate;
+    float deltaTime = 0.f;
+
+    Line top, bottom, left, right;
+    std::vector<Line> lines;
+    std::vector<Ball> balls;
+
+private:
+    void DrawBall(const Ball& ball, char c);
+    void DrawLine(const Line& line, char c);
+
 };
 
 #endif // __GAME_H__
