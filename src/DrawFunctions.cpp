@@ -40,7 +40,7 @@ void DrawLine(float x1, float y1, float x2, float y2, char c){
 	else{
 		for(int y = y1; y < y2; y++){
 			double x = (y - b) / k;
-            PlotPixel(x, y, c);
+			PlotPixel(x, y, c);
 		}
 	}
 }
