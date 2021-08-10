@@ -14,7 +14,6 @@ void Quit(){
 }
 
 void UpdateNCurses(){
-    HandleScreenResizing();
     HandleInput();
 }
 
@@ -35,12 +34,10 @@ void HandleInput(){
     int c = getch();
 
     while(c != ERR){
-	if (c == KEY_RESIZE) {
-		erase();
-		printw("RESIZE DETECTED");
-		refresh();
-		napms(6666666);
-	}
+        if(c == KEY_RESIZE){
+            HandleScreenResizing();
+            Refresh();
+        }
         if(c == 'q'){
             SHOULD_QUIT = true;
         }
