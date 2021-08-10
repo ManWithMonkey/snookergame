@@ -1,7 +1,7 @@
 #ifndef __NCURSESHELPER_H__
 #define __NCURSESHELPER_H__
 
-#include "ncurses.h"
+#include <curses.h>
 
 #include <math.h>
 #include <algorithm>

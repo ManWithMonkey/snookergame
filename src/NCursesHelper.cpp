@@ -1,11 +1,22 @@
 #include "NCursesHelper.hpp"
 
+/* 
+       The  curs_set  routine  sets  the cursor state to invisible, normal, or
+       very visible for visibility equal to 0, 1, or 2 respectively.
+*/
+enum cursor_visibility {
+	CURS_INVIS  = 0,
+	CURS_NORMAL = 1,
+	CURS_BRIGHT = 2,
+};
+
 void Init(){
-    keypad(initscr(), true);
+	initscr();
+    keypad(stdscr, true);
     noecho();
-    curs_set(0);
+    curs_set(CURS_INVIS);
     if(nodelay(stdscr, true) == ERR){
-        std::cout << "error\n";
+        std::cout << "unable to enable nodelay mode\n";
     }
 }
 
@@ -22,6 +33,7 @@ void HandleScreenResizing(){
     int nw, nh;
     getmaxyx(stdscr, nh, nw);
 
+	// this check is probably redundant since the function gets called when a resize event occurred
     if(nw != CURRENT_SCREEN_WIDTH || nh != CURRENT_SCREEN_HEIGHT){
         // std::cout << "Window resized to: " << nw << "x" << nh << "\n";   
         // wresize(stdscr, nh, nw);
@@ -41,7 +53,7 @@ void HandleInput(){
 		refresh();
 		napms(6666666);
 	}
-        if(c == 'q'){
+        if (c == 'q' || c == 'Q') {
             SHOULD_QUIT = true;
         }
 
