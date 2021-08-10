@@ -37,13 +37,22 @@ void Game::Update(){
         if(x > w - 1.f) ball.vel.x = -velx;
         if(y > h - 1.f) ball.vel.y = -vely;
 
-        ball.pos.x += ball.vel.x * deltaTime;
-        ball.pos.y += ball.vel.y * deltaTime;
+        // position change
+        ball.dpos.x = ball.vel.x * deltaTime;
+        ball.dpos.y = ball.vel.y * deltaTime;
 
+        // correct collisions
         for(Line& line : lines){
+            // if(MovingCircleCollidesWithStaticLine(ball.pos.x, ball.pos.y, ))
+            // if(CirclePositionOnCollisionWithLine())
+        }
+
+        // add position change
+        ball.pos.x += ball.dpos.x;
+        ball.pos.y += ball.dpos.y;
+
             // float distance = PointDistance(line.a, line.b, balls[0]);
             // if(distance < )
-        }
     }
 
     float t = 2.f;

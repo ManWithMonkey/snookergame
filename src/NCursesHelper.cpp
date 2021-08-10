@@ -7,6 +7,8 @@ void Init(){
     if(nodelay(stdscr, true) == ERR){
         std::cout << "error\n";
     }
+
+    HandleScreenResizing();
 }
 
 void Quit(){

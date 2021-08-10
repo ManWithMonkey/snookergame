@@ -15,6 +15,7 @@ struct Ball{
     float r;
 
     vec2 vel;
+    vec2 dpos; // change in position for next iteration
 };
 
 #endif // __GAMEUTILS_H__
