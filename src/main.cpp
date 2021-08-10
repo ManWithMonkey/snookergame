@@ -1,8 +1,6 @@
 #include <unistd.h>
 #include "Game.hpp"
 
-// #include "demos.hpp"
-
 int main(){
     Init();
 
@@ -11,10 +9,6 @@ int main(){
     while(!ShouldQuit()){
         UpdateNCurses();
         DefaultScreen();
-
-        // DrawLineTest();
-        // BouncingBallTest();
-        // CanvasTest();
 
         game.Update();
         game.Draw();
