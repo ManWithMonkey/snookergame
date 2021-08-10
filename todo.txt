@@ -4,6 +4,8 @@ Done:
 - Line draw on screen
 
 Undone:
+- Ball, line architectures
+
 - Ball-line collision
 - Ball-ball collision
 
