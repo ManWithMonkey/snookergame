@@ -4,10 +4,7 @@
 #include "NCursesHelper.hpp"
 #include "DrawFunctions.hpp"
 #include "Canvas.hpp"
-
-struct vec2{
-    float x, y;
-};
+#include "vec2.hpp"
 
 struct Line{
     vec2 a, b;
