@@ -22,10 +22,14 @@ void Quit();
 void Refresh();
 
 bool ShouldQuit();
+int GetWidth();
+int GetHeight();
 
 void UpdateNCurses();
 void HandleScreenResizing();
 void HandleInput();
+
+void PlotPixel(int x, int y, char c);
 
 void DefaultScreenTest();
 

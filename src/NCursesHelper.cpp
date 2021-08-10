@@ -1,4 +1,4 @@
-#include "NCursesHelper.h"
+#include "NCursesHelper.hpp"
 
 void Init(){
     initscr();
@@ -24,7 +24,7 @@ void HandleScreenResizing(){
 
     if(nw != CURRENT_SCREEN_WIDTH || nh != CURRENT_SCREEN_HEIGHT){
         // std::cout << "Window resized to: " << nw << "x" << nh << "\n";   
-        wresize(stdscr, nh, nw);
+        // wresize(stdscr, nh, nw);
 
         CURRENT_SCREEN_WIDTH    = nw;
         CURRENT_SCREEN_HEIGHT   = nh;
@@ -62,13 +62,29 @@ bool ShouldQuit(){
     return SHOULD_QUIT;
 }
 
+int GetWidth(){
+    return CURRENT_SCREEN_WIDTH;
+}
+
+int GetHeight(){
+    return CURRENT_SCREEN_HEIGHT;
+}
+
+void PlotPixel(int x, int y, char c){
+    if(x < 0 || y < 0 || x >= GetWidth() || y >= GetHeight()){
+        return;
+    }
+
+    SCREEN_DATA[y * SCREEN_WIDTH_MAX + x] = c;
+}
+
 void DefaultScreenTest(){
     int w = std::min(CURRENT_SCREEN_WIDTH,  SCREEN_WIDTH_MAX);
     int h = std::min(CURRENT_SCREEN_HEIGHT, SCREEN_HEIGHT_MAX);
 
     char b = '#';
     char a[] = {
-        '.', '-', '!'
+        '.', ' ', ' '
     };
 
     for(int y=0; y<h; y++){

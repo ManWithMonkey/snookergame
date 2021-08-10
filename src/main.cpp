@@ -1,4 +1,5 @@
-#include "NCursesHelper.h"
+#include "NCursesHelper.hpp"
+#include "DrawFunctions.hpp"
 #include <unistd.h>
 
 int main(){
@@ -8,6 +9,8 @@ int main(){
         UpdateNCurses();
 
         DefaultScreenTest();
+        // BouncingBallTest();
+        CanvasTest();
         Refresh();
 
         usleep(1000);
