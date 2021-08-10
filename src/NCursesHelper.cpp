@@ -1,7 +1,7 @@
 #include "NCursesHelper.hpp"
 
 void Init(){
-    initscr();
+    keypad(initscr(), true);
     noecho();
     curs_set(0);
     if(nodelay(stdscr, true) == ERR){
@@ -32,9 +32,15 @@ void HandleScreenResizing(){
 }
 
 void HandleInput(){
-    char c = getch();
+    int c = getch();
 
     while(c != ERR){
+	if (c == KEY_RESIZE) {
+		erase();
+		printw("RESIZE DETECTED");
+		refresh();
+		napms(6666666);
+	}
         if(c == 'q'){
             SHOULD_QUIT = true;
         }
