@@ -12,6 +12,7 @@ int main(){
         UpdateNCurses();
         DefaultScreen();
 
+        DrawLineTest();
         BouncingBallTest();
         CanvasTest();
 

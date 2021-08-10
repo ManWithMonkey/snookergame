@@ -6,5 +6,6 @@
 
 void BouncingBallTest();
 void CanvasTest();
+void DrawLineTest();
 
 #endif // __DEMOS_H__

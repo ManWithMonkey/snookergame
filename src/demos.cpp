@@ -1,10 +1,11 @@
 #include "demos.hpp"
 
+static float x = 0;
+static float y = 0;
+
 void BouncingBallTest(){
     const float vel = 0.03f;
 
-    static float x = 0;
-    static float y = 0;
     static float velx = vel;
     static float vely = vel;
     static float r = 5.f;
@@ -20,11 +21,12 @@ void BouncingBallTest(){
     DrawSolidBall(x, y, r, '#');
 }
 
+static float x2 = 0;
+static float y2 = 0;
+
 void CanvasTest(){
     const float vel = 0.05f;
 
-    static float x = 0;
-    static float y = 0;
     static float velx = vel;
     static float vely = vel;
 
@@ -38,13 +40,17 @@ void CanvasTest(){
         " \\---/ \n"
     );
 
-    if(x < 2) velx = vel;
-    if(y < 3) vely = vel;
-    if(x > GetWidth() - 3)    velx = -vel;
-    if(y > GetHeight() - 3)   vely = -vel;
+    if(x2 < 2) velx = vel;
+    if(y2 < 3) vely = vel;
+    if(x2 > GetWidth() - 3)    velx = -vel;
+    if(y2 > GetHeight() - 3)   vely = -vel;
 
-    x += velx;
-    y += vely;
+    x2 += velx;
+    y2 += vely;
     
-    DrawCanvas(x, y, &canvas);
+    DrawCanvas(x2, y2, &canvas);
+}
+
+void DrawLineTest(){
+    DrawLine(x, y, x2, y2, 'x');
 }
