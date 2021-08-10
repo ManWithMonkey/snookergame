@@ -26,7 +26,7 @@ float PointPointDistance(vec2 a, vec2 b){
     return 0.f;
 }
 
-float LinePointDistance(vec2 a, vec2 b, Vec2 p){
+float LinePointDistance(vec2 a, vec2 b, vec2 p){
     return 0.f;
 }
 
