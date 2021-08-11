@@ -50,16 +50,16 @@ float LineLineDistance(vec2 a1, vec2 b1, vec2 a2, vec2 b2){
 }
 
 vec2 LineCollisionPoint(vec2 a1, vec2 b1, vec2 a2, vec2 b2){
-    vec2 result;
+    vec2 result = {0.f, 0.f};
 
     vec2 d1 = {b1.x - a1.x, b1.y - a1.y};
     vec2 d2 = {b2.x - a2.x, b2.y - a2.y};
 
-    
+    // magic here
 
     return result;
 }
 
 vec2 MovingCircleCollisionPointWithLine(vec2 p, vec2 dp, float r, vec2 a, vec2 b){
-
+    
 }
