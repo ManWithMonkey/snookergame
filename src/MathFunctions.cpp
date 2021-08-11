@@ -66,37 +66,24 @@ float LineLineDistance(vec2 a1, vec2 b1, vec2 a2, vec2 b2){
 }
 
 vec2 LineCollisionPoint(vec2 a1, vec2 b1, vec2 a2, vec2 b2){
-    // result
-    vec2 p = {0.f, 0.f};
-    
+    // todo operator overloads 
     vec2 d1 = Subtract(b1, a1);
     vec2 d2 = Subtract(b2, a2);
 
-    vec2 u1 = UnitVector(d1);
-    vec2 u2 = UnitVector(d2);
+    vec2 u = UnitVector(d1);
+    vec2 n = NormalUnit(d2);
 
-    vec2 n1 = Normal(u1);
-    vec2 n2 = Normal(u2);
+    vec2 v1 = Subtract(a1, a2);
+    vec2 v2 = Subtract(Add(a1, u), a2);
 
-    auto CalcVec = [&](vec2 a, vec2 u, float t) -> vec2 {
-        return Add(a, Multiply(u, t));
-    };
+    float value1 = DotProduct(n, v1);
+    float value2 = DotProduct(n, v2);
 
-    auto Calc = [&](vec2 a, vec2 u, float t, vec2 a2, vec2 n) -> float {
-        return DotProduct(n2, Subtract(CalcVec(a, u, t), a2));
-    };
+    float slope = value2 - value1;
 
-    float t = 0.f;
-    float value = Calc(a1, u1, t, a2, n2);
+    float t = - value1 / slope;
 
-    for(int i=0; i<1; i++){
-        float slope = (Calc(a1, u1, t + 0.1f, a2, n2) - value) / 0.1f;
-
-        t = t - value / slope;
-    }
-
-    // p = Add(a1, Multiply(u1, 5.f));
-    p = CalcVec(a1, u1, t);
+    vec2 p = Add(a1, Multiply(u1, t));
 
     return p;
 }
