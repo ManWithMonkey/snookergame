@@ -70,7 +70,7 @@ int main(){
         p2 = LineClosestPointFromPoint(p3, p4, p1);
 
         DrawFunctions::DrawLine(p3.x, p3.y, p4.x, p4.y, 176);
-        // DrawFunctions::DrawLine(p1.x, p1.y, p2.x, p2.y, '.');
+        DrawFunctions::DrawLine(p1.x, p1.y, p2.x, p2.y, '.');
         DrawFunctions::DrawPoint(p1.x, p1.y, 'X');
 
         float distance = LinePointDistance(p3, p4, p1);
