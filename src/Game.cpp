@@ -116,7 +116,7 @@ void Game::Reset(){
     float b = GetHeight() - t - 1.f;
     float r = GetWidth() - l - 1.f;
 
-    float holer = 3.f;
+    float holer = 3.5f;
 
     top     = {{l + holer, t}, {r - holer, t}};
     bottom  = {{l + holer, b}, {r - holer, b}};
@@ -137,7 +137,7 @@ void Game::Reset(){
         int pc = 8;
         float da = 1.5f * 3.14159f / (float)pc;
         vec2 point = vec2{cos(p.z), sin(p.z)} * holer;
-        for(int i=0; i<pc; i++){
+        for(int i=0; i<=pc; i++){
             vec2 center = {p.x, p.y};
             vec2 next = vec2{cos(p.z + da * (float)i), sin(p.z + da * (float)i)} * holer;
             lines.push_back({point + center, next + center});
