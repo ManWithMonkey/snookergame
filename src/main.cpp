@@ -69,16 +69,15 @@ int main(){
 
     while(!ShouldQuit()){
         UpdateNCurses();
-        // BlankScreen();
-        DefaultScreen();
+        BlankScreen();
 
-        // DrawFunctions::DrawLine(p3.x, p3.y, p4.x, p4.y, '0');
-        // DrawFunctions::DrawLine(p1.x, p1.y, p2.x, p2.y, '0');
-        // vec2 collision = LineCollisionPoint(p1, p2, p3, p4);
-        // DrawFunctions::DrawSolidBall(collision.x, collision.y, 1.6f, '#');
-        // std::string s = ToString(collision.x) + " " + ToString(collision.y);
+        DrawFunctions::DrawLine(p3.x, p3.y, p4.x, p4.y, '0');
+        DrawFunctions::DrawLine(p1.x, p1.y, p2.x, p2.y, '0');
+        vec2 collision = LineCollisionPoint(p1, p2, p3, p4);
+        DrawFunctions::DrawSolidBall(collision.x, collision.y, 1.6f, '#');
+        std::string s = ToString(collision.x) + " " + ToString(collision.y);
         
-        mvaddstr(2, 2, "test");
+        DrawFunctions::TypeString(0, 0, s);
 
         Refresh();
         usleep(1000);
