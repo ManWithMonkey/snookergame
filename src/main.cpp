@@ -72,13 +72,21 @@ int main(){
         UpdateNCurses();
         BlankScreen();
 
+        const float r = 10.f;
+
+        vec2 collision = MovingCircleCollisionPointWithLine(p2, p1 - p2, r, p3, p4);
+
+        if(MovingCircleCollidesWithStaticLine(p2, p1 - p2, r, p3, p4))
+            DrawFunctions::DrawSolidBall(collision.x, collision.y, r - 1.f, '.');
         DrawFunctions::DrawLine(p3.x, p3.y, p4.x, p4.y, 176);
         DrawFunctions::DrawLine(p1.x, p1.y, p2.x, p2.y, 176);
         DrawFunctions::DrawPoint(p1.x, p1.y, 'X');
+        DrawFunctions::DrawPoint(p2.x, p2.y, 'X');
+        DrawFunctions::DrawPoint(p3.x, p3.y, 'X');
+        DrawFunctions::DrawPoint(p4.x, p4.y, 'X');
 
-        bool collides = LineLineCollision(p1, p2, p3, p4);
-        std::string s = (collides ? "collides" : "doesnt collide");
-        DrawFunctions::TypeString(0, 0, s);
+        std::string s = ToString(collision.x) + ", " + ToString(collision.y);
+        DrawFunctions::TypeString(1, 1, s);
 
         Refresh();
         usleep(1000);

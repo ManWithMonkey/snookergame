@@ -129,6 +129,7 @@ vec2 LineClosestPointFromPoint(vec2 a, vec2 b, vec2 p){
 }
 
 vec2 LineCollisionPoint(vec2 a1, vec2 b1, vec2 a2, vec2 b2){
+    // assumes that it does collide
     vec2 d1 = b1 - a1;
     vec2 d2 = b2 - a2;
 
@@ -151,5 +152,42 @@ vec2 LineCollisionPoint(vec2 a1, vec2 b1, vec2 a2, vec2 b2){
 }
 
 vec2 MovingCircleCollisionPointWithLine(vec2 p, vec2 dp, float r, vec2 a, vec2 b){
-    return {0.f, 0.f};
+    // assumes that it does collide
+    vec2 result = {0, 0};
+
+    vec2 dline = Subtract(b, a);
+    vec2 uline = UnitVector(dline);
+    vec2 n = Normal(uline);
+
+    vec2 dmotion = dp;
+    vec2 umotion = UnitVector(dmotion);
+    
+    auto CalcVec = [&](float scalar) -> vec2 {
+        return p + umotion * scalar;
+    };
+
+    auto Calc = [&](float scalar) -> float {
+        vec2 cp = CalcVec(scalar);
+        return PointPointDistance(LineClosestPointFromPoint(a, b, cp), cp) - r;
+    };
+
+    // float l = Norm(dp);
+    float t = 0.f;
+    float delta = 0.01f;
+    float value1 = Calc(t);
+    float value2 = Calc(t + delta); 
+
+    // newtons
+    for(int i=0; i<3; i++){
+        float slope = (value2 - value1) / delta;
+
+        t = t - value1 / slope;
+
+        value1 = Calc(t);
+        value2 = Calc(t + delta);
+    }
+
+    result = CalcVec(t);
+
+    return result;
 }
