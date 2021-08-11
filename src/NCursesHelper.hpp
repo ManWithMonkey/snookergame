@@ -37,6 +37,9 @@ void HandleInput();
 static std::vector<std::pair<char, void(*)()>> callbacksIfKeyPressed;
 void AddCallback(char c, void(*func)());
 
+static std::vector<void(*)()> resizeCallbacks;
+void AddResizeCallback(void(*func)());
+
 void PlotPixel(int x, int y, char c);
 
 void DefaultScreen();

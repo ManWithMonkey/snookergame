@@ -23,6 +23,10 @@ void Game::Update(){
         if(x > w - 1.f) ball.vel.x = -velx;
         if(y > h - 1.f) ball.vel.y = -vely;
 
+        // const float deacceleration = 0.9f;
+        // ball.vel.x *= (1.f - deltaTime * deacceleration);
+        // ball.vel.y *= (1.f - deltaTime * deacceleration);
+
         // position change
         ball.dpos.x = ball.vel.x * deltaTime;
         ball.dpos.y = ball.vel.y * deltaTime;
@@ -73,21 +77,6 @@ void Game::Update(){
         ball.pos.y += ball.dpos.y;
     }
 
-    float t = 3.f;
-    float l = 5.f;
-    float b = h - 4.f;
-    float r = w - 6.f;
-
-    top     = {{l, t}, {r, t}};
-    bottom  = {{l, b}, {r, b}};
-    left    = {{l, t}, {l, b}};
-    right   = {{r, t}, {r, b}};
-
-    lines[0] = top;
-    lines[1] = bottom;
-    lines[2] = left;
-    lines[3] = right;
-
     for(Line& line : lines)
         line.UpdateNormal();
 
@@ -107,6 +96,10 @@ void Game::Draw(){
 }
 
 void Game::Reset(){
+    auto frand = []() -> float {
+        return (float)rand() / ((float)(RAND_MAX) + 1.f);
+    };
+
     balls.clear();
     lines.clear();
 
@@ -114,34 +107,52 @@ void Game::Reset(){
 
     ball.pos = {20, 20};
     ball.vel = {-125.f, 63.f};
-    ball.r = 3.f;
+    ball.r = 2.f;
 
     balls.push_back(ball);
 
-    Line l1;
-    l1.a = {4, 2};
-    l1.b = {10, 2};
-    l1.UpdateNormal();
-    lines.push_back(l1);
-    lines.push_back(l1);
-    lines.push_back(l1);
-    lines.push_back(l1);
+    float t = 5.f;
+    float l = 8.f;
+    float b = GetHeight() - t - 1.f;
+    float r = GetWidth() - l - 1.f;
 
-    const int extra = 4;
+    float holer = 3.f;
 
-    if(lines.size() < 4 + extra){
-        lines.resize(4 + extra);
+    top     = {{l + holer, t}, {r - holer, t}};
+    bottom  = {{l + holer, b}, {r - holer, b}};
+    left    = {{l, t + holer}, {l, b - holer}};
+    right   = {{r, t + holer}, {r, b - holer}};
+
+    lines.push_back(top);
+    lines.push_back(bottom);
+    lines.push_back(left);
+    lines.push_back(right);
+
+    for(vec3 p : {
+        vec3{l, t, 1.f * 3.14159f * 0.5f},
+        vec3{l, b, 0.f * 3.14159f * 0.5f},
+        vec3{r, b, 3.f * 3.14159f * 0.5f},
+        vec3{r, t, 2.f * 3.14159f * 0.5f}
+    }){
+        int pc = 8;
+        float da = 1.5f * 3.14159f / (float)pc;
+        vec2 point = vec2{cos(p.z), sin(p.z)} * holer;
+        for(int i=0; i<pc; i++){
+            vec2 center = {p.x, p.y};
+            vec2 next = vec2{cos(p.z + da * (float)i), sin(p.z + da * (float)i)} * holer;
+            lines.push_back({point + center, next + center});
+            point = next;
+        }
     }
-    
-    auto frand = []() -> float {
-        return (float)rand() / ((float)(RAND_MAX) + 1.f);
-    };
+
+    const int extra = 0;
 
     for(int i=0; i<extra; i++){
-        lines[4 + i].a.x = 3.f + frand() * (GetWidth()  - 6.f);
-        lines[4 + i].a.y = 3.f + frand() * (GetHeight() - 6.f);
-        lines[4 + i].b.x = 3.f + frand() * (GetWidth()  - 6.f);
-        lines[4 + i].b.y = 3.f + frand() * (GetHeight() - 6.f);
+        lines.push_back({});
+        lines.back().a.x = 3.f + frand() * (GetWidth()  - 6.f);
+        lines.back().a.y = 3.f + frand() * (GetHeight() - 6.f);
+        lines.back().b.x = 3.f + frand() * (GetWidth()  - 6.f);
+        lines.back().b.y = 3.f + frand() * (GetHeight() - 6.f);
     }
 }
 

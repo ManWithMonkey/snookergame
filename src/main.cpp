@@ -18,11 +18,7 @@ std::string ToString(const T& rhs){
 
 static Game game;
 
-void Randomize(){
-    auto frand = []() -> float {
-        return (float)rand() / ((float)(RAND_MAX) + 1.f);
-    };
-
+void Reset(){
     game.Reset();
 }
 
@@ -44,13 +40,14 @@ void S(){
 int main(){
     Init();
 
-    Randomize();
-    AddCallback('r', Randomize);
+    Reset();
+    AddCallback('r', Reset);
     // AddCallback('a', MoveL);
     // AddCallback('d', MoveR);
     // AddCallback('w', MoveU);
     // AddCallback('s', MoveD);
     // AddCallback(' ', SetOther);
+    AddResizeCallback(Reset);
 
     while(!ShouldQuit()){
         UpdateNCurses();
@@ -60,7 +57,7 @@ int main(){
         game.Draw();
 
         Refresh();
-        usleep(100000);
+        usleep(1000);
     }
 
     Quit();

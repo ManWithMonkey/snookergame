@@ -29,6 +29,10 @@ void HandleScreenResizing(){
         CURRENT_SCREEN_WIDTH    = nw;
         CURRENT_SCREEN_HEIGHT   = nh;
     }
+
+    for(auto& func : resizeCallbacks){
+        func();
+    }
 }
 
 void HandleInput(){
@@ -60,6 +64,11 @@ void AddCallback(char c, void(*func)()){
     newpair.second = func;
 
     callbacksIfKeyPressed.push_back(newpair);
+}
+
+
+void AddResizeCallback(void(*func)()){
+    resizeCallbacks.push_back(func);
 }
 
 void Refresh(){
