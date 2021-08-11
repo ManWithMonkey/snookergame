@@ -68,10 +68,10 @@ float LinePointDistance(vec2 a, vec2 b, vec2 p){
     float v1 = DotProduct(u1, p - a);
     float v2 = DotProduct(u2, p - b);
 
-    if(v1 == v2){
+    if(v1 * v2 > 0.f){
         vec2 n = Normal(u1);
         float v = DotProduct(n, p - a);
-        return v;
+        return std::abs(v);
     }
     else{
         return std::min(
@@ -82,7 +82,20 @@ float LinePointDistance(vec2 a, vec2 b, vec2 p){
 }
 
 float LineLineDistance(vec2 a1, vec2 b1, vec2 a2, vec2 b2){
-    return 0.f;
+    if(LineLineCollision(a1, b1, a2, b2)){
+        return 0.f;
+    }
+
+    return std::min({
+        LinePointDistance(a1, b1, a2),
+        LinePointDistance(a1, b1, b2),
+        LinePointDistance(a2, b2, a1),
+        LinePointDistance(a2, b2, b1)
+    });
+}
+
+vec2 LineClosestPointFromPoint(vec2 a, vec2 b, vec2 p){
+    return {0.f, 0.f};
 }
 
 vec2 LineCollisionPoint(vec2 a1, vec2 b1, vec2 a2, vec2 b2){

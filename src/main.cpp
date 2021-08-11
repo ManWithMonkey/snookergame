@@ -16,11 +16,10 @@ std::string ToString(const T& rhs){
     return result;
 }
 
-static vec2 p2 = {2, 2}, p1 = {23, 12};
+static vec2 p1 = {23, 12}, p2;
 static vec2 p3, p4;
 
 void Randomize(){
-
     auto frand = []() -> float {
         return (float)rand() / ((float)(RAND_MAX) + 1.f);
     };
@@ -35,10 +34,6 @@ void Randomize(){
 
     p3 = {x1, y1};
     p4 = {x2, y2};
-}
-
-void SetOther(){
-    p2 = p1;
 }
 
 void MoveL(){
@@ -63,7 +58,6 @@ int main(){
     Randomize();
 
     AddCallback('r', Randomize);
-    AddCallback(' ', SetOther);
     AddCallback('a', MoveL);
     AddCallback('d', MoveR);
     AddCallback('w', MoveU);
@@ -73,12 +67,14 @@ int main(){
         UpdateNCurses();
         BlankScreen();
 
+        p2 = LineClosestPointFromPoint(p3, p4, p1);
+
         DrawFunctions::DrawLine(p3.x, p3.y, p4.x, p4.y, 176);
-        DrawFunctions::DrawLine(p1.x, p1.y, p2.x, p2.y, 176);
-        vec2 collision = LineCollisionPoint(p1, p2, p3, p4);
-        DrawFunctions::DrawSolidBall(collision.x, collision.y, 2.f, 178);
-        std::string s = ToString(collision.x) + " " + ToString(collision.y);
-        
+        // DrawFunctions::DrawLine(p1.x, p1.y, p2.x, p2.y, '.');
+        DrawFunctions::DrawPoint(p1.x, p1.y, 'X');
+
+        float distance = LinePointDistance(p3, p4, p1);
+        std::string s = ToString(distance);
         DrawFunctions::TypeString(0, 0, s);
 
         Refresh();
