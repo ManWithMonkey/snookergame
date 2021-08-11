@@ -13,6 +13,8 @@ public:
     void Update();
     void Draw();
 
+    void Randomize();
+
 private:
     std::chrono::steady_clock::time_point lastUpdate;
     float deltaTime = 0.f;

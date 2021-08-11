@@ -1,12 +1,13 @@
 #include "NCursesHelper.hpp"
 
 void Init(){
-    initscr();
+    keypad(initscr(), true);
     noecho();
     curs_set(0);
     if(nodelay(stdscr, true) == ERR){
         std::cout << "error\n";
     }
+    HandleScreenResizing();
 }
 
 void Quit(){
@@ -14,7 +15,6 @@ void Quit(){
 }
 
 void UpdateNCurses(){
-    HandleScreenResizing();
     HandleInput();
 }
 
@@ -32,15 +32,34 @@ void HandleScreenResizing(){
 }
 
 void HandleInput(){
-    char c = getch();
+    int c = getch();
 
     while(c != ERR){
+        if(c == KEY_RESIZE){
+            HandleScreenResizing();
+            Refresh();
+        }
         if(c == 'q'){
             SHOULD_QUIT = true;
         }
 
+        for(auto& pair : callbacksIfKeyPressed){
+            if(pair.first == c){
+                pair.second();
+            }
+        }
+
         c = getch();
     }
+}
+
+void AddCallback(char c, void(*func)()){
+    std::pair<char, void(*)()> newpair;
+
+    newpair.first = c;
+    newpair.second = func;
+
+    callbacksIfKeyPressed.push_back(newpair);
 }
 
 void Refresh(){
@@ -101,6 +120,19 @@ void DefaultScreen(){
                 SCREEN_DATA[y * SCREEN_WIDTH_MAX + x] = b;
             else
                 SCREEN_DATA[y * SCREEN_WIDTH_MAX + x] = a[(y + x) % sizeof(a)];
+        }
+    }
+}
+
+void BlankScreen(){
+    int w = std::min(CURRENT_SCREEN_WIDTH,  SCREEN_WIDTH_MAX);
+    int h = std::min(CURRENT_SCREEN_HEIGHT, SCREEN_HEIGHT_MAX);
+
+    char a = ' ';
+
+    for(int y=0; y<h; y++){
+        for(int x=0; x<w; x++){
+            SCREEN_DATA[y * SCREEN_WIDTH_MAX + x] = a;
         }
     }
 }
