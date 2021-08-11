@@ -26,7 +26,7 @@ private:
     const int MAX_COLLISIONS_ITERS = 5;
     const float MIRROR_LOSS = 0.99f;
     const float DPOS_LOSS   = 0.5f;
-    const float VEL_LOSS    = 0.99f;
+    const float VEL_LOSS    = 0.95f;
 
 private:
     void DrawBall(const Ball& ball, char c);

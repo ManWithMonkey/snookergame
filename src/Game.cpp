@@ -105,7 +105,7 @@ void Game::Reset(){
 
     Ball ball;
 
-    ball.pos = {20, 20};
+    ball.pos = {10, 10};
     ball.vel = {-125.f, 63.f};
     ball.r = 2.f;
 
