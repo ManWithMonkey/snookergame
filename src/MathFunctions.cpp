@@ -39,7 +39,15 @@ vec2 Multiply(vec2 a, float s){
 }
 
 bool LineLineCollision(vec2 a1, vec2 b1, vec2 a2, vec2 b2){
-    return false;
+    vec2 n1 = NormalUnit(b1 - a1);
+    vec2 n2 = NormalUnit(b2 - a2);
+
+    float v1 = DotProduct(n1, a2 - a1);
+    float v2 = DotProduct(n1, b2 - a1);
+    float v3 = DotProduct(n2, a1 - a2);
+    float v4 = DotProduct(n2, b1 - a2);
+
+    return (v1 * v2 < 0.f) && (v3 * v4 < 0.f);
 }
 
 bool MovingCircleCollidesWithStaticLine(vec2 p, vec2 dp, float r, vec2 a, vec2 b){

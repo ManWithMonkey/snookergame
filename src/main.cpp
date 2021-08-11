@@ -16,7 +16,7 @@ std::string ToString(const T& rhs){
     return result;
 }
 
-static vec2 p1 = {23, 12}, p2;
+static vec2 p1 = {23, 12}, p2 = {30, 30};
 static vec2 p3, p4;
 
 void Randomize(){
@@ -34,6 +34,10 @@ void Randomize(){
 
     p3 = {x1, y1};
     p4 = {x2, y2};
+}
+
+void SetOther(){
+    p2 = p1;
 }
 
 void MoveL(){
@@ -62,19 +66,18 @@ int main(){
     AddCallback('d', MoveR);
     AddCallback('w', MoveU);
     AddCallback('s', MoveD);
+    AddCallback(' ', SetOther);
 
     while(!ShouldQuit()){
         UpdateNCurses();
         BlankScreen();
 
-        p2 = LineClosestPointFromPoint(p3, p4, p1);
-
         DrawFunctions::DrawLine(p3.x, p3.y, p4.x, p4.y, 176);
-        DrawFunctions::DrawLine(p1.x, p1.y, p2.x, p2.y, '.');
+        DrawFunctions::DrawLine(p1.x, p1.y, p2.x, p2.y, 176);
         DrawFunctions::DrawPoint(p1.x, p1.y, 'X');
 
-        float distance = LinePointDistance(p3, p4, p1);
-        std::string s = ToString(distance);
+        bool collides = LineLineCollision(p1, p2, p3, p4);
+        std::string s = (collides ? "collides" : "doesnt collide");
         DrawFunctions::TypeString(0, 0, s);
 
         Refresh();
