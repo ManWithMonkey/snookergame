@@ -6,6 +6,7 @@
 #include <math.h>
 #include <algorithm>
 #include <iostream>
+#include <vector>
 
 // redo this file
 
@@ -33,8 +34,12 @@ void UpdateNCurses();
 void HandleScreenResizing();
 void HandleInput();
 
+static std::vector<std::pair<char, void(*)()>> callbacksIfKeyPressed;
+void AddCallback(char c, void(*func)());
+
 void PlotPixel(int x, int y, char c);
 
 void DefaultScreen();
+void BlankScreen();
 
 #endif // __NCURSESHELPER_H__
