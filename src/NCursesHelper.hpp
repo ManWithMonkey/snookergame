@@ -9,8 +9,8 @@
 
 // redo this file
 
-static const int SCREEN_WIDTH_MAX = 200;
-static const int SCREEN_HEIGHT_MAX = 100;
+static const int SCREEN_WIDTH_MAX = 300;
+static const int SCREEN_HEIGHT_MAX = 200;
 
 static int SCREEN_DATA[SCREEN_WIDTH_MAX * SCREEN_HEIGHT_MAX];
 
