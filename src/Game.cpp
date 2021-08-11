@@ -32,23 +32,39 @@ void Game::Update(){
         for(int i=0; (i<MAX_COLLISIONS_ITERS) && collisionsLastIteration; i++){
             collisionsLastIteration = false;
 
+            float minDistance = 10000000.f;
+            int lineIndex = 0;
+            vec2 normalMin, centerMin, closestMin, mirrorMin;
+
             for(Line& line : lines){
                 if(MovingCircleCollidesWithStaticLine(ball.pos, ball.dpos, ball.r, line.a, line.b)){
                     vec2 collisionCircleCenter = MovingCircleCollisionPointWithLine(ball.pos, ball.dpos, ball.r, line.a, line.b);
                     vec2 closest = LineClosestPointFromPoint(line.a, line.b, ball.pos);
-                    vec2 normal = UnitVector(closest - ball.pos); // line.nu
-                    vec2 mirror = MirrorVectorFromNormal(ball.pos + ball.dpos - collisionCircleCenter, normal);
-                    vec2 mirroredDst = collisionCircleCenter + mirror;
-                    float l = Norm(ball.dpos);
-                    float mirrorl = Norm(mirror);
 
-                    ball.pos = ball.pos + UnitVector(ball.dpos) * (l - mirrorl) * MIRROR_LOSS;
+                    float distance = Norm(collisionCircleCenter - closest);
 
-                    ball.dpos = UnitVector(mirror) * mirrorl            * DPOS_LOSS;
-                    ball.vel = MirrorVectorFromNormal(ball.vel, normal) * VEL_LOSS;
+                    if(distance > minDistance)
+                        continue;
+
+                    minDistance = distance;
+                    centerMin = collisionCircleCenter;
+                    closestMin = closest;
+                    normalMin = UnitVector(closest - ball.pos); // line.nu
+                    mirrorMin = MirrorVectorFromNormal(ball.pos + ball.dpos - collisionCircleCenter, normalMin);
+                    // vec2 mirroredDst = collisionCircleCenter + mirror;
 
                     collisionsLastIteration = true;
                 }
+            }
+
+            if(collisionsLastIteration){
+                float l = Norm(ball.dpos);
+                float mirrorl = Norm(mirrorMin);
+
+                ball.pos = ball.pos + UnitVector(ball.dpos) * (l - mirrorl) * MIRROR_LOSS;
+
+                ball.dpos = UnitVector(mirrorMin) * mirrorl            * DPOS_LOSS;
+                ball.vel = MirrorVectorFromNormal(ball.vel, normalMin) * VEL_LOSS;
             }
         }
 

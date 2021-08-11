@@ -60,7 +60,7 @@ int main(){
         game.Draw();
 
         Refresh();
-        usleep(20000);
+        usleep(100000);
     }
 
     Quit();

@@ -24,7 +24,7 @@ private:
     std::vector<Ball> balls;
 
     const int MAX_COLLISIONS_ITERS = 5;
-    const float MIRROR_LOSS = 0.95f;
+    const float MIRROR_LOSS = 0.99f;
     const float DPOS_LOSS   = 0.5f;
     const float VEL_LOSS    = 0.99f;
 
