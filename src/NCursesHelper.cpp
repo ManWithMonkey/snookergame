@@ -1,18 +1,16 @@
 #include "NCursesHelper.hpp"
 
-/* 
-       The curs_set routine sets the cursor state to invisible, normal, or
-       very visible for visibility equal to 0, 1, or 2 respectively.
+/*
+	   The curs_set routine sets the cursor state to invisible, normal, or
+	   very visible for visibility equal to 0, 1, or 2 respectively.
 */
-enum cursor_visibility
-{
+enum cursor_visibility {
 	CURS_INVIS  = 0,
 	CURS_NORMAL = 1,
 	CURS_BRIGHT = 2,
 };
 
-void Init()
-{
+void Init() {
 	initscr();
 	keypad(stdscr, true);
 	noecho();
@@ -22,24 +20,21 @@ void Init()
 	}
 }
 
-void Quit()
-{
+void Quit() {
 	endwin();
 }
 
-void UpdateNCurses()
-{
+void UpdateNCurses() {
 	HandleInput();
 }
 
-void HandleScreenResizing()
-{
+void HandleScreenResizing() {
 	int nw, nh;
 	getmaxyx(stdscr, nh, nw);
 
-	// this check is probably redundant since the function gets called when a resize event occurred
-	if (nw != CURRENT_SCREEN_WIDTH || nh != CURRENT_SCREEN_HEIGHT)
-	{
+	// this check is probably redundant since the function gets called when a
+	// resize event occurred
+	if (nw != CURRENT_SCREEN_WIDTH || nh != CURRENT_SCREEN_HEIGHT) {
 		// std::cout << "Window resized to: " << nw << "x" << nh << "\n";
 		// wresize(stdscr, nh, nw);
 
@@ -48,14 +43,11 @@ void HandleScreenResizing()
 	}
 }
 
-void HandleInput()
-{
+void HandleInput() {
 	int c;
 
-	while ((c = getch()) != ERR)
-	{
-		switch (c)
-		{
+	while ((c = getch()) != ERR) {
+		switch (c) {
 		case KEY_RESIZE:
 			HandleScreenResizing();
 			Refresh();
@@ -68,15 +60,12 @@ void HandleInput()
 	}
 }
 
-void Refresh()
-{
+void Refresh() {
 	int w = std::min(CURRENT_SCREEN_WIDTH, SCREEN_WIDTH_MAX);
 	int h = std::min(CURRENT_SCREEN_HEIGHT, SCREEN_HEIGHT_MAX);
 
-	for (int y = 0; y < h; y++)
-	{
-		for (int x = 0; x < w; x++)
-		{
+	for (int y = 0; y < h; y++) {
+		for (int x = 0; x < w; x++) {
 			move(y, x);
 			char c = SCREEN_DATA[y * SCREEN_WIDTH_MAX + x];
 			addch(c);
@@ -86,55 +75,45 @@ void Refresh()
 	refresh();
 }
 
-bool ShouldQuit()
-{
+bool ShouldQuit() {
 	return SHOULD_QUIT;
 }
 
-int GetWidth()
-{
+int GetWidth() {
 	return CURRENT_SCREEN_WIDTH;
 }
 
-int GetHeight()
-{
+int GetHeight() {
 	return CURRENT_SCREEN_HEIGHT;
 }
 
-int GetMaxWidth()
-{
+int GetMaxWidth() {
 	return SCREEN_WIDTH_MAX;
 }
 
-int GetMaxHeight()
-{
+int GetMaxHeight() {
 	return SCREEN_HEIGHT_MAX;
 }
 
-void PlotPixel(int x, int y, char c)
-{
-	if (x < 0 || y < 0 || x >= GetWidth() || y >= GetHeight())
-	{
+void PlotPixel(int x, int y, char c) {
+	if (x < 0 || y < 0 || x >= GetWidth() || y >= GetHeight()) {
 		return;
 	}
 
 	SCREEN_DATA[y * SCREEN_WIDTH_MAX + x] = c;
 }
 
-void DefaultScreen()
-{
+void DefaultScreen() {
 	int w = std::min(CURRENT_SCREEN_WIDTH, SCREEN_WIDTH_MAX);
 	int h = std::min(CURRENT_SCREEN_HEIGHT, SCREEN_HEIGHT_MAX);
 
 	char b = '#';
-	char a[] = {
-	    '.', ' ', ' '};
+	char a[] = {'.', ' ', ' '};
 
-	for (int y = 0; y < h; y++)
-	{
-		for (int x = 0; x < w; x++)
-		{
-			if (x == 0 || y == 0 || x == CURRENT_SCREEN_WIDTH - 1 || y == CURRENT_SCREEN_HEIGHT - 1)
+	for (int y = 0; y < h; y++) {
+		for (int x = 0; x < w; x++) {
+			if (x == 0 || y == 0 || x == CURRENT_SCREEN_WIDTH - 1 ||
+				y == CURRENT_SCREEN_HEIGHT - 1)
 				SCREEN_DATA[y * SCREEN_WIDTH_MAX + x] = b;
 			else
 				SCREEN_DATA[y * SCREEN_WIDTH_MAX + x] = a[(y + x) % sizeof(a)];

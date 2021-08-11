@@ -1,23 +1,23 @@
-#include <unistd.h>
 #include "Game.hpp"
+#include <unistd.h>
 
-int main(){
-    Init();
+int main() {
+	Init();
 
-    Game game;
+	Game game;
 
-    while(!ShouldQuit()){
-        UpdateNCurses();
-        DefaultScreen();
+	while (!ShouldQuit()) {
+		UpdateNCurses();
+		DefaultScreen();
 
-        game.Update();
-        game.Draw();
+		game.Update();
+		game.Draw();
 
-        Refresh();
-        usleep(1000);
-    }
+		Refresh();
+		usleep(1000);
+	}
 
-    Quit();
+	Quit();
 
-    return 0;
+	return 0;
 }
