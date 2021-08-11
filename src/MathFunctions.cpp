@@ -31,18 +31,8 @@ float Angle(vec2 v){
 }
 
 vec2 MirrorVectorFromNormal(vec2 v, vec2 n){
-    float l = Norm(v);
-
-    float a1 = Angle(v);
-    float a2 = Angle(n);
-
-    float da = std::fmod(a2 - a1 + 2.f * 3.14159f, 3.14159f);
-
-    float a = a1 + da;
-
-    vec2 result = {l * cos(a), l * sin(a)};
-
-    return result;
+    // https ://math.stackexchange.com/questions/13261/how-to-get-a-reflection-vector
+    return v - n * 2.f * DotProduct(v, n);
 }
 
 vec2 Add(vec2 a, vec2 b){
