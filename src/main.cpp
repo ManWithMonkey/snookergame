@@ -74,12 +74,15 @@ int main(){
 
         const float r = 10.f;
 
-        vec2 collision = MovingCircleCollisionPointWithLine(p2, p1 - p2, r, p3, p4);
+        vec2 n = NormalUnit(p4 - p3);
 
-        if(MovingCircleCollidesWithStaticLine(p2, p1 - p2, r, p3, p4))
-            DrawFunctions::DrawSolidBall(collision.x, collision.y, r - 1.f, '.');
+        vec2 collision = LineCollisionPoint(p1, p2, p3, p4);
+        vec2 mirror = MirrorVectorFromNormal(p1 - collision, n);
+        vec2 mirroredDst = collision + mirror;
+
         DrawFunctions::DrawLine(p3.x, p3.y, p4.x, p4.y, 176);
-        DrawFunctions::DrawLine(p1.x, p1.y, p2.x, p2.y, 176);
+        DrawFunctions::DrawLine(p2.x, p2.y, collision.x, collision.y, 176);
+        DrawFunctions::DrawLine(collision.x, collision.y, mirroredDst.x, mirroredDst.y, 176);
         DrawFunctions::DrawPoint(p1.x, p1.y, 'X');
         DrawFunctions::DrawPoint(p2.x, p2.y, 'X');
         DrawFunctions::DrawPoint(p3.x, p3.y, 'X');

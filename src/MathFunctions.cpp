@@ -26,6 +26,25 @@ float DotProduct(vec2 a, vec2 b){
     return a.x * b.x + a.y * b.y;
 }
 
+float Angle(vec2 v){
+    return std::atan2(v.y, v.x);
+}
+
+vec2 MirrorVectorFromNormal(vec2 v, vec2 n){
+    float l = Norm(v);
+
+    float a1 = Angle(v);
+    float a2 = Angle(n);
+
+    float da = std::fmod(a2 - a1 + 2.f * 3.14159f, 3.14159f);
+
+    float a = a1 + da;
+
+    vec2 result = {l * cos(a), l * sin(a)};
+
+    return result;
+}
+
 vec2 Add(vec2 a, vec2 b){
     return {a.x + b.x, a.y + b.y};
 }
