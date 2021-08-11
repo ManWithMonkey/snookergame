@@ -83,7 +83,7 @@ vec2 LineCollisionPoint(vec2 a1, vec2 b1, vec2 a2, vec2 b2){
 
     float t = - value1 / slope;
 
-    vec2 p = Add(a1, Multiply(u1, t));
+    vec2 p = Add(a1, Multiply(u, t));
 
     return p;
 }
