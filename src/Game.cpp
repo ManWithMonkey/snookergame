@@ -4,8 +4,8 @@ Game::Game(){
     Ball ball;
 
     ball.pos = {20, 20};
-    ball.vel = {-75.f, 20.f};
-    ball.r = 3.f;
+    ball.vel = {-25.f, 13.f};
+    ball.r = 5.f;
 
     balls.push_back(ball);
 
@@ -50,17 +50,18 @@ void Game::Update(){
 
             for(Line& line : lines){
                 if(MovingCircleCollidesWithStaticLine(ball.pos, ball.dpos, ball.r, line.a, line.b)){
-                    vec2 collision = MovingCircleCollisionPointWithLine(ball.pos, ball.dpos, ball.r, line.a, line.b);
-                    // vec2 normal = UnitVector(collision - ball.pos);
-                    vec2 mirror = MirrorVectorFromNormal(ball.pos + ball.dpos - collision, line.nu);
-                    vec2 mirroredDst = collision + mirror;
+                    vec2 collisionCircleCenter = MovingCircleCollisionPointWithLine(ball.pos, ball.dpos, ball.r, line.a, line.b);
+                    vec2 closest = LineClosestPointFromPoint(line.a, line.b, ball.pos);
+                    vec2 normal = UnitVector(closest - ball.pos); // line.nu
+                    vec2 mirror = MirrorVectorFromNormal(ball.pos + ball.dpos - collisionCircleCenter, normal);
+                    vec2 mirroredDst = collisionCircleCenter + mirror;
                     float l = Norm(ball.dpos);
                     float mirrorl = Norm(mirror);
 
                     ball.pos = ball.pos + UnitVector(ball.dpos) * (l - mirrorl) * 0.9f;
 
                     ball.dpos = UnitVector(mirror) * mirrorl;
-                    ball.vel = MirrorVectorFromNormal(ball.vel, line.nu);
+                    ball.vel = MirrorVectorFromNormal(ball.vel, normal);
 
                     collisionsLastIteration = true;
                 }
@@ -113,16 +114,16 @@ void Game::Randomize(){
     }
     
     balls[0].pos = {20, 20};
-    balls[0].vel = {-75.f, 20.f};
+    balls[0].vel = {-25.f, 13.f};
 
     auto frand = []() -> float {
         return (float)rand() / ((float)(RAND_MAX) + 1.f);
     };
 
     for(int i=0; i<extra; i++){
-        lines[4 + i].a.x = 3.f + frand() * (GetWidth() - 6.f);
+        lines[4 + i].a.x = 3.f + frand() * (GetWidth()  - 6.f);
         lines[4 + i].a.y = 3.f + frand() * (GetHeight() - 6.f);
-        lines[4 + i].b.x = 3.f + frand() * (GetWidth() - 6.f);
+        lines[4 + i].b.x = 3.f + frand() * (GetWidth()  - 6.f);
         lines[4 + i].b.y = 3.f + frand() * (GetHeight() - 6.f);
     }
 }
