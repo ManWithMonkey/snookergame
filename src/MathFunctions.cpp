@@ -4,6 +4,10 @@ vec2 Normal(vec2 v){
     return {v.y, -v.x};
 }
 
+vec2 NormalUnit(vec2 v){
+    return Normal(UnitVector(v));
+}
+
 float Norm(vec2 v){
     return std::sqrt(v.x * v.x + v.y * v.y);
 }
@@ -54,11 +58,27 @@ bool MovingCircleCollidesWithStaticLine(vec2 p, vec2 dp, float r, vec2 a, vec2 b
 }
 
 float PointPointDistance(vec2 a, vec2 b){
-    return 0.f;
+    return Norm(b - a);
 }
 
 float LinePointDistance(vec2 a, vec2 b, vec2 p){
-    return 0.f;
+    vec2 u1 = UnitVector(b - a);
+    vec2 u2 = UnitVector(a - b);
+
+    float v1 = DotProduct(u1, p - a);
+    float v2 = DotProduct(u2, p - b);
+
+    if(v1 == v2){
+        vec2 n = Normal(u1);
+        float v = DotProduct(n, p - a);
+        return v;
+    }
+    else{
+        return std::min(
+            Norm(p - a),
+            Norm(p - b)
+        );
+    }
 }
 
 float LineLineDistance(vec2 a1, vec2 b1, vec2 a2, vec2 b2){
@@ -66,24 +86,23 @@ float LineLineDistance(vec2 a1, vec2 b1, vec2 a2, vec2 b2){
 }
 
 vec2 LineCollisionPoint(vec2 a1, vec2 b1, vec2 a2, vec2 b2){
-    // todo operator overloads 
-    vec2 d1 = Subtract(b1, a1);
-    vec2 d2 = Subtract(b2, a2);
+    vec2 d1 = b1 - a1;
+    vec2 d2 = b2 - a2;
 
     vec2 u = UnitVector(d1);
     vec2 n = NormalUnit(d2);
 
-    vec2 v1 = Subtract(a1, a2);
-    vec2 v2 = Subtract(Add(a1, u), a2);
+    vec2 v1 = (a1 - a2);
+    vec2 v2 = (a1 - a2) + u;
 
-    float value1 = DotProduct(n, v1);
-    float value2 = DotProduct(n, v2);
+    float scalar1 = DotProduct(n, v1);
+    float scalar2 = DotProduct(n, v2);
 
-    float slope = value2 - value1;
+    float slope = scalar2 - scalar1;
 
-    float t = - value1 / slope;
+    float t = - scalar1 / slope;
 
-    vec2 p = Add(a1, Multiply(u, t));
+    vec2 p = a1 + u * t;
 
     return p;
 }

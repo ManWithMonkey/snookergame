@@ -11,10 +11,6 @@ float Norm(vec2 v);
 vec2 UnitVector(vec2 v);
 float DotProduct(vec2 a, vec2 b);
 
-vec2 Add(vec2 a, vec2 b);
-vec2 Subtract(vec2 a, vec2 b);
-vec2 Multiply(vec2 a, float s);
-
 bool LineLineCollision(vec2 a1, vec2 b1, vec2 a2, vec2 b2);
 bool MovingCircleCollidesWithStaticLine(vec2 p, vec2 dp, float r, vec2 a, vec2 b);
 
