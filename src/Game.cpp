@@ -1,22 +1,7 @@
 #include "Game.hpp"
 
 Game::Game(){
-    Ball ball;
-
-    ball.pos = {20, 20};
-    ball.vel = {-25.f, 13.f};
-    ball.r = 5.f;
-
-    balls.push_back(ball);
-
-    Line l1;
-    l1.a = {4, 2};
-    l1.b = {10, 2};
-    l1.UpdateNormal();
-    lines.push_back(l1);
-    lines.push_back(l1);
-    lines.push_back(l1);
-    lines.push_back(l1);
+    Reset();
 
     lastUpdate = std::chrono::steady_clock::now();
 }
@@ -43,7 +28,6 @@ void Game::Update(){
         ball.dpos.y = ball.vel.y * deltaTime;
 
         // correct collisions
-        const int MAX_COLLISIONS_ITERS = 3;
         bool collisionsLastIteration = true;
         for(int i=0; (i<MAX_COLLISIONS_ITERS) && collisionsLastIteration; i++){
             collisionsLastIteration = false;
@@ -58,10 +42,10 @@ void Game::Update(){
                     float l = Norm(ball.dpos);
                     float mirrorl = Norm(mirror);
 
-                    ball.pos = ball.pos + UnitVector(ball.dpos) * (l - mirrorl) * 0.9f;
+                    ball.pos = ball.pos + UnitVector(ball.dpos) * (l - mirrorl) * MIRROR_LOSS;
 
-                    ball.dpos = UnitVector(mirror) * mirrorl;
-                    ball.vel = MirrorVectorFromNormal(ball.vel, normal);
+                    ball.dpos = UnitVector(mirror) * mirrorl            * DPOS_LOSS;
+                    ball.vel = MirrorVectorFromNormal(ball.vel, normal) * VEL_LOSS;
 
                     collisionsLastIteration = true;
                 }
@@ -106,16 +90,33 @@ void Game::Draw(){
     }
 }
 
-void Game::Randomize(){
+void Game::Reset(){
+    balls.clear();
+    lines.clear();
+
+    Ball ball;
+
+    ball.pos = {20, 20};
+    ball.vel = {-125.f, 63.f};
+    ball.r = 3.f;
+
+    balls.push_back(ball);
+
+    Line l1;
+    l1.a = {4, 2};
+    l1.b = {10, 2};
+    l1.UpdateNormal();
+    lines.push_back(l1);
+    lines.push_back(l1);
+    lines.push_back(l1);
+    lines.push_back(l1);
+
     const int extra = 4;
 
     if(lines.size() < 4 + extra){
         lines.resize(4 + extra);
     }
     
-    balls[0].pos = {20, 20};
-    balls[0].vel = {-25.f, 13.f};
-
     auto frand = []() -> float {
         return (float)rand() / ((float)(RAND_MAX) + 1.f);
     };
