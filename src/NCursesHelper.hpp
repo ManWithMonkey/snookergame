@@ -7,8 +7,6 @@
 #include <algorithm>
 #include <iostream>
 
-// redo this file
-
 static const int SCREEN_WIDTH_MAX = 200;
 static const int SCREEN_HEIGHT_MAX = 100;
 
