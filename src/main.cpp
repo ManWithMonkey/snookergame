@@ -92,33 +92,45 @@ int main(){
         // game.Update();
         // game.Draw();
 
-        // vec2 u1 = UnitVector(p1 - p2);
-        // vec2 u2 = UnitVector(p3 - p4);
-        // vec2 dp1 = u1 * 250.f;
-        // vec2 dp2 = u2 * 250.f;
         vec2 dp1 = p1 - p2;
         vec2 dp2 = p3 - p4;
         vec2 end1 = p2 + dp1;
         vec2 end2 = p4 + dp2;
 
-        bool collides = MovingCirclesCollide(p2, dp1, r1, p4, dp2, r2);
         float collisionScalar = GetCollisionPointMovementScalarNewton(p2, dp1, r1, p4, dp2, r2);
         vec2 collisionPointCenter1 = p2 + dp1 * collisionScalar;
         vec2 collisionPointCenter2 = p4 + dp2 * collisionScalar;
 
-        DrawFunctions::DrawSolidBall(p2.x, p2.y, r1, '1');
-        DrawFunctions::DrawSolidBall(p4.x, p4.y, r2, '2');
-        
-        //collision ghost
-        if(collides){
-            DrawFunctions::DrawSolidBall(collisionPointCenter1.x, collisionPointCenter1.y, r1, '.');
-            DrawFunctions::DrawSolidBall(collisionPointCenter2.x, collisionPointCenter2.y, r2, '.');
-        }
+        bool collides = MovingCirclesCollide(p2, dp1, r1, p4, dp2, r2) && collisionScalar <= 1.f;
 
+        vec2 normal1 = UnitVector(collisionPointCenter2 - collisionPointCenter1);
+        vec2 normal2 = UnitVector(collisionPointCenter1 - collisionPointCenter2);
+        vec2 mirror1 = MirrorVectorFromNormal(dp1 * (1.f - collisionScalar), normal1);
+        vec2 mirror2 = MirrorVectorFromNormal(dp2 * (1.f - collisionScalar), normal1);
+
+        vec2 mirrorDst1 = collisionPointCenter1 + mirror1;
+        vec2 mirrorDst2 = collisionPointCenter2 + mirror2;
+
+        DrawFunctions::DrawSolidBall(p2.x, p2.y, r1, ',');
+        DrawFunctions::DrawSolidBall(p4.x, p4.y, r2, ',');
         DrawFunctions::DrawLine(p2.x, p2.y, end1.x, end1.y, '-');
         DrawFunctions::DrawLine(p4.x, p4.y, end2.x, end2.y, '-');
+        
+        if(collides){
+            //collision ghosts
+            DrawFunctions::DrawSolidBall(collisionPointCenter1.x, collisionPointCenter1.y, r1, '.');
+            DrawFunctions::DrawSolidBall(collisionPointCenter2.x, collisionPointCenter2.y, r2, '.');
+
+            //collision new directions
+            DrawFunctions::DrawLine(collisionPointCenter1.x, collisionPointCenter1.y, mirrorDst1.x, mirrorDst1.y, '!');
+            DrawFunctions::DrawLine(collisionPointCenter2.x, collisionPointCenter2.y, mirrorDst2.x, mirrorDst2.y, '?');
+        }
+
         DrawFunctions::DrawPoint(p1.x, p1.y, '#');
         DrawFunctions::DrawPoint(p3.x, p3.y, '#');
+
+        float distance = Norm(collisionPointCenter1 - collisionPointCenter2) - r1 - r2;
+        DrawFunctions::TypeString(0, 0, ToString(distance));
 
         Refresh();
         usleep(1000);
