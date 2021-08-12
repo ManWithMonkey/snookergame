@@ -260,3 +260,34 @@ float GetCollisionPointMovementScalarNewton(vec2 p1, vec2 dp1, float r1, vec2 p2
 
     return t;
 }
+
+std::pair<vec2, vec2> GetNewVelocities(vec2 p1, vec2 dp1, float r1, vec2 p2, vec2 dp2, float r2){
+    std::pair<vec2, vec2> result;
+    
+    float collisionScalar = GetCollisionPointMovementScalarNewton(p1, dp1, r1, p2, dp2, r2);
+    vec2 collisionPointCenter1 = p1 + dp1 * collisionScalar;
+    vec2 collisionPointCenter2 = p2 + dp2 * collisionScalar;
+
+    dp1 = dp1 * (1.f - collisionScalar);
+    dp2 = dp2 * (1.f - collisionScalar);
+
+    vec2 n = UnitVector(collisionPointCenter2 - collisionPointCenter1);
+    vec2 a = dp1;
+    vec2 v = dp2 - a;
+
+    vec2 x = Normal(n);
+    vec2 y = n;
+
+    float s = DotProduct(v, x);
+    float t = DotProduct(v, y);
+
+    vec2 vx = x * s;
+    vec2 vy = y * t;
+
+    vec2 v1 = vy + a;
+    vec2 v2 = vx + a;
+
+    result = {v1, v2};
+
+    return result;
+}

@@ -30,4 +30,6 @@ vec2 MovingCircleCollisionPointWithLine(vec2 p, vec2 dp, float r, vec2 a, vec2 b
 
 float GetCollisionPointMovementScalarNewton(vec2 p1, vec2 dp1, float r1, vec2 p2, vec2 dp2, float r2);
 
+std::pair<vec2, vec2> GetNewVelocities(vec2 p1, vec2 dp1, float r1, vec2 p2, vec2 dp2, float r2);
+
 #endif // __MATHFUNCTIONS_H__
