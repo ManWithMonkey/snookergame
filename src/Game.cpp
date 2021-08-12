@@ -32,7 +32,7 @@ void Game::Update(){
         ball.dpos.x = ball.vel.x * deltaTime;
         ball.dpos.y = ball.vel.y * deltaTime;
 
-        // correct collisions
+        // correct collisions, needs refactor
         bool collisionsLastIteration = true;
         for(int i=0; (i<MAX_COLLISIONS_ITERS) && collisionsLastIteration; i++){
             collisionsLastIteration = false;

@@ -20,6 +20,7 @@ private:
     std::chrono::steady_clock::time_point lastUpdate;
     float deltaTime = 0.f;
 
+    // seperate collision lines and draw lines
     std::vector<Line> lines;
     std::vector<Ball> balls;
 
