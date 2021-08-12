@@ -99,6 +99,18 @@ bool MovingCircleCollidesWithStaticLine(vec2 p, vec2 dp, float r, vec2 a, vec2 b
     }
 }
 
+bool MovingCirclesCollide(vec2 p1, vec2 dp1, float r1, vec2 p2, vec2 dp2, float r2){
+    // return LineLineDistance(p1, p1 + dp1, p2, p2 + dp2) <= r1 + r2;
+
+    // quick fix
+    float scalar = GetCollisionPointMovementScalarNewton(p1, dp1, r1, p2, dp2, r2);
+    float distance = Norm(
+        (p1 + dp1 * scalar) -
+        (p2 + dp2 * scalar)
+    );
+    return distance < r1 + r2 + 0.01f;
+}
+
 float PointPointDistance(vec2 a, vec2 b){
     return Norm(b - a);
 }
@@ -224,4 +236,26 @@ vec2 MovingCircleCollisionPointWithLine(vec2 p, vec2 dp, float r, vec2 a, vec2 b
     result = CalcVec(t);
 
     return result;
+}
+
+float GetCollisionPointMovementScalarNewton(vec2 p1, vec2 dp1, float r1, vec2 p2, vec2 dp2, float r2){
+    auto GetDistance = [&](float t){
+        vec2 dst1 = p1 + dp1 * t;
+        vec2 dst2 = p2 + dp2 * t;
+
+        return Norm(dst2 - dst1) - r1 - r2;
+    };
+    
+    const float dt = 1E-5f;
+    float t = 0.f;
+
+    for(int i=0; i<10; i++){
+        float distance1 = GetDistance(t);
+        float distance2 = GetDistance(t + dt);
+        float slope = (distance2 - distance1) / dt;
+
+        t -= distance1 / slope;
+    }
+
+    return t;
 }

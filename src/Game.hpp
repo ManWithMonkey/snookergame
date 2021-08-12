@@ -5,6 +5,7 @@
 
 #include <vector>
 #include <chrono>
+#include <limits>
 
 class Game{
 public:

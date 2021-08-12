@@ -24,52 +24,56 @@ void Game::Update(){
         if(x > w - 1.f) ball.vel.x = -velx;
         if(y > h - 1.f) ball.vel.y = -vely;
 
-        // const float deacceleration = 0.9f;
-        // ball.vel.x *= (1.f - deltaTime * deacceleration);
-        // ball.vel.y *= (1.f - deltaTime * deacceleration);
-
         // position change
         ball.dpos.x = ball.vel.x * deltaTime;
         ball.dpos.y = ball.vel.y * deltaTime;
 
-        // correct collisions, needs refactor
+        // correct collisions
         bool collisionsLastIteration = true;
+
         for(int i=0; (i<MAX_COLLISIONS_ITERS) && collisionsLastIteration; i++){
             collisionsLastIteration = false;
 
-            float minDistance = 10000000.f;
-            int lineIndex = 0;
-            vec2 normalMin, centerMin, closestMin, mirrorMin;
+            float minDistance = MAXFLOAT;
+            int firstCollisionIndex = 0;
+            vec2 center;
+            vec2 closest;
 
-            for(Line& line : lines){
+            // find fist collision
+            for(int i=0; i<lines.size(); i++){
+                Line& line = lines[i];
+
                 if(MovingCircleCollidesWithStaticLine(ball.pos, ball.dpos, ball.r, line.a, line.b)){
                     vec2 collisionCircleCenter = MovingCircleCollisionPointWithLine(ball.pos, ball.dpos, ball.r, line.a, line.b);
-                    vec2 closest = LineClosestPointFromPoint(line.a, line.b, ball.pos);
+                    vec2 closestPoint = LineClosestPointFromPoint(line.a, line.b, ball.pos);
 
-                    float distance = Norm(collisionCircleCenter - closest);
+                    float distance = Norm(collisionCircleCenter - closestPoint);
 
-                    if(distance > minDistance)
-                        continue;
+                    if(distance < minDistance){
+                        minDistance             = distance;
+                        firstCollisionIndex     = i;
+                        center                  = collisionCircleCenter;
+                        closest                 = closestPoint;
 
-                    minDistance = distance;
-                    centerMin = collisionCircleCenter;
-                    closestMin = closest;
-                    normalMin = UnitVector(closest - ball.pos); // line.nu
-                    mirrorMin = MirrorVectorFromNormal(ball.pos + ball.dpos - collisionCircleCenter, normalMin);
-                    // vec2 mirroredDst = collisionCircleCenter + mirror;
-
-                    collisionsLastIteration = true;
+                        collisionsLastIteration = true;
+                    }
                 }
             }
 
+            // apply collision
             if(collisionsLastIteration){
-                float l = Norm(ball.dpos);
-                float mirrorl = Norm(mirrorMin);
+                Line& line = lines[firstCollisionIndex];
 
-                ball.pos = ball.pos + UnitVector(ball.dpos) * (l - mirrorl) * MIRROR_LOSS;
+                vec2 normal = UnitVector(closest - ball.pos);
+                vec2 mirror = MirrorVectorFromNormal(ball.pos + ball.dpos - center, normal);
 
-                ball.dpos = UnitVector(mirrorMin) * mirrorl            * DPOS_LOSS;
-                ball.vel = MirrorVectorFromNormal(ball.vel, normalMin) * VEL_LOSS;
+                float totalMotionLength     = Norm(ball.dpos);
+                float mirrorMotionLength    = Norm(mirror);
+
+                ball.pos = ball.pos + UnitVector(ball.dpos) * (totalMotionLength - mirrorMotionLength) * MIRROR_LOSS;
+                ball.dpos = UnitVector(mirror) * mirrorMotionLength * DPOS_LOSS;
+
+                ball.vel = MirrorVectorFromNormal(ball.vel, normal) * VEL_LOSS;
             }
         }
 

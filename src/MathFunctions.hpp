@@ -18,6 +18,7 @@ vec2 MakeVector(float angle, float length);
 bool AABB(vec2 a1, vec2 b1, vec2 a2, vec2 b2);
 bool LineLineCollision(vec2 a1, vec2 b1, vec2 a2, vec2 b2);
 bool MovingCircleCollidesWithStaticLine(vec2 p, vec2 dp, float r, vec2 a, vec2 b);
+bool MovingCirclesCollide(vec2 p1, vec2 dp1, float r1, vec2 p2, vec2 dp2, float r2);
 
 float PointPointDistance(vec2 a, vec2 b);
 float LinePointDistance(vec2 a, vec2 b, vec2 p);
@@ -26,5 +27,7 @@ float LineLineDistance(vec2 a1, vec2 b1, vec2 a2, vec2 b2);
 vec2 LineClosestPointFromPoint(vec2 a, vec2 b, vec2 p);
 vec2 LineCollisionPoint(vec2 a1, vec2 b1, vec2 a2, vec2 b2);
 vec2 MovingCircleCollisionPointWithLine(vec2 p, vec2 dp, float r, vec2 a, vec2 b);
+
+float GetCollisionPointMovementScalarNewton(vec2 p1, vec2 dp1, float r1, vec2 p2, vec2 dp2, float r2);
 
 #endif // __MATHFUNCTIONS_H__
