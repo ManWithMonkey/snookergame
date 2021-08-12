@@ -6,6 +6,7 @@
 #include <math.h>
 #include <algorithm>
 #include <iostream>
+#include <vector>
 
 struct Terminal{
     static bool SHOULD_QUIT;
