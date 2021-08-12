@@ -53,8 +53,11 @@ int main(){
         UpdateNCurses();
         BlankScreen();
 
-        game.Update();
-        game.Draw();
+        // game.Update();
+        // game.Draw();
+        int w = GetWidth();
+        int h = GetHeight();
+        DrawFunctions::DrawSolidEllipse(w / 2, h / 2, w * 0.4f, h * 0.4f, '!');
 
         Refresh();
         usleep(1000);

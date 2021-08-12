@@ -11,6 +11,7 @@ void DrawLineHorisontal(float y, float x1, float x2, char c);
 void DrawLineVertical(float x, float y1, float y2, char c);
 
 void DrawSolidBall(float x, float y, float r, char c);
+void DrawSolidEllipse(float x, float y, float rx, float ry, char c);
 
 void TypeString(int x, int y, std::string str);
 

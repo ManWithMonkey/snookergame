@@ -89,6 +89,28 @@ void DrawSolidBall(float x, float y, float r, char c){
     }
 }
 
+void DrawSolidEllipse(float x, float y, float rx, float ry, char c){
+	if(!isfinite(x) || !isfinite(y) || !isfinite(rx) || !isfinite(ry))
+		return;
+
+    float iy = y - ry;
+    float ix;
+
+    while(iy <= y + ry){
+        float hw = std::sqrt(std::abs(ry * ry - (iy - y) * (iy - y))) * (rx / ry);
+
+        ix = x - hw;
+
+        while(ix <= x + hw){
+            PlotPixel(ix, iy, c);
+
+            ix += 1.f;
+        }
+
+        iy += 1.f;
+    }
+}
+
 void TypeString(int x, int y, std::string str){
 	for(int i=0; i<str.length(); i++){
 		PlotPixel(x+i, y, str[i]);

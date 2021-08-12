@@ -118,10 +118,10 @@ void Game::Reset(){
 
     float holer = 3.5f;
 
-    top     = {{l + holer, t}, {r - holer, t}};
-    bottom  = {{l + holer, b}, {r - holer, b}};
-    left    = {{l, t + holer}, {l, b - holer}};
-    right   = {{r, t + holer}, {r, b - holer}};
+    Line top     = {{l + holer, t}, {r - holer, t}};
+    Line bottom  = {{l + holer, b}, {r - holer, b}};
+    Line left    = {{l, t + holer}, {l, b - holer}};
+    Line right   = {{r, t + holer}, {r, b - holer}};
 
     lines.push_back(top);
     lines.push_back(bottom);
