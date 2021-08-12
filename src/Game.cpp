@@ -109,23 +109,19 @@ void Game::Reset(){
     balls.clear();
     lines.clear();
 
-    Ball ball;
+    const float l = 0.15f * map_width;
+    const float t = 0.15f * map_height;
+    const float r = map_width - l;
+    const float b = map_height - t;
+    const float holer = 0.08f;
+    const float ballr = 0.04f;
 
-    ball.pos = {0.3f, 0.3f};
-    ball.vel = {-5.f, 5.f};
-    ball.r = 0.05f;
+    std::vector<vec2> pointBand;
 
-    balls.push_back(ball);
-
-    float l = 0.1f * map_width;
-    float t = 0.1f * map_height;
-    float r = map_width - l;
-    float b = map_height - t;
-
-    float holer = 0.075f;
-
-    std::vector<vec2> tempPointBand;
-
+    vec2 tr = {r, t};
+    vec2 br = {r, b};
+    vec2 bl = {l, b};
+    vec2 tl = {l, t};
     vec2 tr_x = {r,             t + holer};
     vec2 tr_y = {r - holer,     t};
     vec2 br_x = {r,             b - holer};
@@ -135,38 +131,49 @@ void Game::Reset(){
     vec2 tl_x = {l,             t + holer};
     vec2 tl_y = {l + holer,     t};
 
-    tempPointBand.push_back(tr_x);
-    tempPointBand.push_back(tr_y);
-    tempPointBand.push_back(tl_y);
-    tempPointBand.push_back(tl_x);
-    tempPointBand.push_back(bl_x);
-    tempPointBand.push_back(bl_y);
-    tempPointBand.push_back(br_y);
-    tempPointBand.push_back(br_x);
+    vec2 corners[4][3]{
+        {tr, tr_x, tr_y},
+        {tl, tl_y, tl_x},
+        {bl, bl_x, bl_y},
+        {br, br_y, br_x}
+    };
 
-    for(vec3 p : {
-        vec3{l, t, 1.f * 3.14159f * 0.5f},
-        vec3{l, b, 0.f * 3.14159f * 0.5f},
-        vec3{r, b, 3.f * 3.14159f * 0.5f},
-        vec3{r, t, 2.f * 3.14159f * 0.5f}
-    }){
-        break;
+    float angleOffsets[4] = {
+        1.f * 3.14159f * 0.5f,
+        0.f * 3.14159f * 0.5f,
+        3.f * 3.14159f * 0.5f,
+        2.f * 3.14159f * 0.5f
+    };
+
+    for(int i=0; i<4; i++){
+        pointBand.push_back(corners[i][1]);
+
         int pc = 8;
         float da = 1.5f * 3.14159f / (float)pc;
-        for(int i=0; i<pc; i++){
-            vec2 center = {p.x, p.y};
-            vec2 next = vec2{cos(p.z + da * (float)i), sin(p.z + da * (float)i)} * holer;
-            next = next + center;
+        for(int j=0; j<pc; j++){
+            float ang = 2.f * 3.14159f - (float)j * da + angleOffsets[i];
+            float length = holer;
+
+            vec2 point = corners[i][0] + MakeVector(ang, length);
+            pointBand.push_back(point);
         }
+        
+        pointBand.push_back(corners[i][2]);
     }
     
-    lines.push_back({tempPointBand.back(), tempPointBand.front()});
-    for(int i=1; i<tempPointBand.size(); i++){
+    lines.push_back({pointBand.back(), pointBand.front()});
+    for(int i=1; i<pointBand.size(); i++){
         lines.push_back({
-            tempPointBand[i],
-            tempPointBand[i-1]
+            pointBand[i],
+            pointBand[i-1]
         });
     }
+
+    Ball ball;
+    ball.pos = {map_width / 2.f, map_height / 2.f};
+    ball.vel = {-5.f, 5.f};
+    ball.r = ballr;
+    balls.push_back(ball);
 }
 
 void Game::DrawBall(const Ball& ball, char c){

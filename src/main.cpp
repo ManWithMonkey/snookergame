@@ -42,7 +42,7 @@ int main(){
     Init();
     ResizeEvent();
     Reset();
-    // AddCallback('r', Reset);
+    AddCallback('r', Reset);
     // AddCallback('a', Left);
     // AddCallback('d', Right);
     // AddCallback('w', Up);

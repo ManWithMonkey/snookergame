@@ -13,6 +13,7 @@ vec2 UnitVector(vec2 v);
 float DotProduct(vec2 a, vec2 b);
 float Angle(vec2 v);
 vec2 MirrorVectorFromNormal(vec2 v, vec2 n);
+vec2 MakeVector(float angle, float length);
 
 bool AABB(vec2 a1, vec2 b1, vec2 a2, vec2 b2);
 bool LineLineCollision(vec2 a1, vec2 b1, vec2 a2, vec2 b2);

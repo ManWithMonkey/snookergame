@@ -35,6 +35,11 @@ vec2 MirrorVectorFromNormal(vec2 v, vec2 n){
     return v - n * 2.f * DotProduct(v, n);
 }
 
+vec2 MakeVector(float angle, float length){
+    return vec2{cos(angle), sin(angle)} * length;
+}
+
+// REMOVE
 vec2 Add(vec2 a, vec2 b){
     return {a.x + b.x, a.y + b.y};
 }
@@ -46,6 +51,7 @@ vec2 Subtract(vec2 a, vec2 b){
 vec2 Multiply(vec2 a, float s){
     return {a.x * s, a.y * s};
 }
+// END OF REMOVE
 
 bool AABB(vec2 a1, vec2 b1, vec2 a2, vec2 b2){
     float x1 = std::min(a1.x, b1.x);
