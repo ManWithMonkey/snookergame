@@ -7,6 +7,7 @@
 #include <algorithm>
 #include <iostream>
 #include <vector>
+#include <limits.h>
 
 struct Terminal{
     static bool SHOULD_QUIT;

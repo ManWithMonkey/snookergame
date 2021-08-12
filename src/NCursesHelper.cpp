@@ -38,6 +38,30 @@ void Init() {
 		std::cout << "unable to enable nodelay mode\n";
 	}
 	HandleScreenResizing();
+
+	//colors
+	if(start_color() == ERR){
+		std::cout << "unable to initialize color table\n";
+	}
+	else{
+		const int MAX_COLOR = 1000; // why 1000 ???
+
+		init_color(0, 0, 0, 0);
+		init_color(1, MAX_COLOR, MAX_COLOR, MAX_COLOR);
+		init_color(2, MAX_COLOR, 0, 0);
+		init_color(3, 0, MAX_COLOR, 0);
+		init_color(4, 0, 0, MAX_COLOR);
+
+		const int WHITE_ON_BLACK = 0;
+		const int BLACK_ON_RED = 1;
+		const int BLACK_ON_GREEN = 2;
+		const int BLACK_ON_BLUE = 3;
+		init_pair(WHITE_ON_BLACK, 	1, 0);
+		init_pair(BLACK_ON_RED, 	0, 2);
+		init_pair(BLACK_ON_GREEN, 	0, 3);
+		init_pair(BLACK_ON_BLUE, 	0, 4);
+		attron(COLOR_PAIR(BLACK_ON_BLUE));
+	}
 }
 
 void Quit() {

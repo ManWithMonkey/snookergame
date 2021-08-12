@@ -56,7 +56,7 @@ int main(){
 		game.Draw();
 
 		Refresh();
-		napms(10);
+		napms(1);
 	}
 
 	Quit();
