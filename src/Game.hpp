@@ -18,6 +18,9 @@ public:
     void Reset();
 
 private:
+    void HandleCollisions();
+
+private:
     std::chrono::steady_clock::time_point lastUpdate;
     float deltaTime = 0.f;
 
