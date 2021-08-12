@@ -25,7 +25,7 @@ void DrawCanvas(int x, int y, const Canvas *canvas) {
 			char c = canvas->data[iy * canvas->w + ix];
 
 			if (c != canvas->alpha) {
-				PlotPixel(x2, y2, c);
+				Terminal::PlotPixel(x2, y2, c);
 			}
 		}
 	}

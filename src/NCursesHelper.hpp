@@ -7,15 +7,23 @@
 #include <algorithm>
 #include <iostream>
 
-static const int SCREEN_WIDTH_MAX = 200;
-static const int SCREEN_HEIGHT_MAX = 100;
+struct Terminal{
+    static bool SHOULD_QUIT;
 
-static int SCREEN_DATA[SCREEN_WIDTH_MAX * SCREEN_HEIGHT_MAX];
+    // max width and height are just for saving memory, can be arbitrarily large
+    static const int MAX_WIDTH  = 300;
+    static const int MAX_HEIGHT = 200;
 
-static int CURRENT_SCREEN_WIDTH = 0;
-static int CURRENT_SCREEN_HEIGHT = 0;
+    // width and height updated from HandleScreenResizing on runtime
+    static int WIDTH;
+    static int HEIGHT;
 
-static bool SHOULD_QUIT = false;
+    static int SCREEN_DATA[MAX_WIDTH * MAX_HEIGHT];
+    // wrapper function for getting index of pixel on screen
+    static int Index(int x, int y);
+
+    static void PlotPixel(int x, int y, char c);
+};
 
 void Init();
 void Quit();
@@ -24,15 +32,9 @@ void Refresh();
 bool ShouldQuit();
 int GetWidth();
 int GetHeight();
-int GetMaxWidth();
-int GetMaxHeight();
 
-void UpdateNCurses();
+void HandleEvents(); // formerly UpdateNCurses
 void HandleScreenResizing();
 void HandleInput();
-
-void PlotPixel(int x, int y, char c);
-
-void DefaultScreen();
 
 #endif // __NCURSESHELPER_H__

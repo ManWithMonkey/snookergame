@@ -1,5 +1,24 @@
 #include "NCursesHelper.hpp"
 
+// static variables
+const int   Terminal::MAX_WIDTH;
+const int   Terminal::MAX_HEIGHT;
+int         Terminal::WIDTH = 0;
+int         Terminal::HEIGHT = 0;
+bool        Terminal::SHOULD_QUIT = false;
+int         Terminal::SCREEN_DATA[MAX_WIDTH * MAX_HEIGHT];
+
+int Terminal::Index(int x, int y){
+    return (y * MAX_WIDTH + x);
+}
+
+void Terminal::PlotPixel(int x, int y, char c){
+    if (x < 0 || y < 0 || x >= WIDTH || y >= HEIGHT)
+        return;
+
+    SCREEN_DATA[Index(x, y)] = c;
+}
+
 /*
 	The curs_set routine sets the cursor state to invisible, normal, or
 	very visible for visibility equal to 0, 1, or 2 respectively.
@@ -7,7 +26,7 @@
 enum cursor_visibility_t {
 	CURS_INVIS  = 0,
 	CURS_NORMAL = 1,
-	CURS_BRIGHT = 2,
+	CURS_BRIGHT = 2
 };
 
 void Init() {
@@ -25,7 +44,7 @@ void Quit() {
 	endwin();
 }
 
-void UpdateNCurses() {
+void HandleEvents() {
 	HandleInput();
 }
 
@@ -33,8 +52,8 @@ void HandleScreenResizing() {
 	int nw, nh;
 	getmaxyx(stdscr, nh, nw);
 
-	CURRENT_SCREEN_WIDTH = nw;
-	CURRENT_SCREEN_HEIGHT = nh;
+	Terminal::WIDTH = nw;
+	Terminal::HEIGHT = nh;
 }
 
 void HandleInput() {
@@ -48,21 +67,20 @@ void HandleInput() {
 			break;
 		case 'q':
 		case 'Q':
-			SHOULD_QUIT = true;
+			Terminal::SHOULD_QUIT = true;
 			break;
 		}
 	}
 }
 
 void Refresh() {
-	int w = std::min(CURRENT_SCREEN_WIDTH, SCREEN_WIDTH_MAX);
-	int h = std::min(CURRENT_SCREEN_HEIGHT, SCREEN_HEIGHT_MAX);
+	int w = std::min(Terminal::WIDTH,   Terminal::MAX_WIDTH);
+	int h = std::min(Terminal::HEIGHT,  Terminal::MAX_HEIGHT);
 
 	for (int y = 0; y < h; y++) {
 		for (int x = 0; x < w; x++) {
-			move(y, x);
-			char c = SCREEN_DATA[y * SCREEN_WIDTH_MAX + x];
-			addch(c);
+			char c = Terminal::SCREEN_DATA[Terminal::Index(x, y)];
+			mvaddch(y, x, c);
 		}
 	}
 
@@ -70,47 +88,13 @@ void Refresh() {
 }
 
 bool ShouldQuit() {
-	return SHOULD_QUIT;
+	return Terminal::SHOULD_QUIT;
 }
 
 int GetWidth() {
-	return CURRENT_SCREEN_WIDTH;
+	return Terminal::WIDTH;
 }
 
 int GetHeight() {
-	return CURRENT_SCREEN_HEIGHT;
-}
-
-int GetMaxWidth() {
-	return SCREEN_WIDTH_MAX;
-}
-
-int GetMaxHeight() {
-	return SCREEN_HEIGHT_MAX;
-}
-
-void PlotPixel(int x, int y, char c) {
-	if (x < 0 || y < 0 || x >= GetWidth() || y >= GetHeight()) {
-		return;
-	}
-
-	SCREEN_DATA[y * SCREEN_WIDTH_MAX + x] = c;
-}
-
-void DefaultScreen() {
-	int w = std::min(CURRENT_SCREEN_WIDTH, SCREEN_WIDTH_MAX);
-	int h = std::min(CURRENT_SCREEN_HEIGHT, SCREEN_HEIGHT_MAX);
-
-	char b = 176;
-	char a[] = {'.', ' ', ' ', ' ', ' '};
-
-	for (int y = 0; y < h; y++) {
-		for (int x = 0; x < w; x++) {
-			if (x == 0 || y == 0 || x == CURRENT_SCREEN_WIDTH - 1 ||
-				y == CURRENT_SCREEN_HEIGHT - 1)
-				SCREEN_DATA[y * SCREEN_WIDTH_MAX + x] = b;
-			else
-				SCREEN_DATA[y * SCREEN_WIDTH_MAX + x] = a[(y + x) % sizeof(a)];
-		}
-	}
+	return Terminal::HEIGHT;
 }

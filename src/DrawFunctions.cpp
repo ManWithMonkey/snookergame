@@ -2,6 +2,10 @@
 
 namespace DrawFunctions{
 
+void PlotPixel(int x, int y, char c){
+	Terminal::PlotPixel(x, y, c);
+}
+
 void DrawLine(float x1, float y1, float x2, float y2, char c){
 	if(y2 < y1){
 		std::swap(y1, y2);
@@ -81,5 +85,37 @@ void DrawSolidBall(float x, float y, float r, char c){
         iy += 1.f;
     }
 }
+
+
+void PaintDefaultScreen(){
+	int w = std::min(Terminal::WIDTH,   Terminal::MAX_WIDTH);
+	int h = std::min(Terminal::HEIGHT,  Terminal::MAX_HEIGHT);
+
+	char b = 176;
+	char a[] = {'.', ' ', ' ', ' ', ' '};
+
+	for (int y = 0; y < h; y++) {
+		for (int x = 0; x < w; x++) {
+			if (x == 0 || y == 0 || x == Terminal::WIDTH - 1 || y == Terminal::HEIGHT - 1)
+				Terminal::SCREEN_DATA[Terminal::Index(x, y)] = b;
+			else
+				Terminal::SCREEN_DATA[Terminal::Index(x, y)] = a[(y + x) % sizeof(a)];
+		}
+	}
+}
+
+void PaintBlankScreen(){
+	int w = std::min(Terminal::WIDTH,   Terminal::MAX_WIDTH);
+	int h = std::min(Terminal::HEIGHT,  Terminal::MAX_HEIGHT);
+
+	char a = ' ';
+
+	for (int y = 0; y < h; y++) {
+		for (int x = 0; x < w; x++) {
+			Terminal::SCREEN_DATA[Terminal::Index(x, y)] = a;
+		}
+	}
+}
+
 
 };

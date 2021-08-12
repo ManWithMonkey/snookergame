@@ -7,8 +7,8 @@ int main() {
 	Game game;
 
 	while (!ShouldQuit()) {
-		UpdateNCurses();
-		DefaultScreen();
+		HandleEvents();
+		DrawFunctions::PaintDefaultScreen();
 
 		game.Update();
 		game.Draw();
