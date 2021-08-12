@@ -13,6 +13,7 @@ public:
     void Update();
     void Draw();
 
+    void ResizeEvent();
     void Reset();
 
 private:
@@ -31,6 +32,8 @@ private:
     // normalize game so its uneffected by screensize
     float map_width     = 2.f;
     float map_height    = 1.f;
+    float x_factor = 0.f;
+    float y_factor = 0.f;
 
     void DrawBall(const Ball& ball, char c);
     void DrawLine(const Line& line, char c);

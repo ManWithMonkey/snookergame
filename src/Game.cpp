@@ -2,6 +2,7 @@
 
 Game::Game(){
     Reset();
+    ResizeEvent();
 
     lastUpdate = std::chrono::steady_clock::now();
 }
@@ -95,6 +96,11 @@ void Game::Draw(){
     }
 }
 
+void Game::ResizeEvent(){
+    x_factor = (float)GetWidth()    / map_width; 
+    y_factor = (float)GetHeight()   / map_height;
+}
+
 void Game::Reset(){
     auto frand = []() -> float {
         return (float)rand() / ((float)(RAND_MAX) + 1.f);
@@ -105,28 +111,38 @@ void Game::Reset(){
 
     Ball ball;
 
-    ball.pos = {10, 10};
-    ball.vel = {-125.f, 63.f};
-    ball.r = 2.f;
+    ball.pos = {0.3f, 0.3f};
+    ball.vel = {-5.f, 5.f};
+    ball.r = 0.05f;
 
     balls.push_back(ball);
 
-    float t = 5.f;
-    float l = 8.f;
-    float b = GetHeight() - t - 1.f;
-    float r = GetWidth() - l - 1.f;
+    float l = 0.1f * map_width;
+    float t = 0.1f * map_height;
+    float r = map_width - l;
+    float b = map_height - t;
 
-    float holer = 3.5f;
+    float holer = 0.075f;
 
-    Line top     = {{l + holer, t}, {r - holer, t}};
-    Line bottom  = {{l + holer, b}, {r - holer, b}};
-    Line left    = {{l, t + holer}, {l, b - holer}};
-    Line right   = {{r, t + holer}, {r, b - holer}};
+    std::vector<vec2> tempPointBand;
 
-    lines.push_back(top);
-    lines.push_back(bottom);
-    lines.push_back(left);
-    lines.push_back(right);
+    vec2 tr_x = {r,             t + holer};
+    vec2 tr_y = {r - holer,     t};
+    vec2 br_x = {r,             b - holer};
+    vec2 br_y = {r - holer,     b};
+    vec2 bl_x = {l,             b - holer};
+    vec2 bl_y = {l + holer,     b};
+    vec2 tl_x = {l,             t + holer};
+    vec2 tl_y = {l + holer,     t};
+
+    tempPointBand.push_back(tr_x);
+    tempPointBand.push_back(tr_y);
+    tempPointBand.push_back(tl_y);
+    tempPointBand.push_back(tl_x);
+    tempPointBand.push_back(bl_x);
+    tempPointBand.push_back(bl_y);
+    tempPointBand.push_back(br_y);
+    tempPointBand.push_back(br_x);
 
     for(vec3 p : {
         vec3{l, t, 1.f * 3.14159f * 0.5f},
@@ -134,37 +150,39 @@ void Game::Reset(){
         vec3{r, b, 3.f * 3.14159f * 0.5f},
         vec3{r, t, 2.f * 3.14159f * 0.5f}
     }){
+        break;
         int pc = 8;
         float da = 1.5f * 3.14159f / (float)pc;
-        vec2 point = vec2{cos(p.z), sin(p.z)} * holer;
-        for(int i=0; i<=pc; i++){
+        for(int i=0; i<pc; i++){
             vec2 center = {p.x, p.y};
             vec2 next = vec2{cos(p.z + da * (float)i), sin(p.z + da * (float)i)} * holer;
-            lines.push_back({point + center, next + center});
-            point = next;
+            next = next + center;
         }
     }
-
-    const int extra = 0;
-
-    for(int i=0; i<extra; i++){
-        lines.push_back({});
-        lines.back().a.x = 3.f + frand() * (GetWidth()  - 6.f);
-        lines.back().a.y = 3.f + frand() * (GetHeight() - 6.f);
-        lines.back().b.x = 3.f + frand() * (GetWidth()  - 6.f);
-        lines.back().b.y = 3.f + frand() * (GetHeight() - 6.f);
+    
+    lines.push_back({tempPointBand.back(), tempPointBand.front()});
+    for(int i=1; i<tempPointBand.size(); i++){
+        lines.push_back({
+            tempPointBand[i],
+            tempPointBand[i-1]
+        });
     }
 }
 
 void Game::DrawBall(const Ball& ball, char c){
-    DrawFunctions::DrawSolidBall(ball.pos.x, ball.pos.y, ball.r, c);
+    float x = ball.pos.x    * x_factor;
+    float y = ball.pos.y    * y_factor;
+    float rx = ball.r       * x_factor;
+    float ry = ball.r       * y_factor;
+
+    DrawFunctions::DrawSolidEllipse(x, y, rx, ry, c);
 }
 
 void Game::DrawLine(const Line& line, char c){
-    float x1 = line.a.x;
-    float y1 = line.a.y;
-    float x2 = line.b.x;
-    float y2 = line.b.y;
+    float x1 = line.a.x * x_factor;
+    float y1 = line.a.y * y_factor;
+    float x2 = line.b.x * x_factor;
+    float y2 = line.b.y * y_factor;
 
     DrawFunctions::DrawLine(x1, y1, x2, y2, c);
 }

@@ -18,46 +18,43 @@ std::string ToString(const T& rhs){
 
 static Game game;
 
+void ResizeEvent(){
+    game.ResizeEvent();
+}
+
 void Reset(){
     game.Reset();
 }
 
-void SetOther(){
+void Up(){
 }
 
-void MoveL(){
+void Down(){
 }
 
-void D(){
+void Left(){
 }
 
-void W(){
-}
-
-void S(){
+void Right(){
 }
 
 int main(){
     Init();
-
+    ResizeEvent();
     Reset();
-    AddCallback('r', Reset);
-    // AddCallback('a', MoveL);
-    // AddCallback('d', MoveR);
-    // AddCallback('w', MoveU);
-    // AddCallback('s', MoveD);
-    // AddCallback(' ', SetOther);
-    AddResizeCallback(Reset);
+    // AddCallback('r', Reset);
+    // AddCallback('a', Left);
+    // AddCallback('d', Right);
+    // AddCallback('w', Up);
+    // AddCallback('s', Down);
+    AddResizeCallback(ResizeEvent);
 
     while(!ShouldQuit()){
         UpdateNCurses();
         BlankScreen();
 
-        // game.Update();
-        // game.Draw();
-        int w = GetWidth();
-        int h = GetHeight();
-        DrawFunctions::DrawSolidEllipse(w / 2, h / 2, w * 0.4f, h * 0.4f, '!');
+        game.Update();
+        game.Draw();
 
         Refresh();
         usleep(1000);
