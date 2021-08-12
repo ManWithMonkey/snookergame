@@ -7,66 +7,6 @@ Game::Game(){
     lastUpdate = std::chrono::steady_clock::now();
 }
 
-void Game::Update(){
-    float w = GetWidth();
-    float h = GetHeight();
-
-    for(int balli = 0; balli < balls.size(); balli++){
-        Ball& ball = balls[balli];
-
-        float x = ball.pos.x;
-        float y = ball.pos.y;
-
-        float velx = std::abs(ball.vel.x);
-        float vely = std::abs(ball.vel.y);
-
-        // totally out of bounds
-        if(x < 0.f)     ball.vel.x = velx;
-        if(y < 0.f)     ball.vel.y = vely;
-        if(x > w - 1.f) ball.vel.x = -velx;
-        if(y > h - 1.f) ball.vel.y = -vely;
-
-        // position change
-        ball.dpos.x = ball.vel.x * deltaTime;
-        ball.dpos.y = ball.vel.y * deltaTime;
-    }
-
-    HandleCollisions();
-
-    for(Ball& ball : balls){
-        ball.pos.x += ball.dpos.x;
-        ball.pos.y += ball.dpos.y;
-    }
-
-    // balls clipping with each other
-    for(int balli = 0; balli < balls.size(); balli++){
-        Ball& ball = balls[balli];
-
-        for(int balli2 = balli + 1; balli2 < balls.size(); balli2 ++){
-            Ball& other = balls[balli2];
-
-            float minDistance = (other.r + ball.r) * 1.01f;
-            float distance = Norm(other.pos - ball.pos);
-
-            if(distance < minDistance){
-                vec2 u = UnitVector(other.pos - ball.pos);
-
-                float hdd = (minDistance - distance) * 0.5f;
-                
-                ball.pos  = ball.pos  - u * hdd;
-                other.pos = other.pos + u * hdd;
-            }
-        }
-    }
-
-    // for(Line& line : lines)
-    //     line.UpdateNormal();
-
-    auto now = std::chrono::steady_clock::now();
-    deltaTime = std::chrono::duration_cast<std::chrono::microseconds>(now - lastUpdate).count() / 1000000.0f;
-    lastUpdate = now;
-}
-
 void Game::Draw(){
     for(Ball& ball : balls){
         DrawBall(ball, 'O');
@@ -95,7 +35,7 @@ void Game::Reset(){
     const float r = map_width - l;
     const float b = map_height - t;
     const float holer = 0.06f;
-    const float ballr = 0.08f;
+    const float ballr = 0.12f;
 
     std::vector<vec2> pointBand;
 
@@ -142,15 +82,15 @@ void Game::Reset(){
         pointBand.push_back(corners[i][2]);
     }
     
-    lines.push_back({pointBand.back(), pointBand.front()});
-    for(int i=1; i<pointBand.size(); i++){
-        lines.push_back({
-            pointBand[i],
-            pointBand[i-1]
-        });
-    }
+    // lines.push_back({pointBand.back(), pointBand.front()});
+    // for(int i=1; i<pointBand.size(); i++){
+    //     lines.push_back({
+    //         pointBand[i],
+    //         pointBand[i-1]
+    //     });
+    // }
 
-    for(int i=0; i<4; i++){
+    for(int i=0; i<6; i++){
         Ball ball;
         ball.pos = {map_width / 2.f - 5.f * ballr + (float)i * 3.f * ballr, map_height / 2.f};
         ball.vel = {-2.f + 4.f * frand(), -2.f + 4.f * frand()};
@@ -160,58 +100,124 @@ void Game::Reset(){
     }
 }
 
-struct collision_t{
-    float dt_scalar;
+void Game::Update(){
+    float w = GetWidth();
+    float h = GetHeight();
 
-    bool isBallCollision; // false => line collision
-};
+    for(int balli = 0; balli < balls.size(); balli++){
+        Ball& ball = balls[balli];
+
+        float x = ball.pos.x;
+        float y = ball.pos.y;
+
+        float velx = std::max(0.1f, std::abs(ball.vel.x));
+        float vely = std::max(0.1f, std::abs(ball.vel.y));
+
+        // totally out of bounds
+        if(x < 0.f)     ball.vel.x = velx;
+        if(y < 0.f)     ball.vel.y = vely;
+        if(x >= map_width)  ball.vel.x = -velx;
+        if(y >= map_height) ball.vel.y = -vely;
+
+        ball.vel = ball.vel * (1.f - 0.1f * deltaTime);
+
+        // position change
+        ball.dpos.x = ball.vel.x * deltaTime;
+        ball.dpos.y = ball.vel.y * deltaTime;
+    }
+
+    HandleCollisions();
+
+    for(Ball& ball : balls){
+        ball.pos.x += ball.dpos.x;
+        ball.pos.y += ball.dpos.y;
+    }
+
+    // balls clipping with each other
+    for(int balli = 0; balli < balls.size(); balli++){
+        Ball& ball = balls[balli];
+
+        for(int balli2 = balli + 1; balli2 < balls.size(); balli2 ++){
+            Ball& other = balls[balli2];
+
+            float minDistance = (other.r + ball.r) * 1.f;
+            float distance = Norm(other.pos - ball.pos);
+
+            if(distance < minDistance){
+                vec2 u = UnitVector(other.pos - ball.pos);
+
+                float hdd = (minDistance - distance) * 0.51f;
+                
+                ball.pos  = ball.pos  - u * hdd;
+                other.pos = other.pos + u * hdd;
+            }
+        }
+    }
+
+    // for(Line& line : lines)
+    //     line.UpdateNormal();
+
+    auto now = std::chrono::steady_clock::now();
+    deltaTime = std::chrono::duration_cast<std::chrono::microseconds>(now - lastUpdate).count() / 1000000.0f;
+    lastUpdate = now;
+}
+
+// struct collision_t{
+//     float dt_scalar; // used to find the first collision
+//     void* ptr1;
+//     void* ptr2;
+// };
+
+// struct lineball_collision : public collision_t{
+//     Line* line(){ return (Line*)ptr1; }
+//     Line* ball(){ return (Ball*)ptr2; }
+// };
+
+// struct ballball_collision_t : public collision_t{
+//     Line* ball1(){ return (Line*)ptr1; }
+//     Line* ball2(){ return (Ball*)ptr2; }
+// };
 
 void Game::HandleCollisions(){
     // ball collisions
     for(int balli = 0; balli < balls.size(); balli++){
         Ball& ball = balls[balli];
 
-        bool collisionsLastIteration = true;
-        for(int i=0; (i<MAX_COLLISIONS_ITERS) && collisionsLastIteration; i++){
-            collisionsLastIteration = false;
 
-            for(int balli2 = balli + 1; balli2 < balls.size(); balli2 ++){
-                Ball& other = balls[balli2];
+        for(int balli2 = balli + 1; balli2 < balls.size(); balli2 ++){
+            Ball& other = balls[balli2];
 
-                float collisionScalar = GetCollisionPointMovementScalarNewton(ball.pos, ball.dpos, ball.r, other.pos, other.dpos, other.r);
-                vec2 collisionPointCenter1 = ball.pos   + ball.dpos     * collisionScalar;
-                vec2 collisionPointCenter2 = other.pos  + other.dpos    * collisionScalar;
+            float collisionScalar = GetCollisionPointMovementScalarNewton(ball.pos, ball.dpos, ball.r, other.pos, other.dpos, other.r);
+            vec2 collisionPointCenter1 = ball.pos   + ball.dpos     * collisionScalar;
+            vec2 collisionPointCenter2 = other.pos  + other.dpos    * collisionScalar;
 
-                bool collides = MovingCirclesCollide(ball.pos, ball.dpos, ball.r, other.pos, other.dpos, other.r);
+            bool collides = MovingCirclesCollide(ball.pos, ball.dpos, ball.r, other.pos, other.dpos, other.r);
 
-                if(collides && (collisionScalar <= 1.f) && (collisionScalar > 0.f)){
-                    auto result = GetNewVelocities(ball.pos, ball.dpos, ball.r, other.pos, other.dpos, other.r);
+            if(collides && (collisionScalar <= 1.f) && (collisionScalar > 0.f)){
+                auto result = GetNewVelocities(ball.pos, ball.dpos, ball.r, other.pos, other.dpos, other.r);
 
-                    vec2 mirror1 = result.first;
-                    vec2 mirror2 = result.second;
+                vec2 mirror1 = result.first;
+                vec2 mirror2 = result.second;
 
-                    ball.pos    = collisionPointCenter1 + mirror1 * 0.f;
-                    other.pos   = collisionPointCenter2 + mirror2 * 0.f;
+                ball.pos    = collisionPointCenter1;// - UnitVector(ball.dpos)     * 0.01f + mirror1 * 0.01f;
+                other.pos   = collisionPointCenter2;// - UnitVector(other.dpos)    * 0.01f + mirror2 * 0.01f;
 
-                    ball.dpos   = mirror1;
-                    other.dpos  = mirror2;
+                vec2 u1 = UnitVector(mirror1);
+                vec2 u2 = UnitVector(mirror2);
 
-                    vec2 u1 = UnitVector(mirror1);
-                    vec2 u2 = UnitVector(mirror2);
+                float dl1 = Norm(ball.dpos);
+                float dl2 = Norm(other.dpos);
+                float l1 = Norm(ball.vel);
+                float l2 = Norm(other.vel);
 
-                    float dl1 = Norm(ball.dpos);
-                    float dl2 = Norm(other.dpos);
-                    float l1 = Norm(ball.vel);
-                    float l2 = Norm(other.vel);
+                float dl = dl1 + dl2;
+                float l  = l1  + l2;
 
-                    float dl = dl1 + dl2;
-                    float l  = l1  + l2;
+                ball.dpos   = mirror1;
+                other.dpos  = mirror2;
 
-                    ball.vel  = u1 * l * (dl1 / dl) * 1.f;
-                    other.vel = u2 * l * (dl2 / dl) * 1.f;
-
-                    collisionsLastIteration = true;
-                }
+                ball.vel  = u1 * l * (dl1 / dl) * 1.f;
+                other.vel = u2 * l * (dl2 / dl) * 1.f; 
             }
         }
     }

@@ -108,7 +108,7 @@ bool MovingCirclesCollide(vec2 p1, vec2 dp1, float r1, vec2 p2, vec2 dp2, float 
         (p1 + dp1 * scalar) -
         (p2 + dp2 * scalar)
     );
-    return distance <= r1 + r2 - 1E-5f;
+    return distance <= r1 + r2 + 1E-5f;
 }
 
 float PointPointDistance(vec2 a, vec2 b){
@@ -249,7 +249,7 @@ float GetCollisionPointMovementScalarNewton(vec2 p1, vec2 dp1, float r1, vec2 p2
     const float dt = 1E-5f;
     float t = 0.f;
 
-    const int NEWTON_ITERATIONS = 5;
+    const int NEWTON_ITERATIONS = 10;
     for(int i=0; i<NEWTON_ITERATIONS; i++){
         float distance1 = GetDistance(t);
         float distance2 = GetDistance(t + dt);
