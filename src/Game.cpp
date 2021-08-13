@@ -1,5 +1,19 @@
 #include "Game.hpp"
 
+template<typename T>
+std::string ToString(const T& rhs){
+    std::string result;
+
+    std::stringstream ss;
+    ss << rhs;
+    result += ss.str();
+
+    return result;
+}
+static float scalarmax = -1000000000.f;
+static float scalarmin = 1000000000.f;
+static float lastscalar = 0.f;
+
 Game::Game(){
     Reset();
     ResizeEvent();
@@ -9,12 +23,17 @@ Game::Game(){
 
 void Game::Draw(){
     for(Ball& ball : balls){
-        DrawBall(ball, 'O');
+        if(ball.collided)
+            DrawBall(ball, '.');
+        else
+            DrawBall(ball, 'O');
     }
 
     for(Line& line : lines){
         DrawLine(line, '#');
     }
+
+    DrawFunctions::TypeString(0, 0, ToString(scalarmin) + ", " + ToString(scalarmax) + ", " + ToString(lastscalar));
 }
 
 void Game::ResizeEvent(){
@@ -35,7 +54,7 @@ void Game::Reset(){
     const float r = map_width - l;
     const float b = map_height - t;
     const float holer = 0.06f;
-    const float ballr = 0.12f;
+    const float ballr = 1.2f;
 
     std::vector<vec2> pointBand;
 
@@ -93,7 +112,7 @@ void Game::Reset(){
     for(int i=0; i<6; i++){
         Ball ball;
         ball.pos = {map_width / 2.f - 5.f * ballr + (float)i * 3.f * ballr, map_height / 2.f};
-        ball.vel = {-2.f + 4.f * frand(), -2.f + 4.f * frand()};
+        ball.vel = vec2{-2.f + 4.f * frand(), -2.f + 4.f * frand()} * (map_width / 2.f);
         ball.r = ballr;
 
         balls.push_back(ball);
@@ -106,6 +125,7 @@ void Game::Update(){
 
     for(int balli = 0; balli < balls.size(); balli++){
         Ball& ball = balls[balli];
+        ball.collided = false;
 
         float x = ball.pos.x;
         float y = ball.pos.y;
@@ -134,6 +154,7 @@ void Game::Update(){
     }
 
     // balls clipping with each other
+    if(false)
     for(int balli = 0; balli < balls.size(); balli++){
         Ball& ball = balls[balli];
 
@@ -178,11 +199,11 @@ void Game::Update(){
 //     Line* ball2(){ return (Ball*)ptr2; }
 // };
 
+
 void Game::HandleCollisions(){
     // ball collisions
     for(int balli = 0; balli < balls.size(); balli++){
         Ball& ball = balls[balli];
-
 
         for(int balli2 = balli + 1; balli2 < balls.size(); balli2 ++){
             Ball& other = balls[balli2];
@@ -193,14 +214,18 @@ void Game::HandleCollisions(){
 
             bool collides = MovingCirclesCollide(ball.pos, ball.dpos, ball.r, other.pos, other.dpos, other.r);
 
-            if(collides && (collisionScalar <= 1.f) && (collisionScalar > 0.f)){
+            if(collides && (collisionScalar <= 0.f)){
+                scalarmax = std::max(scalarmax, collisionScalar);
+                scalarmin = std::min(scalarmin, collisionScalar);
+                lastscalar = collisionScalar;
+
                 auto result = GetNewVelocities(ball.pos, ball.dpos, ball.r, other.pos, other.dpos, other.r);
 
                 vec2 mirror1 = result.first;
                 vec2 mirror2 = result.second;
 
-                ball.pos    = collisionPointCenter1;// - UnitVector(ball.dpos)     * 0.01f + mirror1 * 0.01f;
-                other.pos   = collisionPointCenter2;// - UnitVector(other.dpos)    * 0.01f + mirror2 * 0.01f;
+                ball.pos    = collisionPointCenter1 - UnitVector(ball.dpos)     * 0.01f + mirror1 * 0.01f;
+                other.pos   = collisionPointCenter2 - UnitVector(other.dpos)    * 0.01f + mirror2 * 0.01f;
 
                 vec2 u1 = UnitVector(mirror1);
                 vec2 u2 = UnitVector(mirror2);
@@ -213,11 +238,14 @@ void Game::HandleCollisions(){
                 float dl = dl1 + dl2;
                 float l  = l1  + l2;
 
-                ball.dpos   = mirror1;
-                other.dpos  = mirror2;
+                ball.dpos   = mirror1 * 1.f + u1 * 0.01f;
+                other.dpos  = mirror2 * 1.f + u2 * 0.01f;
 
                 ball.vel  = u1 * l * (dl1 / dl) * 1.f;
                 other.vel = u2 * l * (dl2 / dl) * 1.f; 
+                
+                ball.collided = true;
+                other.collided = true;
             }
         }
     }

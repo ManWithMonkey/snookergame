@@ -21,8 +21,7 @@ struct Ball{
     vec2 vel;
     vec2 dpos; // change in position for next iteration
 
-    // needs more collision checking
-    // bool stillNecessary = false;
+    bool collided = false;
 };
 
 #endif // __GAMEUTILS_H__
