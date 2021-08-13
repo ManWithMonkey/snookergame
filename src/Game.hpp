@@ -65,10 +65,17 @@ private:
 
 private:
     // normalize game so its uneffected by screensize
-    float map_width     = 2.f;
-    float map_height    = 1.f;
+    const float map_width     = 2.f;
+    const float map_height    = 1.f;
     float x_factor = 0.f;
     float y_factor = 0.f;
+
+    const float table_left   = 0.0f;
+    const float table_top    = 0.0f;
+    const float table_right  = map_width - table_left;
+    const float table_bottom = map_height - table_top;
+
+    const float deacceleration = 0.95f;
 
     void DrawBall(const Ball& ball, char c);
     void DrawLine(const Line& line, char c);
