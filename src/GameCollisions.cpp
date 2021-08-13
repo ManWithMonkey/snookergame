@@ -208,8 +208,8 @@ void Game::HandleClippingIfNecessary(){
                 vec2 mirror1 = MirrorVectorFromNormal(rv1, u);
                 vec2 mirror2 = MirrorVectorFromNormal(rv2, u);
 
-                vec2 v1 = ball.vel + mirror1;
-                vec2 v2 = other.vel + mirror2;
+                vec2 v1 = ball.vel * (1.f - Norm(mirror1) / Norm(ball.vel)) + mirror1;
+                vec2 v2 = other.vel * (1.f - Norm(mirror2) / Norm(other.vel)) + mirror2;
 
                 // ball.vel  = MirrorVectorFromNormal(ball.vel, u);
                 // other.vel = MirrorVectorFromNormal(other.vel, u);

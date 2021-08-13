@@ -59,7 +59,7 @@ private:
     std::vector<Hole> holes;
 
     const int MAX_COLLISIONS_ITERS = 500;
-    const float MIRROR_LOSS = 0.1f;
+    const float MIRROR_LOSS = 0.8f;
     const float DPOS_LOSS   = 0.33f;
     const float VEL_LOSS    = 0.99f;
 
