@@ -34,8 +34,8 @@ void Game::Reset(){
     const float t = 0.15f * map_height;
     const float r = map_width - l;
     const float b = map_height - t;
-    const float holer = 0.06f;
-    const float ballr = 0.04f;
+    const float holer = 0.12f;
+    const float ballr = 0.08f;
 
     std::vector<vec2> pointBand;
 
@@ -91,9 +91,9 @@ void Game::Reset(){
     }
 
     for(int j=0; j<3; j++){
-        for(int i=0; i<8; i++){
+        for(int i=0; i<6; i++){
             Ball ball;
-            ball.pos = {map_width / 2.f - 12.f * ballr + (float)i * 2.5f * ballr, map_height / 2.f - 4.f * ballr + 2.5f * ballr * (float)j};
+            ball.pos = {map_width / 2.f - 6.f * ballr + (float)i * 2.5f * ballr, map_height / 2.f - 3.f * ballr + 2.f * ballr * (float)j};
             ball.vel = {-2.f + 4.f * frand(), -2.f + 4.f * frand()};
             ball.r = ballr;
 
@@ -131,53 +131,6 @@ void Game::Update(){
     auto now = std::chrono::steady_clock::now();
     deltaTime = std::chrono::duration_cast<std::chrono::microseconds>(now - lastUpdate).count() / 1000000.0f;
     lastUpdate = now;
-}
-
-void Game::HandleClippingIfNecessary(){
-
-    // balls in balls
-    for(int i = 0; i < balls.size(); i++){
-        Ball& ball = balls[i];
-
-        for(int i2 = i + 1; i2 < balls.size(); i2 ++){
-            Ball& other = balls[i2];
-
-            float minDistance = (other.r + ball.r) * 1.f;
-            float distance = Norm(other.pos - ball.pos);
-
-            if(distance < minDistance){
-                vec2 u = UnitVector(other.pos - ball.pos);
-
-                float hdd = (minDistance - distance) * 0.51f;
-                
-                ball.pos  = ball.pos  - u * hdd;
-                other.pos = other.pos + u * hdd;
-                ball.vel  = MirrorVectorFromNormal(ball.vel, u);
-                other.vel = MirrorVectorFromNormal(other.vel, u);
-            }
-        }
-    }
-
-    // balls in lines
-    for(int i = 0; i < balls.size(); i++){
-        Ball& ball = balls[i];
-
-        for(int i2 = 0; i2 < lines.size(); i2 ++){
-            Line& line = lines[i2];
-
-            float minDistance = ball.r * 1.f;
-            float distance = LinePointDistance(line.a, line.b, ball.pos);
-
-            if(distance < minDistance){
-                vec2 u = UnitVector(LineClosestPointFromPoint(line.a, line.b, ball.pos) - ball.pos);
-
-                float hdd = (minDistance - distance) * 1.01f;
-                
-                ball.pos  = ball.pos - u * hdd;
-                ball.vel  = MirrorVectorFromNormal(ball.vel, u);
-            }
-        }
-    }
 }
 
 void Game::DrawBall(const Ball& ball, char c){

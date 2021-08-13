@@ -183,3 +183,50 @@ void Game::HandleCollisions(){
         ball.pos.y += ball.dpos.y;
     }
 }
+
+void Game::HandleClippingIfNecessary(){
+
+    // balls in balls
+    for(int i = 0; i < balls.size(); i++){
+        Ball& ball = balls[i];
+
+        for(int i2 = i + 1; i2 < balls.size(); i2 ++){
+            Ball& other = balls[i2];
+
+            float minDistance = (other.r + ball.r) * 1.f;
+            float distance = Norm(other.pos - ball.pos);
+
+            if(distance < minDistance){
+                vec2 u = UnitVector(other.pos - ball.pos);
+
+                float hdd = (minDistance - distance) * 0.51f;
+                
+                ball.pos  = ball.pos  - u * hdd;
+                other.pos = other.pos + u * hdd;
+                ball.vel  = MirrorVectorFromNormal(ball.vel, u);
+                other.vel = MirrorVectorFromNormal(other.vel, u);
+            }
+        }
+    }
+
+    // balls in lines
+    for(int i = 0; i < balls.size(); i++){
+        Ball& ball = balls[i];
+
+        for(int i2 = 0; i2 < lines.size(); i2 ++){
+            Line& line = lines[i2];
+
+            float minDistance = ball.r * 1.f;
+            float distance = LinePointDistance(line.a, line.b, ball.pos);
+
+            if(distance < minDistance){
+                vec2 u = UnitVector(LineClosestPointFromPoint(line.a, line.b, ball.pos) - ball.pos);
+
+                float hdd = (minDistance - distance) * 1.01f;
+                
+                ball.pos  = ball.pos - u * hdd;
+                ball.vel  = MirrorVectorFromNormal(ball.vel, u);
+            }
+        }
+    }
+}
