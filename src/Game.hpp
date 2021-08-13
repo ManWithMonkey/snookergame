@@ -7,6 +7,23 @@
 #include <chrono>
 #include <limits>
 
+struct BallCollisionInfo{
+    float scalarOfDeltatime;
+    vec2 pos1, pos2;
+    vec2 dpos1, dpos2;
+    vec2 vel1, vel2;
+};
+
+struct BallBallCollision : public BallCollisionInfo{
+    int i = 0, j = 0;
+    bool nocollision = true;
+};
+
+struct BallLineCollision{
+    int b = 0, l = 0;
+    bool nocollision = true;
+};
+
 class Game{
 public:
     Game();
@@ -18,7 +35,11 @@ public:
     void Reset();
 
 private:
+    BallBallCollision GetClosestBallBallCollision();
+    BallLineCollision GetClosestBallLineCollision();
+
     void HandleCollisions();
+    void HandleClippingIfNecessary();
 
 private:
     std::chrono::steady_clock::time_point lastUpdate;
