@@ -35,7 +35,7 @@ void Game::Reset(){
     const float r = map_width - l;
     const float b = map_height - t;
     const float holer = 0.06f;
-    const float ballr = 0.12f;
+    const float ballr = 0.04f;
 
     std::vector<vec2> pointBand;
 
@@ -90,13 +90,15 @@ void Game::Reset(){
         });
     }
 
-    for(int i=0; i<6; i++){
-        Ball ball;
-        ball.pos = {map_width / 2.f - 5.f * ballr + (float)i * 3.f * ballr, map_height / 2.f};
-        ball.vel = {-2.f + 4.f * frand(), -2.f + 4.f * frand()};
-        ball.r = ballr;
+    for(int j=0; j<3; j++){
+        for(int i=0; i<8; i++){
+            Ball ball;
+            ball.pos = {map_width / 2.f - 12.f * ballr + (float)i * 2.5f * ballr, map_height / 2.f - 4.f * ballr + 2.5f * ballr * (float)j};
+            ball.vel = {-2.f + 4.f * frand(), -2.f + 4.f * frand()};
+            ball.r = ballr;
 
-        balls.push_back(ball);
+            balls.push_back(ball);
+        }
     }
 }
 
@@ -132,6 +134,8 @@ void Game::Update(){
 }
 
 void Game::HandleClippingIfNecessary(){
+
+    // balls in balls
     for(int i = 0; i < balls.size(); i++){
         Ball& ball = balls[i];
 
@@ -148,6 +152,29 @@ void Game::HandleClippingIfNecessary(){
                 
                 ball.pos  = ball.pos  - u * hdd;
                 other.pos = other.pos + u * hdd;
+                ball.vel  = MirrorVectorFromNormal(ball.vel, u);
+                other.vel = MirrorVectorFromNormal(other.vel, u);
+            }
+        }
+    }
+
+    // balls in lines
+    for(int i = 0; i < balls.size(); i++){
+        Ball& ball = balls[i];
+
+        for(int i2 = 0; i2 < lines.size(); i2 ++){
+            Line& line = lines[i2];
+
+            float minDistance = ball.r * 1.f;
+            float distance = LinePointDistance(line.a, line.b, ball.pos);
+
+            if(distance < minDistance){
+                vec2 u = UnitVector(LineClosestPointFromPoint(line.a, line.b, ball.pos) - ball.pos);
+
+                float hdd = (minDistance - distance) * 1.01f;
+                
+                ball.pos  = ball.pos - u * hdd;
+                ball.vel  = MirrorVectorFromNormal(ball.vel, u);
             }
         }
     }

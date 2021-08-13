@@ -45,8 +45,8 @@ BallBallCollision Game::GetClosestBallBallCollision(){
                 BallBallCollision retval;
                 retval.pos1 = collisionPointCenter1;
                 retval.pos2 = collisionPointCenter2;
-                retval.dpos1 = mirror1;
-                retval.dpos2 = mirror2;
+                retval.dpos1 = mirror1 * DPOS_LOSS;
+                retval.dpos2 = mirror2 * DPOS_LOSS;
                 retval.vel1 = u1 * l * (dl1 / dl);
                 retval.vel2 = u2 * l * (dl2 / dl);
                 retval.scalarOfDeltatime = collisionScalar;
@@ -96,19 +96,18 @@ BallLineCollision Game::GetClosestBallLineCollision(){
                 float totalMotionLength     = Norm(ball.dpos);
                 float mirrorMotionLength    = Norm(mirror);
 
-                // ball.pos = ball.pos + UnitVector(ball.dpos) * (totalMotionLength - mirrorMotionLength) * MIRROR_LOSS;
-                // ball.dpos = UnitVector(mirror) * mirrorMotionLength * DPOS_LOSS;
-                // ball.vel = MirrorVectorFromNormal(ball.vel, normal) * VEL_LOSS;
-
                 BallLineCollision collision;
                 collision.b = i;
                 collision.l = j;
-                collision.pos = ball.pos + UnitVector(ball.dpos) * (totalMotionLength - mirrorMotionLength) * MIRROR_LOSS;
+                collision.pos = ball.pos + UnitVector(ball.dpos) * (totalMotionLength - mirrorMotionLength) * MIRROR_LOSS * 0.f;
                 collision.dpos = UnitVector(mirror) * mirrorMotionLength * DPOS_LOSS;
                 collision.vel = MirrorVectorFromNormal(ball.vel, normal) * VEL_LOSS;
                 collision.nocollision = false;
+                collision.scalarOfDeltatime = 1.f - mirrorMotionLength / totalMotionLength;
 
-                return collision;
+                float scalar = collision.scalarOfDeltatime;
+                if(scalar >= 0.f)
+                    collisions.push_back(collision);
             }
         }
     }
@@ -129,34 +128,54 @@ BallLineCollision Game::GetClosestBallLineCollision(){
 
 void Game::HandleCollisions(){
 
-    BallBallCollision bbcoll = GetClosestBallBallCollision();
-    BallLineCollision blcoll = GetClosestBallLineCollision();
+    for(int i=0; i<MAX_COLLISIONS_ITERS; i++){
+        BallBallCollision bbcoll = GetClosestBallBallCollision();
+        BallLineCollision blcoll = GetClosestBallLineCollision();
 
-    if(!bbcoll.nocollision){
-        int i = bbcoll.i;
-        int i2 = bbcoll.j;
+        bool dotheball_insteadof_theline;
 
-        Ball& ball = balls[i];
-        Ball& other = balls[i2];
+        bool b = !bbcoll.nocollision;
+        bool l = !blcoll.nocollision;
 
-        ball.pos    = bbcoll.pos1;
-        other.pos   = bbcoll.pos2;
+        if(!b && !l){
+            break;
+        }
+        else if(b && l){
+            dotheball_insteadof_theline = bbcoll.scalarOfDeltatime < blcoll.scalarOfDeltatime;
+        }
+        else if(b){
+            dotheball_insteadof_theline = true;
+        }
+        else if(l){
+            dotheball_insteadof_theline = false;
+        }
+        
+        if(dotheball_insteadof_theline){
+            int i = bbcoll.i;
+            int i2 = bbcoll.j;
 
-        ball.dpos   = bbcoll.dpos1;
-        other.dpos  = bbcoll.dpos2;
+            Ball& ball = balls[i];
+            Ball& other = balls[i2];
 
-        ball.vel  = bbcoll.vel1;
-        other.vel = bbcoll.vel2;
-    }
+            ball.pos    = bbcoll.pos1;
+            other.pos   = bbcoll.pos2;
 
-    if(!blcoll.nocollision){
-        int i = blcoll.b;
+            ball.dpos   = bbcoll.dpos1;
+            other.dpos  = bbcoll.dpos2;
 
-        Ball& ball = balls[i];
+            ball.vel  = bbcoll.vel1;
+            other.vel = bbcoll.vel2;
+        }
 
-        ball.pos    = blcoll.pos;
-        ball.dpos   = blcoll.dpos;
-        ball.vel  = blcoll.vel;
+        if(!dotheball_insteadof_theline){
+            int i = blcoll.b;
+
+            Ball& ball = balls[i];
+
+            ball.pos    = blcoll.pos;
+            ball.dpos   = blcoll.dpos;
+            ball.vel    = blcoll.vel;
+        }
     }
 
     for(Ball& ball : balls){

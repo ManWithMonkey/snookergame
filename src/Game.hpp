@@ -56,7 +56,7 @@ private:
     std::vector<Line> lines;
     std::vector<Ball> balls;
 
-    const int MAX_COLLISIONS_ITERS = 5;
+    const int MAX_COLLISIONS_ITERS = 100;
     const float MIRROR_LOSS = 0.99f;
     const float DPOS_LOSS   = 0.5f;
     const float VEL_LOSS    = 0.95f;

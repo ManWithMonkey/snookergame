@@ -129,7 +129,7 @@ int main(){
         // DrawFunctions::TypeString(0, 0, ToString(distance));
 
         Refresh();
-        napms(15);
+        napms(5);
     }
 
     Quit();
