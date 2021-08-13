@@ -219,12 +219,16 @@ vec2 MovingCircleCollisionPointWithLine(vec2 p, vec2 dp, float r, vec2 a, vec2 b
 
     // float l = Norm(dp);
     float t = 0.f;
-    float delta = 0.01f;
+    float delta = 1E-5f;
     float value1 = Calc(t);
     float value2 = Calc(t + delta); 
 
     // newtons
-    for(int i=0; i<3; i++){
+    for(int i=0; i<6; i++){
+        if(value1 <= 0.f){
+            return CalcVec(t);
+        }
+
         float slope = (value2 - value1) / delta;
 
         t = t - value1 / slope;
@@ -254,6 +258,10 @@ float GetCollisionPointMovementScalarNewton(vec2 p1, vec2 dp1, float r1, vec2 p2
         float distance1 = GetDistance(t);
         float distance2 = GetDistance(t + dt);
         float slope = (distance2 - distance1) / dt;
+
+        if(distance1 <= 0.f){
+            return t;
+        }
 
         t -= distance1 / slope;
     }

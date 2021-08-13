@@ -202,22 +202,22 @@ void Game::HandleClippingIfNecessary(){
                 ball.pos  = ball.pos  - u * hdd;
                 other.pos = other.pos + u * hdd;
 
-                // vec2 rv1 = ball.vel - other.vel;
-                // vec2 rv2 = other.vel - ball.vel;
+                vec2 rv1 = ball.vel - other.vel;
+                vec2 rv2 = other.vel - ball.vel;
 
-                // vec2 mirror1 = MirrorVectorFromNormal(rv1 * 0.5f, u);
-                // vec2 mirror2 = MirrorVectorFromNormal(rv2 * 0.5f, u);
+                vec2 mirror1 = MirrorVectorFromNormal(rv1, u);
+                vec2 mirror2 = MirrorVectorFromNormal(rv2, u);
 
-                // vec2 v1 = mirror1 + ball.vel;
-                // vec2 v2 = mirror2 + other.vel;
+                vec2 v1 = ball.vel + mirror1;
+                vec2 v2 = other.vel + mirror2;
 
                 // ball.vel  = MirrorVectorFromNormal(ball.vel, u);
                 // other.vel = MirrorVectorFromNormal(other.vel, u);
-                // ball.vel  = mirror1;
-                // other.vel = mirror2;
+                ball.vel  = v1;
+                other.vel = v2;
 
-                ball.vel = ball.vel - u * hdd;
-                other.vel = other.vel - u * hdd;
+                // ball.vel = ball.vel - u * hdd;
+                // other.vel = other.vel + u * hdd;
             }
         }
     }

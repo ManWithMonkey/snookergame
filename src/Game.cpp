@@ -112,7 +112,7 @@ void Game::Reset(){
     Hole hole;
     hole.holeRadius = realholer * 1.0f;
     hole.insideRadius = ballr * 1.2f;
-    hole.pullStrength = 1000.f * map_width;
+    hole.pullStrength = 1.f * map_width;
     
     for(int i=0; i<4; i++){
         vec2 center = (corners[i][2] + corners[i][1] + corners[i][0] * 2.f) * 0.25f;
@@ -142,7 +142,7 @@ void Game::Update(){
         if(ball.pos.x >= map_width)     ball.vel.x = -velx;
         if(ball.pos.y >= map_height)    ball.vel.y = -vely;
 
-        ball.vel = ball.vel * (1.f - 0.1f * deltaTime);
+        ball.vel = ball.vel * (1.f - 1.f * deltaTime);
 
         // position change
         ball.dpos.x = ball.vel.x * deltaTime;
