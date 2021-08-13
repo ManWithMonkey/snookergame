@@ -39,7 +39,7 @@ void Game::Reset(){
     const float t = 0.15f * map_height;
     const float r = map_width - l;
     const float b = map_height - t;
-    const float holer = 0.12f;
+    const float holer = 0.11f;
     const float ballr = 0.06f;
 
     std::vector<vec2> pointBand;
@@ -71,16 +71,19 @@ void Game::Reset(){
         2.f * 3.14159f * 0.5f
     };
 
+    float realholer = 0.5f * std::hypot(holer, holer);
+
     for(int i=0; i<4; i++){
         pointBand.push_back(corners[i][1]);
 
         int pc = 8;
-        float da = 1.5f * 3.14159f / (float)pc;
+        float da = (1.f) * 3.14159f / (float)pc;
         for(int j=0; j<pc; j++){
-            float ang = 2.f * 3.14159f - (float)j * da + angleOffsets[i];
-            float length = holer;
+            float ang = 2.f * 3.14159f - (float)j * da + angleOffsets[i] - 3.14159f * 0.25f;
+            float length = realholer;
 
-            vec2 point = corners[i][0] + MakeVector(ang, length);
+            vec2 center = (corners[i][2] + corners[i][1] + corners[i][0] * 2.f) * 0.25f;
+            vec2 point = center + MakeVector(ang, length);
             pointBand.push_back(point);
         }
         
@@ -107,18 +110,15 @@ void Game::Reset(){
     }
 
     Hole hole;
-    hole.holeRadius = holer * 0.8f;
-    hole.insideRadius = ballr * 1.1f;
+    hole.holeRadius = realholer * 1.0f;
+    hole.insideRadius = ballr * 1.2f;
     hole.pullStrength = 1000.f * map_width;
     
-    hole.pos = tl;
-    holes.push_back(hole);
-    hole.pos = tr;
-    holes.push_back(hole);
-    hole.pos = bl;
-    holes.push_back(hole);
-    hole.pos = br;
-    holes.push_back(hole);
+    for(int i=0; i<4; i++){
+        vec2 center = (corners[i][2] + corners[i][1] + corners[i][0] * 2.f) * 0.25f;
+        hole.pos = center;
+        holes.push_back(hole);
+    }
 }
 
 void Game::Update(){
@@ -171,11 +171,11 @@ void Game::UpdateHoleStuff(){
             }
             if(close){
                 float distance = Norm(ball.pos - hole.pos);
-                float strength = std::pow(hole.holeRadius - distance, 2.f) * hole.pullStrength;
+                float strength = (hole.holeRadius - distance) * hole.pullStrength;
                 
                 vec2 unit = UnitVector(hole.pos - ball.pos);
 
-                float slowdownScalar = Norm(ball.vel) * ball.r / hole.holeRadius * 0.1f;
+                float slowdownScalar = Norm(ball.vel) * ball.r / hole.holeRadius * 0.f;
                 ball.vel = ball.vel * (1.f - slowdownScalar * deltaTime) + unit * strength * deltaTime;
             }
         }
