@@ -6,9 +6,13 @@ BallBallCollision Game::GetClosestBallBallCollision(){
 
     for(int i = 0; i < balls.size(); i++){
         Ball& ball = balls[i];
+        if(!ball.active)
+            continue;
 
         for(int i2 = i + 1; i2 < balls.size(); i2 ++){
             Ball& other = balls[i2];
+            if(!other.active)
+                continue;
 
             float collisionScalar = GetCollisionPointMovementScalarNewton(ball.pos, ball.dpos, ball.r, other.pos, other.dpos, other.r);
             vec2 collisionPointCenter1 = ball.pos   + ball.dpos     * collisionScalar;
@@ -33,29 +37,19 @@ BallBallCollision Game::GetClosestBallBallCollision(){
                 float dl = dl1 + dl2;
                 float l  = l1  + l2;
 
-                // ball.pos    = collisionPointCenter1;
-                // other.pos   = collisionPointCenter2;
+                BallBallCollision collision;
+                collision.pos1 = collisionPointCenter1;
+                collision.pos2 = collisionPointCenter2;
+                collision.dpos1 = mirror1 * DPOS_LOSS;
+                collision.dpos2 = mirror2 * DPOS_LOSS;
+                collision.vel1 = u1 * l * (dl1 / dl);
+                collision.vel2 = u2 * l * (dl2 / dl);
+                collision.scalarOfDeltatime = collisionScalar;
 
-                // ball.dpos   = mirror1;
-                // other.dpos  = mirror2;
-
-                // ball.vel  = u1 * l * (dl1 / dl);
-                // other.vel = u2 * l * (dl2 / dl);
-
-                BallBallCollision retval;
-                retval.pos1 = collisionPointCenter1;
-                retval.pos2 = collisionPointCenter2;
-                retval.dpos1 = mirror1 * DPOS_LOSS;
-                retval.dpos2 = mirror2 * DPOS_LOSS;
-                retval.vel1 = u1 * l * (dl1 / dl);
-                retval.vel2 = u2 * l * (dl2 / dl);
-                retval.scalarOfDeltatime = collisionScalar;
-
-                retval.i = i;
-                retval.j = i2;
-                retval.nocollision = false;
-                // return retval;
-                collisions.push_back(retval);
+                collision.i = i;
+                collision.j = i2;
+                collision.nocollision = false;
+                collisions.push_back(collision);
             }
         }
     }
@@ -68,8 +62,9 @@ BallBallCollision Game::GetClosestBallBallCollision(){
         return *it;
     }
     else{
-        BallBallCollision ret;
-        return ret;
+        BallBallCollision nocollision;
+        nocollision.nocollision = true;
+        return nocollision;
     }
 }
 
@@ -79,6 +74,8 @@ BallLineCollision Game::GetClosestBallLineCollision(){
 
     for(int i = 0; i < balls.size(); i++){
         Ball& ball = balls[i];
+        if(!ball.active)
+            continue;
 
         // find first collision
         for(int j=0; j<lines.size(); j++){
@@ -120,13 +117,14 @@ BallLineCollision Game::GetClosestBallLineCollision(){
         return *it;
     }
     else{
-        BallLineCollision retval;
-        return retval;
+        BallLineCollision nocollision;
+        nocollision.nocollision = true;
+        return nocollision;
     }
 }
 
 
-void Game::HandleCollisions(){
+void Game::UpdatePositionsAndHandleCollisions(){
 
     for(int i=0; i<MAX_COLLISIONS_ITERS; i++){
         BallBallCollision bbcoll = GetClosestBallBallCollision();
@@ -203,8 +201,23 @@ void Game::HandleClippingIfNecessary(){
                 
                 ball.pos  = ball.pos  - u * hdd;
                 other.pos = other.pos + u * hdd;
-                ball.vel  = MirrorVectorFromNormal(ball.vel, u);
-                other.vel = MirrorVectorFromNormal(other.vel, u);
+
+                // vec2 rv1 = ball.vel - other.vel;
+                // vec2 rv2 = other.vel - ball.vel;
+
+                // vec2 mirror1 = MirrorVectorFromNormal(rv1 * 0.5f, u);
+                // vec2 mirror2 = MirrorVectorFromNormal(rv2 * 0.5f, u);
+
+                // vec2 v1 = mirror1 + ball.vel;
+                // vec2 v2 = mirror2 + other.vel;
+
+                // ball.vel  = MirrorVectorFromNormal(ball.vel, u);
+                // other.vel = MirrorVectorFromNormal(other.vel, u);
+                // ball.vel  = mirror1;
+                // other.vel = mirror2;
+
+                ball.vel = ball.vel - u * hdd;
+                other.vel = other.vel - u * hdd;
             }
         }
     }

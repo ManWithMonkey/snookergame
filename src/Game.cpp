@@ -8,12 +8,17 @@ Game::Game(){
 }
 
 void Game::Draw(){
+    for(Hole& hole : holes){
+        DrawHole(hole, '.');
+    }
+
     for(Ball& ball : balls){
-        DrawBall(ball, 'O');
+        if(ball.active)
+            DrawBall(ball, '#');
     }
 
     for(Line& line : lines){
-        DrawLine(line, '#');
+        DrawLine(line, 176);
     }
 }
 
@@ -35,7 +40,7 @@ void Game::Reset(){
     const float r = map_width - l;
     const float b = map_height - t;
     const float holer = 0.12f;
-    const float ballr = 0.08f;
+    const float ballr = 0.06f;
 
     std::vector<vec2> pointBand;
 
@@ -90,8 +95,8 @@ void Game::Reset(){
         });
     }
 
-    for(int j=0; j<3; j++){
-        for(int i=0; i<6; i++){
+    for(int j=0; j<2; j++){
+        for(int i=0; i<3; i++){
             Ball ball;
             ball.pos = {map_width / 2.f - 6.f * ballr + (float)i * 2.5f * ballr, map_height / 2.f - 3.f * ballr + 2.f * ballr * (float)j};
             ball.vel = {-2.f + 4.f * frand(), -2.f + 4.f * frand()};
@@ -100,14 +105,33 @@ void Game::Reset(){
             balls.push_back(ball);
         }
     }
+
+    Hole hole;
+    hole.holeRadius = holer * 0.8f;
+    hole.insideRadius = ballr * 1.1f;
+    hole.pullStrength = 1000.f * map_width;
+    
+    hole.pos = tl;
+    holes.push_back(hole);
+    hole.pos = tr;
+    holes.push_back(hole);
+    hole.pos = bl;
+    holes.push_back(hole);
+    hole.pos = br;
+    holes.push_back(hole);
 }
 
 void Game::Update(){
     float w = GetWidth();
     float h = GetHeight();
 
+    UpdateHoleStuff();
+
     for(int i = 0; i < balls.size(); i++){
         Ball& ball = balls[i];
+
+        if(!ball.active)
+            continue;
 
         float velx = std::max(0.1f, std::abs(ball.vel.x));
         float vely = std::max(0.1f, std::abs(ball.vel.y));
@@ -125,12 +149,37 @@ void Game::Update(){
         ball.dpos.y = ball.vel.y * deltaTime;
     }
 
-    HandleCollisions();
+    UpdatePositionsAndHandleCollisions();
     HandleClippingIfNecessary();
 
     auto now = std::chrono::steady_clock::now();
     deltaTime = std::chrono::duration_cast<std::chrono::microseconds>(now - lastUpdate).count() / 1000000.0f;
     lastUpdate = now;
+}
+
+void Game::UpdateHoleStuff(){
+    for(int i = 0; i < balls.size(); i++){
+        Ball& ball = balls[i];
+
+        for(Hole& hole : holes){
+            bool inside = hole.IsInside(ball);
+            bool close = hole.IsClose(ball);
+
+            if(inside){
+                ball.active = false;
+                break;
+            }
+            if(close){
+                float distance = Norm(ball.pos - hole.pos);
+                float strength = std::pow(hole.holeRadius - distance, 2.f) * hole.pullStrength;
+                
+                vec2 unit = UnitVector(hole.pos - ball.pos);
+
+                float slowdownScalar = Norm(ball.vel) * ball.r / hole.holeRadius * 0.1f;
+                ball.vel = ball.vel * (1.f - slowdownScalar * deltaTime) + unit * strength * deltaTime;
+            }
+        }
+    }
 }
 
 void Game::DrawBall(const Ball& ball, char c){
@@ -149,4 +198,13 @@ void Game::DrawLine(const Line& line, char c){
     float y2 = line.b.y * y_factor;
 
     DrawFunctions::DrawLine(x1, y1, x2, y2, c);
+}
+
+void Game::DrawHole(const Hole& hole, char c){
+    float x1 = hole.pos.x * x_factor;
+    float y1 = hole.pos.y * y_factor;
+    float rx = hole.holeRadius * x_factor;
+    float ry = hole.holeRadius * y_factor;
+
+    DrawFunctions::DrawSolidEllipse(x1, y1, rx, ry, c);
 }

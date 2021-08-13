@@ -45,18 +45,20 @@ private:
     BallBallCollision GetClosestBallBallCollision();
     BallLineCollision GetClosestBallLineCollision();
 
-    void HandleCollisions();
+    void UpdatePositionsAndHandleCollisions();
     void HandleClippingIfNecessary();
+    void UpdateHoleStuff();
 
 private:
     std::chrono::steady_clock::time_point lastUpdate;
     float deltaTime = 0.f;
 
-    // seperate collision lines and draw lines
+    // todo: seperate collision lines and draw lines
     std::vector<Line> lines;
     std::vector<Ball> balls;
+    std::vector<Hole> holes;
 
-    const int MAX_COLLISIONS_ITERS = 100;
+    const int MAX_COLLISIONS_ITERS = 500;
     const float MIRROR_LOSS = 0.99f;
     const float DPOS_LOSS   = 0.5f;
     const float VEL_LOSS    = 0.95f;
@@ -70,6 +72,7 @@ private:
 
     void DrawBall(const Ball& ball, char c);
     void DrawLine(const Line& line, char c);
+    void DrawHole(const Hole& hole, char c);
 
 };
 

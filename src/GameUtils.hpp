@@ -9,20 +9,28 @@
 
 struct Line{
     vec2 a, b;
-    vec2 nu;
-
-    void UpdateNormal();
 };
 
 struct Ball{
-    vec2 pos;
     float r;
 
+    vec2 pos;
     vec2 vel;
-    vec2 dpos; // change in position for next iteration
 
-    // needs more collision checking
-    // bool stillNecessary = false;
+    // change in position for next iteration
+    vec2 dpos; 
+
+    bool active = true;
+};
+
+struct Hole{
+    vec2 pos;
+    float holeRadius;
+    float insideRadius;
+    float pullStrength;
+
+    bool IsClose(const Ball& ball);
+    bool IsInside(const Ball& ball);
 };
 
 #endif // __GAMEUTILS_H__
