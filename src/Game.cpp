@@ -81,6 +81,14 @@ void Game::Reset(){
         
         pointBand.push_back(corners[i][2]);
     }
+    
+    lines.push_back({pointBand.back(), pointBand.front()});
+    for(int i=1; i<pointBand.size(); i++){
+        lines.push_back({
+            pointBand[i],
+            pointBand[i-1]
+        });
+    }
 
     for(int i=0; i<6; i++){
         Ball ball;
