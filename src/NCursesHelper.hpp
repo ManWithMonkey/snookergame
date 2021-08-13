@@ -8,23 +8,30 @@
 #include <iostream>
 #include <vector>
 #include <limits.h>
+#include <assert.h>
 
-struct Terminal{
-    static bool SHOULD_QUIT;
+// ncurses error checking macro
+#define CHECK(expr) do {assert(expr != ERR);} while (false)
 
-    // max width and height are just for saving memory, can be arbitrarily large
-    static const int MAX_WIDTH  = 300;
-    static const int MAX_HEIGHT = 200;
+const int MAX_COLOR = 1000; // why 1000 ???
 
-    // width and height updated from HandleScreenResizing on runtime
-    static int WIDTH;
-    static int HEIGHT;
+struct Terminal
+{
+	static bool SHOULD_QUIT;
 
-    static int SCREEN_DATA[MAX_WIDTH * MAX_HEIGHT];
-    // wrapper function for getting index of pixel on screen
-    static int Index(int x, int y);
+	// max width and height are just for saving memory, can be arbitrarily large
+	static const int MAX_WIDTH = 300;
+	static const int MAX_HEIGHT = 200;
 
-    static void PlotPixel(int x, int y, char c);
+	// width and height updated from HandleScreenResizing on runtime
+	static int WIDTH;
+	static int HEIGHT;
+
+	static int SCREEN_DATA[MAX_WIDTH * MAX_HEIGHT];
+	// wrapper function for getting index of pixel on screen
+	static int Index(int x, int y);
+
+	static void PlotPixel(int x, int y, char c);
 };
 
 void Init();

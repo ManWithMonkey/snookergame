@@ -23,45 +23,69 @@ void Terminal::PlotPixel(int x, int y, char c){
 	The curs_set routine sets the cursor state to invisible, normal, or
 	very visible for visibility equal to 0, 1, or 2 respectively.
 */
-enum cursor_visibility_t {
+enum cursor_visibility {
 	CURS_INVIS  = 0,
 	CURS_NORMAL = 1,
 	CURS_BRIGHT = 2
 };
 
+enum default_colors {
+	BLACK   = COLOR_BLACK,
+	RED     = COLOR_RED,
+	GREEN   = COLOR_GREEN,
+	YELLOW  = COLOR_YELLOW,
+	BLUE    = COLOR_BLUE,
+	MAGENTA = COLOR_MAGENTA,
+	CYAN    = COLOR_CYAN,
+	WHITE   = COLOR_WHITE,
+};
+
+
+enum color_pairs {
+	WHITE_ON_BLACK = 1, // because color pair 0 is reserved
+	BLACK_ON_RED,
+	BLACK_ON_GREEN,
+	BLACK_ON_BLUE,
+};
+
+
 void Init() {
 	initscr();
+	CHECK(start_color());
+	assert(can_change_color());
+
 	keypad(stdscr, true);
 	noecho();
-	curs_set(CURS_INVIS);
-	if (nodelay(stdscr, true) == ERR) {
-		std::cout << "unable to enable nodelay mode\n";
-	}
+	CHECK(curs_set(CURS_INVIS));
+
+	CHECK(nodelay(stdscr, true));
+
 	HandleScreenResizing();
 
 	//colors
-	if(start_color() == ERR){
-		std::cout << "unable to initialize color table\n";
-	}
-	else{
-		const int MAX_COLOR = 1000; // why 1000 ???
 
-		init_color(0, 0, 0, 0);
-		init_color(1, MAX_COLOR, MAX_COLOR, MAX_COLOR);
-		init_color(2, MAX_COLOR, 0, 0);
-		init_color(3, 0, MAX_COLOR, 0);
-		init_color(4, 0, 0, MAX_COLOR);
+	// color pair 0 is special; it denotes “no color”.
 
-		const int WHITE_ON_BLACK = 0;
-		const int BLACK_ON_RED = 1;
-		const int BLACK_ON_GREEN = 2;
-		const int BLACK_ON_BLUE = 3;
-		init_pair(WHITE_ON_BLACK, 	1, 0);
-		init_pair(BLACK_ON_RED, 	0, 2);
-		init_pair(BLACK_ON_GREEN, 	0, 3);
-		init_pair(BLACK_ON_BLUE, 	0, 4);
-		attron(COLOR_PAIR(BLACK_ON_BLUE));
+	for (int i = 0; i < 8; i++) {
+		short R, G, B;
+		CHECK(color_content(i, &R, &G, &B));
+		std::cout << "color " << i << " has RGB (" << R << ", " << G << " , " << B << std::endl;
 	}
+
+
+
+	init_color(0, 0, 0, 0);
+	CHECK(init_color(1, MAX_COLOR, MAX_COLOR, MAX_COLOR));
+	init_color(2, MAX_COLOR, 0, 0);
+	init_color(3, 0, MAX_COLOR, 0);
+	init_color(4, 0, 0, MAX_COLOR);
+
+	// init_pair (color_id, foreground, background)
+	init_pair(WHITE_ON_BLACK, COLOR_WHITE, COLOR_BLACK);
+	init_pair(BLACK_ON_RED,   COLOR_BLACK, COLOR_RED);
+	init_pair(BLACK_ON_GREEN, COLOR_BLACK, COLOR_GREEN);
+	init_pair(BLACK_ON_BLUE,  COLOR_BLACK, COLOR_BLUE);
+	attron(COLOR_PAIR(BLACK_ON_BLUE));
 }
 
 void Quit() {
