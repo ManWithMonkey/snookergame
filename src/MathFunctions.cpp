@@ -39,20 +39,6 @@ vec2 MakeVector(float angle, float length){
     return vec2{cos(angle), sin(angle)} * length;
 }
 
-// REMOVE
-vec2 Add(vec2 a, vec2 b){
-    return {a.x + b.x, a.y + b.y};
-}
-
-vec2 Subtract(vec2 a, vec2 b){
-    return {a.x - b.x, a.y - b.y};
-}
-
-vec2 Multiply(vec2 a, float s){
-    return {a.x * s, a.y * s};
-}
-// END OF REMOVE
-
 bool AABB(vec2 a1, vec2 b1, vec2 a2, vec2 b2){
     float x1 = std::min(a1.x, b1.x);
     float y1 = std::min(a1.y, b1.y);
@@ -201,7 +187,7 @@ vec2 MovingCircleCollisionPointWithLine(vec2 p, vec2 dp, float r, vec2 a, vec2 b
     // assumes that it does collide
     vec2 result = {0, 0};
 
-    vec2 dline = Subtract(b, a);
+    vec2 dline = b - a;
     vec2 uline = UnitVector(dline);
     vec2 n = Normal(uline);
 
@@ -225,6 +211,9 @@ vec2 MovingCircleCollisionPointWithLine(vec2 p, vec2 dp, float r, vec2 a, vec2 b
 
     // newtons
     for(int i=0; i<3; i++){
+        if(value1 <= 0.f)
+            return CalcVec(t);
+
         float slope = (value2 - value1) / delta;
 
         t = t - value1 / slope;
@@ -249,11 +238,15 @@ float GetCollisionPointMovementScalarNewton(vec2 p1, vec2 dp1, float r1, vec2 p2
     const float dt = 1E-5f;
     float t = 0.f;
 
-    const int NEWTON_ITERATIONS = 10;
+    const int NEWTON_ITERATIONS = 5;
     for(int i=0; i<NEWTON_ITERATIONS; i++){
         float distance1 = GetDistance(t);
         float distance2 = GetDistance(t + dt);
         float slope = (distance2 - distance1) / dt;
+
+        if(distance1 <= 0.f){
+            return t;
+        }
 
         t -= distance1 / slope;
     }

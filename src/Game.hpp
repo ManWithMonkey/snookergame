@@ -7,6 +7,21 @@
 #include <chrono>
 #include <limits>
 
+struct collision_t{
+    float scalar;
+
+    bool ballcollision;
+    void* ptr1;
+    void* ptr2;
+
+    vec2 ndpos1;
+    vec2 npos1;
+    vec2 nvel1;
+    vec2 ndpos2;
+    vec2 npos2;
+    vec2 nvel2;
+};
+
 class Game{
 public:
     Game();
@@ -19,6 +34,12 @@ public:
 
 private:
     void HandleCollisions();
+
+    std::vector<collision_t> GetBallBallCollisions();
+    std::vector<collision_t> GetBallLineCollisions();
+
+    void ApplyBallBallCollision(collision_t collision);
+    void ApplyBallLineCollision(collision_t collision);
 
 private:
     std::chrono::steady_clock::time_point lastUpdate;

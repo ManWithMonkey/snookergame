@@ -54,7 +54,7 @@ void Game::Reset(){
     const float r = map_width - l;
     const float b = map_height - t;
     const float holer = 0.06f;
-    const float ballr = 1.2f;
+    const float ballr = 0.9f;
 
     std::vector<vec2> pointBand;
 
@@ -101,13 +101,13 @@ void Game::Reset(){
         pointBand.push_back(corners[i][2]);
     }
     
-    // lines.push_back({pointBand.back(), pointBand.front()});
-    // for(int i=1; i<pointBand.size(); i++){
-    //     lines.push_back({
-    //         pointBand[i],
-    //         pointBand[i-1]
-    //     });
-    // }
+    lines.push_back({pointBand.back(), pointBand.front()});
+    for(int i=1; i<pointBand.size(); i++){
+        lines.push_back({
+            pointBand[i],
+            pointBand[i-1]
+        });
+    }
 
     for(int i=0; i<6; i++){
         Ball ball;
@@ -175,46 +175,59 @@ void Game::Update(){
         }
     }
 
-    // for(Line& line : lines)
-    //     line.UpdateNormal();
-
     auto now = std::chrono::steady_clock::now();
     deltaTime = std::chrono::duration_cast<std::chrono::microseconds>(now - lastUpdate).count() / 1000000.0f;
     lastUpdate = now;
 }
 
-// struct collision_t{
-//     float dt_scalar; // used to find the first collision
-//     void* ptr1;
-//     void* ptr2;
-// };
-
-// struct lineball_collision : public collision_t{
-//     Line* line(){ return (Line*)ptr1; }
-//     Line* ball(){ return (Ball*)ptr2; }
-// };
-
-// struct ballball_collision_t : public collision_t{
-//     Line* ball1(){ return (Line*)ptr1; }
-//     Line* ball2(){ return (Ball*)ptr2; }
-// };
-
 
 void Game::HandleCollisions(){
-    // ball collisions
-    for(int balli = 0; balli < balls.size(); balli++){
-        Ball& ball = balls[balli];
 
-        for(int balli2 = balli + 1; balli2 < balls.size(); balli2 ++){
-            Ball& other = balls[balli2];
+    for(int i=0; i<MAX_COLLISIONS_ITERS; i++){
+
+        std::vector<collision_t> bbcollisions = GetBallBallCollisions();
+        std::vector<collision_t> blcollisions = GetBallLineCollisions();
+
+        // combine
+        std::vector<collision_t> collisions = bbcollisions;
+        collisions.insert(collisions.end(), blcollisions.begin(), blcollisions.end());
+
+        if(collisions.size() == 0){
+            break;
+        }
+
+        // find first collision
+        collision_t firstCollision = *std::min_element(collisions.begin(), collisions.end(), [](collision_t rhs, collision_t lhs) -> bool {
+            return rhs.scalar < lhs.scalar;
+        });
+
+        // apply collision
+        if(firstCollision.ballcollision){
+            ApplyBallBallCollision(firstCollision);
+        }
+        else{
+            ApplyBallLineCollision(firstCollision);
+        }
+    }
+}
+
+std::vector<collision_t> Game::GetBallBallCollisions(){
+    std::vector<collision_t> collisions;
+
+    for(int i = 0; i < balls.size(); i++){
+        const Ball& ball = balls[i];
+
+        for(int j = j + 1; j < balls.size(); j ++){
+            const Ball& other = balls[j];
 
             float collisionScalar = GetCollisionPointMovementScalarNewton(ball.pos, ball.dpos, ball.r, other.pos, other.dpos, other.r);
             vec2 collisionPointCenter1 = ball.pos   + ball.dpos     * collisionScalar;
             vec2 collisionPointCenter2 = other.pos  + other.dpos    * collisionScalar;
 
             bool collides = MovingCirclesCollide(ball.pos, ball.dpos, ball.r, other.pos, other.dpos, other.r);
+            bool collides2 = (collisionScalar >= 0.f) && (collisionScalar <= 1.f);
 
-            if(collides && (collisionScalar <= 0.f)){
+            if(collides){
                 scalarmax = std::max(scalarmax, collisionScalar);
                 scalarmin = std::min(scalarmin, collisionScalar);
                 lastscalar = collisionScalar;
@@ -223,9 +236,6 @@ void Game::HandleCollisions(){
 
                 vec2 mirror1 = result.first;
                 vec2 mirror2 = result.second;
-
-                ball.pos    = collisionPointCenter1 - UnitVector(ball.dpos)     * 0.01f + mirror1 * 0.01f;
-                other.pos   = collisionPointCenter2 - UnitVector(other.dpos)    * 0.01f + mirror2 * 0.01f;
 
                 vec2 u1 = UnitVector(mirror1);
                 vec2 u2 = UnitVector(mirror2);
@@ -238,19 +248,40 @@ void Game::HandleCollisions(){
                 float dl = dl1 + dl2;
                 float l  = l1  + l2;
 
-                ball.dpos   = mirror1 * 1.f + u1 * 0.01f;
-                other.dpos  = mirror2 * 1.f + u2 * 0.01f;
+                // ball.pos    = collisionPointCenter1 - UnitVector(ball.dpos)     * 0.01f + mirror1 * 0.01f;
+                // other.pos   = collisionPointCenter2 - UnitVector(other.dpos)    * 0.01f + mirror2 * 0.01f;
 
-                ball.vel  = u1 * l * (dl1 / dl) * 1.f;
-                other.vel = u2 * l * (dl2 / dl) * 1.f; 
+                // ball.dpos   = mirror1 * 1.f + u1 * 0.01f;
+                // other.dpos  = mirror2 * 1.f + u2 * 0.01f;
+
+                // ball.vel  = u1 * l * (dl1 / dl) * 1.f;
+                // other.vel = u2 * l * (dl2 / dl) * 1.f; 
                 
-                ball.collided = true;
-                other.collided = true;
+                // ball.collided = true;
+                // other.collided = true;
+
+                collision_t collision;
+                collision.ballcollision = true;
+                collision.ptr1 = (void*)&ball;
+                collision.ptr2 = (void*)&other;
+                collision.scalar = collisionScalar;
+                collision.npos1 = collisionPointCenter1 - UnitVector(ball.dpos)     * 0.01f + mirror1 * 0.01f;
+                collision.npos2 = collisionPointCenter2 - UnitVector(other.dpos)    * 0.01f + mirror2 * 0.01f;
+                collision.ndpos1 = mirror1 * 1.f + u1 * 0.01f;
+                collision.ndpos2 = mirror2 * 1.f + u2 * 0.01f;
+                collision.nvel1 = u1 * l * (dl1 / dl) * 1.f;
+                collision.nvel2 = u2 * l * (dl2 / dl) * 1.f;
+                collisions.push_back(collision);
             }
         }
     }
 
-    // line collisions
+    return collisions;
+}
+
+std::vector<collision_t> Game::GetBallLineCollisions(){
+    std::vector<collision_t> collisions;
+
     for(int balli = 0; balli < balls.size(); balli++){
         Ball& ball = balls[balli];
 
@@ -264,7 +295,7 @@ void Game::HandleCollisions(){
             vec2 center;
             vec2 closest;
 
-            // find fist collision
+            // find first collision
             for(int i=0; i<lines.size(); i++){
                 Line& line = lines[i];
 
@@ -285,24 +316,72 @@ void Game::HandleCollisions(){
                 }
             }
 
-            // apply collision
             if(collisionsLastIteration){
-                Line& line = lines[firstCollisionIndex];
+                collision_t coll;
+                coll.ballcollision = false;
+                coll.ptr1 = (void*)&ball;
+                coll.ptr2 = (void*)&(lines[firstCollisionIndex]);
 
-                vec2 normal = UnitVector(closest - ball.pos);
-                vec2 mirror = MirrorVectorFromNormal(ball.pos + ball.dpos - center, normal);
+                float totalDistance = Norm(ball.dpos);
+                coll.scalar = minDistance / totalDistance;
 
-                float totalMotionLength     = Norm(ball.dpos);
-                float mirrorMotionLength    = Norm(mirror);
-
-                ball.pos = ball.pos + UnitVector(ball.dpos) * (totalMotionLength - mirrorMotionLength) * MIRROR_LOSS;
-                ball.dpos = UnitVector(mirror) * mirrorMotionLength * DPOS_LOSS;
-
-                ball.vel = MirrorVectorFromNormal(ball.vel, normal) * VEL_LOSS;
+                // collisions.push_back(coll);
             }
+
+            // // apply collision
+            // if(collisionsLastIteration){
+            //     Line& line = lines[firstCollisionIndex];
+
+            //     vec2 normal = UnitVector(closest - ball.pos);
+            //     vec2 mirror = MirrorVectorFromNormal(ball.pos + ball.dpos - center, normal);
+
+            //     float totalMotionLength     = Norm(ball.dpos);
+            //     float mirrorMotionLength    = Norm(mirror);
+
+            //     ball.pos = ball.pos + UnitVector(ball.dpos) * (totalMotionLength - mirrorMotionLength) * MIRROR_LOSS;
+            //     ball.dpos = UnitVector(mirror) * mirrorMotionLength * DPOS_LOSS;
+
+            //     ball.vel = MirrorVectorFromNormal(ball.vel, normal) * VEL_LOSS;
+            // }
         }
     }
+
+    return collisions;
 }
+
+void Game::ApplyBallBallCollision(collision_t collision){
+    Ball& ball = *(Ball*)collision.ptr1;
+    Ball& other = *(Ball*)collision.ptr2;
+
+    ball.pos    = collision.npos1;
+    other.pos   = collision.npos2;
+    
+    ball.dpos    = collision.ndpos1;
+    other.dpos   = collision.ndpos2;
+
+    ball.vel    = collision.nvel1;
+    other.vel   = collision.nvel2;
+    
+    ball.collided = true;
+    other.collided = true;
+}
+
+void Game::ApplyBallLineCollision(collision_t collision){
+    Line& line = *(Line*)collision.ptr1;
+    Ball& ball = *(Ball*)collision.ptr2;
+
+    // vec2 normal = UnitVector(closest - ball.pos);
+    // vec2 mirror = MirrorVectorFromNormal(ball.pos + ball.dpos - center, normal);
+
+    // float totalMotionLength     = Norm(ball.dpos);
+    // float mirrorMotionLength    = Norm(mirror);
+
+    // ball.pos = ball.pos + UnitVector(ball.dpos) * (totalMotionLength - mirrorMotionLength) * MIRROR_LOSS;
+    // ball.dpos = UnitVector(mirror) * mirrorMotionLength * DPOS_LOSS;
+
+    // ball.vel = MirrorVectorFromNormal(ball.vel, normal) * VEL_LOSS;
+}
+
 
 void Game::DrawBall(const Ball& ball, char c){
     float x = ball.pos.x    * x_factor;

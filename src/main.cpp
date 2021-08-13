@@ -80,7 +80,7 @@ int main(){
         game.Draw();
 
         Refresh();
-        napms(50);
+        napms(5);
     }
 
     Quit();
