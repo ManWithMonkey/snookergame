@@ -1,5 +1,114 @@
 #include "Game.hpp"
 
+BallBallCollision Game::GetClosestBallBallCollision(Ball& ball){
+    std::vector<BallBallCollision> collisions;
+
+    for(int j = 0; j < balls.size(); j ++){
+        Ball& other = balls[j];
+        if(!other.active || &other == &ball)
+            continue;
+
+        double collisionScalar = GetCollisionPointMovementScalarNewton(ball.pos, ball.dpos, ball.r, other.pos, other.dpos, other.r);
+        vec2 collisionPointCenter1 = ball.pos   + ball.dpos     * collisionScalar;
+        vec2 collisionPointCenter2 = other.pos  + other.dpos    * collisionScalar;
+
+        bool collides = MovingCirclesCollide(ball.pos, ball.dpos, ball.r, other.pos, other.dpos, other.r);
+        bool collides2 = (collisionScalar > 0.0) && (collisionScalar <= 1.0);
+
+        if(collides && collides2){
+            auto result = GetNewVelocities(ball.pos, ball.dpos, ball.r, other.pos, other.dpos, other.r);
+
+            vec2 mirror1 = result.first;
+            vec2 mirror2 = result.second;
+
+            vec2 u1 = UnitVector(mirror1);
+            vec2 u2 = UnitVector(mirror2);
+
+            double dl1 = Norm(mirror1);
+            double dl2 = Norm(mirror2);
+            double l1 = Norm(ball.vel);
+            double l2 = Norm(other.vel);
+
+            double dl = dl1 + dl2;
+            double l  = l1  + l2;
+
+            BallBallCollision collision;
+            collision.pos1 = collisionPointCenter1;
+            collision.pos2 = collisionPointCenter2;
+            collision.dpos1 = mirror1 * DPOS_LOSS;
+            collision.dpos2 = mirror2 * DPOS_LOSS;
+            collision.vel1 = u1 * l * (dl1 / dl) * VEL_LOSS;
+            collision.vel2 = u2 * l * (dl2 / dl) * VEL_LOSS;
+            collision.scalarOfDeltatime = collisionScalar;
+
+            collision.i = std::distance(&balls[0], &ball);
+            collision.j = j;
+            collision.nocollision = false;
+            collisions.push_back(collision);
+        }
+    }
+
+    if(collisions.size()){
+        auto it = std::min_element(collisions.begin(), collisions.end(), [](const BallBallCollision& lhs, const BallBallCollision& rhs){
+            return lhs.scalarOfDeltatime < rhs.scalarOfDeltatime;
+        });
+
+        return *it;
+    }
+    else{
+        BallBallCollision nocollision;
+        nocollision.nocollision = true;
+        return nocollision;
+    }
+}
+
+BallLineCollision Game::GetClosestBallLineCollision(Ball& ball){
+    std::vector<BallLineCollision> collisions;
+
+    for(int j=0; j<lines.size(); j++){
+        Line& line = lines[j];
+
+        if(MovingCircleCollidesWithStaticLine(ball.pos, ball.dpos, ball.r, line.a, line.b)){
+            vec2 center = MovingCircleCollisionPointWithLine(ball.pos, ball.dpos, ball.r, line.a, line.b);
+            vec2 closest = LineClosestPointFromPoint(line.a, line.b, ball.pos);
+
+            double distance = Norm(center - closest);
+
+            vec2 normal = UnitVector(closest - ball.pos);
+            vec2 mirror = MirrorVectorFromNormal(ball.pos + ball.dpos - center, normal);
+
+            double totalMotionLength     = Norm(ball.dpos);
+            double mirrorMotionLength    = Norm(mirror);
+
+            BallLineCollision collision;
+            collision.b = std::distance(&balls[0], &ball);
+            collision.l = j;
+            collision.pos = ball.pos + UnitVector(ball.dpos) * (totalMotionLength - mirrorMotionLength) * MIRROR_LOSS * 0.0;
+            collision.dpos = UnitVector(mirror) * mirrorMotionLength * DPOS_LOSS;
+            collision.vel = MirrorVectorFromNormal(ball.vel, normal) * VEL_LOSS;
+            collision.nocollision = false;
+            collision.scalarOfDeltatime = 1.0 - mirrorMotionLength / totalMotionLength;
+
+            double scalar = collision.scalarOfDeltatime;
+            if(scalar >= 0.0)
+                collisions.push_back(collision);
+        }
+    }
+
+    if(collisions.size() > 0){
+        auto it = std::min_element(collisions.begin(), collisions.end(), [](const BallLineCollision& lhs, const BallLineCollision& rhs){
+            return lhs.scalarOfDeltatime < rhs.scalarOfDeltatime;
+        });
+
+        return *it;
+    }
+    else{
+        BallLineCollision nocollision;
+        nocollision.nocollision = true;
+        return nocollision;
+    }
+}
+
 BallBallCollision Game::GetClosestBallBallCollision(){
 
     std::vector<BallBallCollision> collisions;

@@ -4,14 +4,15 @@ Done:
 - Line draw on screen
 - Ball, line architectures
 
-Undone:
 - Line-line collision/distance
 - Point-line collision
 - Ball-line collision
 - Ball-ball collision
 
-- Cue action
-
 - Table layout
 
+Undone:
+- Cue action
+- Cue ball in hole -> player chooses position
+- Teams
 - Game logic

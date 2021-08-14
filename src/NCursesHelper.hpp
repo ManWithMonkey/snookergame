@@ -34,8 +34,8 @@ void UpdateNCurses();
 void HandleScreenResizing();
 void HandleInput();
 
-static std::vector<std::pair<char, void(*)()>> callbacksIfKeyPressed;
-void AddCallback(char c, void(*func)());
+static std::vector<std::pair<int, void(*)()>> callbacksIfKeyPressed;
+void AddCallback(int c, void(*func)());
 
 static std::vector<void(*)()> resizeCallbacks;
 void AddResizeCallback(void(*func)());

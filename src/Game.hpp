@@ -7,30 +7,6 @@
 #include <chrono>
 #include <limits>
 
-struct BallBallCollisionInfo{
-    double scalarOfDeltatime;
-    vec2 pos1, pos2;
-    vec2 dpos1, dpos2;
-    vec2 vel1, vel2;
-};
-
-struct BallBallCollision : public BallBallCollisionInfo{
-    int i = 0, j = 0;
-    bool nocollision = true;
-};
-
-struct BallLineCollisionInfo{
-    double scalarOfDeltatime;
-    vec2 pos;
-    vec2 dpos;
-    vec2 vel;
-};
-
-struct BallLineCollision : public BallLineCollisionInfo{
-    int b = 0, l = 0;
-    bool nocollision = true;
-};
-
 class Game{
 public:
     Game();
@@ -38,23 +14,39 @@ public:
     void Update();
     void Draw();
 
-    void ResizeEvent();
     void Reset();
 
+    void ResizeEvent();
+    void LeftEvent();
+    void RightEvent();
+    void UpEvent();
+    void DownEvent();
+    void SpaceEvent();
+
 private:
+    BallBallCollision GetClosestBallBallCollision(Ball& ball);
+    BallLineCollision GetClosestBallLineCollision(Ball& ball);
     BallBallCollision GetClosestBallBallCollision();
     BallLineCollision GetClosestBallLineCollision();
 
     void UpdatePositions();
     void HandleClipping();
     void UpdateBallHoleInteraction();
+    void UpdateCueStuff();
+    void ReleaseCue();
 
     void InitDefaultBallFormation();
+    void InitDefaultCue();
 
 private:
+    void DrawBall(double x, double y, double r, char c);
+    void DrawLine(double x1, double y1, double x2, double y2, char c);
+
     void DrawBall(const Ball& ball, char c);
     void DrawLine(const Line& line, char c);
     void DrawHole(const Hole& hole, char c);
+    void DrawCue(const Cue& cue, char c, char x);
+    void DrawCueGhosts(const Cue& cue, char c);
 
 private:
     std::chrono::steady_clock::time_point lastUpdate;
@@ -64,6 +56,7 @@ private:
     std::vector<Line> lines;
     std::vector<Ball> balls;
     std::vector<Hole> holes;
+    Cue cue;
 
     const int MAX_COLLISIONS_ITERS = 100;
 
@@ -81,10 +74,15 @@ private:
     const double buffer_y       = 0.01f;
     const double table_left     = 0.1f;
     const double table_top      = 0.05f;
-    const double table_right    = 2.f - 0.1f;
+    const double table_right    = 2.f - 0.5f;
     const double table_bottom   = 1.f - 0.05f;
     const double holer          = 0.08f;
     const double ballr          = 0.04f;
+
+    // cue
+    const double rotateCueVel       = 0.1;
+    const double pullCue            = 0.1;
+    const double cueActivationVel   = 0.1;
 
     // for normalization
     double x_factor;

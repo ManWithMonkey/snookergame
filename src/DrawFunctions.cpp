@@ -111,6 +111,10 @@ void DrawSolidEllipse(float x, float y, float rx, float ry, char c){
     }
 }
 
+void DrawRotatedRect(float x, float y, float cx, float cy, float w, float h, char c){
+	// todo
+}
+
 void TypeString(int x, int y, std::string str){
 	for(int i=0; i<str.length(); i++){
 		PlotPixel(x+i, y, str[i]);

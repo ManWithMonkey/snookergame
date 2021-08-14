@@ -13,6 +13,8 @@ void DrawLineVertical(float x, float y1, float y2, char c);
 void DrawSolidBall(float x, float y, float r, char c);
 void DrawSolidEllipse(float x, float y, float rx, float ry, char c);
 
+void DrawRotatedRect(float x, float y, float cx, float cy, float w, float h, char c);
+
 void TypeString(int x, int y, std::string str);
 
 };

@@ -22,13 +22,8 @@ void HandleScreenResizing(){
     int nw, nh;
     getmaxyx(stdscr, nh, nw);
 
-    if(nw != CURRENT_SCREEN_WIDTH || nh != CURRENT_SCREEN_HEIGHT){
-        // std::cout << "Window resized to: " << nw << "x" << nh << "\n";   
-        // wresize(stdscr, nh, nw);
-
-        CURRENT_SCREEN_WIDTH    = nw;
-        CURRENT_SCREEN_HEIGHT   = nh;
-    }
+    CURRENT_SCREEN_WIDTH    = nw;
+    CURRENT_SCREEN_HEIGHT   = nh;
 
     for(auto& func : resizeCallbacks){
         func();
@@ -57,8 +52,8 @@ void HandleInput(){
     }
 }
 
-void AddCallback(char c, void(*func)()){
-    std::pair<char, void(*)()> newpair;
+void AddCallback(int c, void(*func)()){
+    std::pair<int, void(*)()> newpair;
 
     newpair.first = c;
     newpair.second = func;
