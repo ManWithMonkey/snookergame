@@ -7,7 +7,7 @@ void Game::LeftEvent(){
         return;
 
     // if already rotating, stop
-    if(cue.rotationStatus == ROTATE_LEFT)
+    if(cue.rotationStatus == ROTATE_LEFT || cue.rotationStatus == ROTATE_RIGHT)
         cue.rotationStatus = NO_ROTATION;
     else
         cue.rotationStatus = ROTATE_LEFT;
@@ -20,7 +20,7 @@ void Game::RightEvent(){
         return;
     
     // if already rotating, stop
-    if(cue.rotationStatus == ROTATE_RIGHT)
+    if(cue.rotationStatus == ROTATE_LEFT || cue.rotationStatus == ROTATE_RIGHT)
         cue.rotationStatus = NO_ROTATION;
     else
         cue.rotationStatus = ROTATE_RIGHT;

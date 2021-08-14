@@ -9,6 +9,8 @@
 
 struct Line{
     vec2 a, b;
+
+    double holeBounceFactor = 1.0;
 };
 
 struct Ball{
@@ -41,12 +43,11 @@ enum CueRotation{
 
 struct Cue{
     int ballIndex;
-    vec2 targetPosition;
+    double angle = 0.0;
 
     double distanceFromBallMin;
     double distanceFromBallMax;
     double lengthOnScreen;
-    double widthOnScreen;
     double pullScale;
     double releaseMinStregth;
     double releaseMaxStregth;

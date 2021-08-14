@@ -85,7 +85,7 @@ BallLineCollision Game::GetClosestBallLineCollision(Ball& ball){
             collision.l = j;
             collision.pos = ball.pos + UnitVector(ball.dpos) * (totalMotionLength - mirrorMotionLength) * MIRROR_LOSS * 0.0;
             collision.dpos = UnitVector(mirror) * mirrorMotionLength * DPOS_LOSS;
-            collision.vel = MirrorVectorFromNormal(ball.vel, normal) * VEL_LOSS;
+            collision.vel = MirrorVectorFromNormal(ball.vel, normal) * line.holeBounceFactor * VEL_LOSS;
             collision.nocollision = false;
             collision.scalarOfDeltatime = 1.0 - mirrorMotionLength / totalMotionLength;
 
@@ -208,7 +208,7 @@ BallLineCollision Game::GetClosestBallLineCollision(){
                 collision.l = j;
                 collision.pos = ball.pos + UnitVector(ball.dpos) * (totalMotionLength - mirrorMotionLength) * MIRROR_LOSS * 0.0;
                 collision.dpos = UnitVector(mirror) * mirrorMotionLength * DPOS_LOSS;
-                collision.vel = MirrorVectorFromNormal(ball.vel, normal) * VEL_LOSS;
+                collision.vel = MirrorVectorFromNormal(ball.vel, normal) * line.holeBounceFactor * VEL_LOSS;
                 collision.nocollision = false;
                 collision.scalarOfDeltatime = 1.0 - mirrorMotionLength / totalMotionLength;
 

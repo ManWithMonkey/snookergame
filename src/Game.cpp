@@ -45,6 +45,7 @@ void Game::Reset(){
     lines.clear();
 
     std::vector<vec2> pointBand;
+    std::vector<double> lastBounceBand;
 
     vec2 tr = {r, t};
     vec2 br = {r, b};
@@ -73,37 +74,41 @@ void Game::Reset(){
         2.f * 3.14159f * 0.5f
     };
 
-    double realholer = 0.5f * std::hypot(holer, holer);
 
     for(int i=0; i<4; i++){
         pointBand.push_back(corners[i][1]);
+        lastBounceBand.push_back(wallBounce);
 
-        int pc = 8;
-        double da = (1.f) * 3.14159f / (double)pc;
-        for(int j=0; j<pc; j++){
+        double da = (1.f) * 3.14159f / (double)holePointCount;
+        for(int j=0; j<holePointCount; j++){
             double ang = 2.f * 3.14159f - (double)j * da + angleOffsets[i] - 3.14159f * 0.25f;
             double length = realholer;
 
             vec2 center = (corners[i][2] + corners[i][1] + corners[i][0] * 2.f) * 0.25f;
             vec2 point = center + MakeVector(ang, length);
             pointBand.push_back(point);
+            lastBounceBand.push_back(holeWallBounce);
         }
         
         pointBand.push_back(corners[i][2]);
+        lastBounceBand.push_back(wallBounce);
     }
     
-    lines.push_back({pointBand.back(), pointBand.front()});
+    lines.push_back({pointBand.back(), pointBand.front(), lastBounceBand.front()});
     for(int i=1; i<pointBand.size(); i++){
+        double bounce = lastBounceBand[i];
+
         lines.push_back({
             pointBand[i],
-            pointBand[i-1]
+            pointBand[i-1],
+            bounce
         });
     }
 
     Hole hole;
     hole.holeRadius = realholer * 1.0;
-    hole.insideRadius = ballr * 1.3;
-    hole.pullStrength = 10.0 * map_width;
+    hole.insideRadius = holeInsideRadius;
+    hole.pullStrength = 100.0 * map_width;
     
     for(int i=0; i<4; i++){
         vec2 center = (corners[i][2] + corners[i][1] + corners[i][0] * 2.0) * 0.25;
@@ -178,12 +183,12 @@ void Game::UpdateBallHoleInteraction(){
             }
             if(close){
                 double distance = Norm(ball.pos - hole.pos);
-                double strength = (hole.holeRadius - distance) * hole.pullStrength;
+                double strength = holeSuckMinVel + distance * hole.pullStrength;
                 
                 vec2 unit = UnitVector(hole.pos - ball.pos);
 
-                double slowdownScalar = Norm(ball.vel) * ball.r / hole.holeRadius * 0.0;
-                ball.vel = ball.vel * (1.0 - slowdownScalar * deltaTime) + unit * strength * deltaTime;
+                ball.vel = ball.vel * (1.0 - holeDeacceleration * deltaTime);
+                ball.vel = ball.vel + unit * strength * deltaTime;
             }
         }
     }
@@ -225,15 +230,19 @@ void Game::InitDefaultBallFormation(){
 void Game::InitDefaultCue(){
     cue.active = true;
     cue.ballIndex = balls.size() - 1;
-    cue.targetPosition = balls.back().pos + vec2{map_width * 0.4, map_height * 0.5};
+    cue.angle = 3.14159;
     cue.distanceFromBallMin = ballr * 0.5;
     cue.distanceFromBallMax = ballr * 6.0;
     cue.pullScale = 0.0;
-    cue.lengthOnScreen = table_w * 0.3;
-    cue.widthOnScreen = 0.2; // unused
+    cue.lengthOnScreen = table_w * 0.25;
     cue.releaseMaxStregth = 6.0;
     cue.releaseMinStregth = 0.25;
     cue.rotationStatus = NO_ROTATION;
+
+    vec2 toCenter = vec2{table_left, table_top} + vec2{table_w, table_h} * 0.5 - balls.back().pos;
+    if(Norm(toCenter) >= balls.back().r * 4.f){
+        cue.angle = 3.14159 + atan2(toCenter.y, toCenter.x);
+    }
 }
 
 void Game::DrawBall(double x, double y, double r, char c){
@@ -287,8 +296,7 @@ void Game::DrawCue(const Cue& cue, char c, char x){
 
     Ball* ball = &balls[cue.ballIndex];
 
-    vec2 dpos = cue.targetPosition - ball->pos;
-    vec2 unit = UnitVector(dpos) * 1.0;
+    vec2 unit = MakeVector(cue.angle, 1.0);
     double distanceFromBall = cue.distanceFromBallMin + (cue.distanceFromBallMax - cue.distanceFromBallMin) * cue.pullScale + ball->r;
     double distanceFromBall2 = distanceFromBall + cue.lengthOnScreen;
 
@@ -296,23 +304,20 @@ void Game::DrawCue(const Cue& cue, char c, char x){
     double y1 = (ball->pos + unit * distanceFromBall).y * y_factor;
     double x2 = (ball->pos + unit * distanceFromBall2).x * x_factor;
     double y2 = (ball->pos + unit * distanceFromBall2).y * y_factor;
-    double x3 = cue.targetPosition.x * x_factor;
-    double y3 = cue.targetPosition.y * y_factor;
+    // double x3 = cue.targetPosition.x * x_factor;
+    // double y3 = cue.targetPosition.y * y_factor;
 
     DrawFunctions::DrawLine(x1, y1, x2, y2, c);
-    DrawFunctions::DrawPoint(x3, y3, x);
+    // DrawFunctions::DrawPoint(x3, y3, x);
 }
 
 void Game::UpdateCueStuff(){
 
     if(cue.active && (cue.rotationStatus != NO_ROTATION) && !(cue.ballIndex < 0 || cue.ballIndex >= balls.size())){
         Ball* ball = &balls[cue.ballIndex];
-        vec2 dpos = cue.targetPosition - ball->pos;
         
-        double angle = atan2(dpos.y, dpos.x);
-        double newAngle = angle + rotateCueVel * deltaTime * (cue.rotationStatus == ROTATE_LEFT ? -1.0 : 1.0);
-
-        cue.targetPosition = ball->pos + MakeVector(newAngle, Norm(dpos));
+        double newAngle = cue.angle + rotateCueVel * deltaTime * (cue.rotationStatus == ROTATE_LEFT ? -1.0 : 1.0);
+        cue.angle = newAngle;
     }
 
     if(!cue.active){
@@ -342,8 +347,7 @@ void Game::ReleaseCue(){
     float strength = cue.releaseMinStregth + (cue.releaseMaxStregth - cue.distanceFromBallMin) * cue.pullScale;
 
     Ball* ball = &balls[cue.ballIndex];
-    vec2 dpos = cue.targetPosition - ball->pos;
-    vec2 unit = UnitVector(dpos) * -1.0;
+    vec2 unit = MakeVector(cue.angle, -1.0);
 
     ball->vel = unit * strength;
 
@@ -358,8 +362,7 @@ void Game::DrawCueGhosts(const Cue& cue, char c){
         return;
 
     Ball* ball = &balls[cue.ballIndex];
-    vec2 dpos = cue.targetPosition - ball->pos;
-    vec2 unit = UnitVector(dpos) * -100.0;
+    vec2 unit = MakeVector(cue.angle, -100.0);
 
     vec2 temp = ball->dpos;
     ball->dpos = unit;
@@ -399,40 +402,4 @@ void Game::DrawCueGhosts(const Cue& cue, char c){
 
     DrawLine(ball->pos.x, ball->pos.y, ghost.x, ghost.y, c);
     DrawBall(ghost.x, ghost.y, ball->r, c);
-
-    // vec2 dp1 = p1 - p2;
-    // vec2 dp2 = p3 - p4;
-    // vec2 end1 = p2 + dp1;
-    // vec2 end2 = p4 + dp2;
-
-    // float collisionScalar = GetCollisionPointMovementScalarNewton(p2, dp1, r1, p4, dp2, r2);
-    // vec2 collisionPointCenter1 = p2 + dp1 * collisionScalar;
-    // vec2 collisionPointCenter2 = p4 + dp2 * collisionScalar;
-
-    // bool collides = MovingCirclesCollide(p2, dp1, r1, p4, dp2, r2) && collisionScalar <= 1.f;
-    // auto result = GetNewVelocities(p2, dp1, r1, p4, dp2, r2);
-
-    // vec2 mirrorDst1 = collisionPointCenter1 + result.first;
-    // vec2 mirrorDst2 = collisionPointCenter2 + result.second;
-
-    // DrawFunctions::DrawSolidBall(p2.x, p2.y, r1, ',');
-    // DrawFunctions::DrawSolidBall(p4.x, p4.y, r2, ',');
-    // DrawFunctions::DrawLine(p2.x, p2.y, end1.x, end1.y, '-');
-    // DrawFunctions::DrawLine(p4.x, p4.y, end2.x, end2.y, '-');
-    
-    // if(collides){
-    //     //collision ghosts
-    //     DrawFunctions::DrawSolidBall(collisionPointCenter1.x, collisionPointCenter1.y, r1, '.');
-    //     DrawFunctions::DrawSolidBall(collisionPointCenter2.x, collisionPointCenter2.y, r2, '.');
-
-    //     //collision new directions
-    //     DrawFunctions::DrawLine(collisionPointCenter1.x, collisionPointCenter1.y, mirrorDst1.x, mirrorDst1.y, '!');
-    //     DrawFunctions::DrawLine(collisionPointCenter2.x, collisionPointCenter2.y, mirrorDst2.x, mirrorDst2.y, '?');
-    // }
-
-    // DrawFunctions::DrawPoint(p1.x, p1.y, '#');
-    // DrawFunctions::DrawPoint(p3.x, p3.y, '#');
-
-    // float distance = Norm(collisionPointCenter1 - collisionPointCenter2) - r1 - r2;
-    // DrawFunctions::TypeString(0, 0, ToString(distance));
 }

@@ -76,8 +76,17 @@ private:
     const double table_top      = 0.05f;
     const double table_right    = 2.f - 0.1f;
     const double table_bottom   = 1.f - 0.05f;
-    const double holer          = 0.09f;
     const double ballr          = 0.04f;
+    const double wallBounce     = 0.99;
+
+    // holes
+    const int holePointCount        = 8;
+    const double holer              = 0.08;
+    const double realholer          = 0.06;
+    const double holeInsideRadius   = ballr *  1.2;
+    const double holeSuckMinVel     = 0.2;
+    const double holeWallBounce     = 0.4;
+    const double holeDeacceleration = 3.0;
 
     // cue
     const double rotateCueVel       = 0.5;
