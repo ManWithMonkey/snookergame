@@ -307,6 +307,8 @@ void Game::UpdateCueStuff(){
         bool isEverythingSlowEnough = true;
 
         for(Ball& ball : balls){
+            if(!ball.active)
+                continue;
             double vel = Norm(ball.vel);
 
             if(vel > cueActivationVel){
@@ -322,7 +324,7 @@ void Game::UpdateCueStuff(){
 }
 
 void Game::ReleaseCue(){
-    if(cue.ballIndex < 0 || cue.ballIndex >= balls.size())
+    if(!cue.active || cue.ballIndex < 0 || cue.ballIndex >= balls.size())
         return;
 
     float strength = cue.releaseMinStregth + (cue.releaseMaxStregth - cue.distanceFromBallMin) * cue.pullScale;

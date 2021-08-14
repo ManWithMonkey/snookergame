@@ -64,7 +64,7 @@ private:
     const double DPOS_LOSS      = 0.99f;
     const double VEL_LOSS       = 0.99f;
 
-    const double deacceleration = 0.95f;
+    const double deacceleration = 0.99f;
 
     // normalize game so its uneffected by screensize
     const double map_width      = 2.f;
@@ -82,7 +82,7 @@ private:
     // cue
     const double rotateCueVel       = 0.1;
     const double pullCue            = 0.1;
-    const double cueActivationVel   = 0.1;
+    const double cueActivationVel   = 0.04;
 
     // for normalization
     double x_factor;
