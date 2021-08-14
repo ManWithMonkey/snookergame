@@ -116,7 +116,7 @@ void Game::Update(){
     }
 
     // holes
-    UpdateHoleStuff();
+    UpdateBallHoleInteraction();
 
     // calculate dpos
     for(int i = 0; i < balls.size(); i++){
@@ -140,16 +140,16 @@ void Game::Update(){
     }
 
     // collisions
-    UpdatePositionsAndHandleCollisions();
-    // HandleClippingIfNecessary();
+    UpdatePositions();
+    HandleClipping();
 
     // deltatime for next iteration
     auto now = std::chrono::steady_clock::now();
-    deltaTime = std::chrono::duration_cast<std::chrono::microseconds>(now - lastUpdate).count() / 1000000.0;
+    deltaTime = std::chrono::duration_cast<std::chrono::microseconds>(now - lastUpdate).count() / 1E6;
     lastUpdate = now;
 }
 
-void Game::UpdateHoleStuff(){
+void Game::UpdateBallHoleInteraction(){
     for(int i = 0; i < balls.size(); i++){
         Ball& ball = balls[i];
 
@@ -175,20 +175,18 @@ void Game::UpdateHoleStuff(){
 }
 
 void Game::InitDefaultBallFormation(){
-
     double w = r - l;
     double h = b - t;
 
     double startx = l + w * 0.7;
     double starty = t + h * 0.5;
 
-    double dx = ballr * 2.5;
-    double dy = ballr * 3.1;
+    double dx = ballr * 2.2;
+    double dy = ballr * 2.8;
 
     Ball ball;
     ball.r = ballr;
-    ball.vel = {-0.01, -0.01};
-    // ball.vel = {-1.f, -0.01f};
+    ball.vel = {0.0, 0.0};
 
     for(int l=0; l<4; l++){
         double x = startx + dx * (double)l;
@@ -205,7 +203,7 @@ void Game::InitDefaultBallFormation(){
     double cuebally = t + h * 0.5;
 
     ball.pos = {cueballx, cuebally};
-    ball.vel = {2.f, 0.1f};
+    ball.vel = {10.0, 0.0};
     balls.push_back(ball);
 
     // for(int i=0; i<balls.size() - 1; i++){

@@ -9,8 +9,8 @@ BallBallCollision Game::GetClosestBallBallCollision(){
         if(!ball.active)
             continue;
 
-        for(int i2 = i + 1; i2 < balls.size(); i2 ++){
-            Ball& other = balls[i2];
+        for(int j = i + 1; j < balls.size(); j ++){
+            Ball& other = balls[j];
             if(!other.active)
                 continue;
 
@@ -48,7 +48,7 @@ BallBallCollision Game::GetClosestBallBallCollision(){
                 collision.scalarOfDeltatime = collisionScalar;
 
                 collision.i = i;
-                collision.j = i2;
+                collision.j = j;
                 collision.nocollision = false;
                 collisions.push_back(collision);
             }
@@ -125,37 +125,37 @@ BallLineCollision Game::GetClosestBallLineCollision(){
 }
 
 
-void Game::UpdatePositionsAndHandleCollisions(){
+void Game::UpdatePositions(){
+
+    // inefficient, might re-calculate unrelated collisions that would never be affected by one another
 
     for(int i=0; i<MAX_COLLISIONS_ITERS; i++){
         BallBallCollision bbcoll = GetClosestBallBallCollision();
         BallLineCollision blcoll = GetClosestBallLineCollision();
 
-        bool dotheball_insteadof_theline;
+        bool apply_ballball_instead_of_ballline;
 
         bool b = !bbcoll.nocollision;
         bool l = !blcoll.nocollision;
 
         if(!b && !l){
-            // continue;
+            // no more collisions, no need to iterate
             break;
         }
         else if(b && l){
-            dotheball_insteadof_theline = bbcoll.scalarOfDeltatime < blcoll.scalarOfDeltatime;
+            apply_ballball_instead_of_ballline = bbcoll.scalarOfDeltatime < blcoll.scalarOfDeltatime;
         }
         else if(b){
-            dotheball_insteadof_theline = true;
+            apply_ballball_instead_of_ballline = true;
         }
         else if(l){
-            dotheball_insteadof_theline = false;
+            apply_ballball_instead_of_ballline = false;
         }
         
-        if(dotheball_insteadof_theline){
-            int i = bbcoll.i;
-            int i2 = bbcoll.j;
-
-            Ball& ball = balls[i];
-            Ball& other = balls[i2];
+        // apply ball collision
+        if(apply_ballball_instead_of_ballline){
+            Ball& ball = balls[bbcoll.i];
+            Ball& other = balls[bbcoll.j];
 
             ball.pos    = bbcoll.pos1;
             other.pos   = bbcoll.pos2;
@@ -167,7 +167,8 @@ void Game::UpdatePositionsAndHandleCollisions(){
             other.vel = bbcoll.vel2;
         }
 
-        if(!dotheball_insteadof_theline){
+        // apply line collision
+        if(!apply_ballball_instead_of_ballline){
             int i = blcoll.b;
 
             Ball& ball = balls[i];
@@ -178,19 +179,21 @@ void Game::UpdatePositionsAndHandleCollisions(){
         }
     }
 
+    // add rest of motion
     for(Ball& ball : balls){
         ball.pos.x += ball.dpos.x;
         ball.pos.y += ball.dpos.y;
     }
 }
 
-void Game::HandleClippingIfNecessary(){
-    // balls in balls
+void Game::HandleClipping(){
+
+    // balls inside balls
     for(int i = 0; i < balls.size(); i++){
         Ball& ball = balls[i];
 
-        for(int i2 = i + 1; i2 < balls.size(); i2 ++){
-            Ball& other = balls[i2];
+        for(int j = i + 1; j < balls.size(); j ++){
+            Ball& other = balls[j];
 
             double minDistance = (other.r + ball.r) * 1.0;
             double distance = Norm(other.pos - ball.pos);
@@ -198,37 +201,20 @@ void Game::HandleClippingIfNecessary(){
             if(distance < minDistance){
                 vec2 u = UnitVector(other.pos - ball.pos);
 
-                double hdd = (minDistance - distance) * 0.51;
+                double motion = (minDistance - distance) * 0.501;
                 
-                ball.pos  = ball.pos  - u * hdd;
-                other.pos = other.pos + u * hdd;
-
-                vec2 rv1 = ball.vel - other.vel;
-                vec2 rv2 = other.vel - ball.vel;
-
-                vec2 mirror1 = MirrorVectorFromNormal(rv1, u);
-                vec2 mirror2 = MirrorVectorFromNormal(rv2, u);
-
-                vec2 v1 = ball.vel * (1.0 - Norm(mirror1) / Norm(ball.vel)) + mirror1;
-                vec2 v2 = other.vel * (1.0 - Norm(mirror2) / Norm(other.vel)) + mirror2;
-
-                // ball.vel  = MirrorVectorFromNormal(ball.vel, u);
-                // other.vel = MirrorVectorFromNormal(other.vel, u);
-                // ball.vel  = v1;
-                // other.vel = v2;
-
-                ball.vel = ball.vel - u * hdd;
-                other.vel = other.vel + u * hdd;
+                ball.pos  = ball.pos  - u * motion;
+                other.pos = other.pos + u * motion;
             }
         }
     }
 
-    // balls in lines
+    // balls inside lines
     for(int i = 0; i < balls.size(); i++){
         Ball& ball = balls[i];
 
-        for(int i2 = 0; i2 < lines.size(); i2 ++){
-            Line& line = lines[i2];
+        for(int j = 0; j < lines.size(); j ++){
+            Line& line = lines[j];
 
             double minDistance = ball.r * 1.0;
             double distance = LinePointDistance(line.a, line.b, ball.pos);
@@ -236,10 +222,8 @@ void Game::HandleClippingIfNecessary(){
             if(distance < minDistance){
                 vec2 u = UnitVector(LineClosestPointFromPoint(line.a, line.b, ball.pos) - ball.pos);
 
-                double hdd = (minDistance - distance) * 1.01;
-                
-                ball.pos  = ball.pos - u * hdd;
-                ball.vel  = MirrorVectorFromNormal(ball.vel, u);
+                double motion = (minDistance - distance) * 1.001;
+                ball.pos  = ball.pos - u * motion;
             }
         }
     }
