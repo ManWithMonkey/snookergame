@@ -102,8 +102,8 @@ void Game::Reset(){
 
     Hole hole;
     hole.holeRadius = realholer * 1.0;
-    hole.insideRadius = ballr * 1.2;
-    hole.pullStrength = 1.0 * map_width;
+    hole.insideRadius = ballr * 1.3;
+    hole.pullStrength = 10.0 * map_width;
     
     for(int i=0; i<4; i++){
         vec2 center = (corners[i][2] + corners[i][1] + corners[i][0] * 2.0) * 0.25;
@@ -226,13 +226,14 @@ void Game::InitDefaultCue(){
     cue.active = true;
     cue.ballIndex = balls.size() - 1;
     cue.targetPosition = balls.back().pos + vec2{map_width * 0.4, map_height * 0.5};
-    cue.distanceFromBallMin = ballr * 0.333;
-    cue.distanceFromBallMax = ballr * 4.0;
+    cue.distanceFromBallMin = ballr * 0.5;
+    cue.distanceFromBallMax = ballr * 6.0;
     cue.pullScale = 0.0;
-    cue.lengthOnScreen = table_w * 0.4;
+    cue.lengthOnScreen = table_w * 0.3;
     cue.widthOnScreen = 0.2; // unused
     cue.releaseMaxStregth = 6.0;
     cue.releaseMinStregth = 0.25;
+    cue.rotationStatus = NO_ROTATION;
 }
 
 void Game::DrawBall(double x, double y, double r, char c){
@@ -303,6 +304,17 @@ void Game::DrawCue(const Cue& cue, char c, char x){
 }
 
 void Game::UpdateCueStuff(){
+
+    if(cue.active && (cue.rotationStatus != NO_ROTATION) && !(cue.ballIndex < 0 || cue.ballIndex >= balls.size())){
+        Ball* ball = &balls[cue.ballIndex];
+        vec2 dpos = cue.targetPosition - ball->pos;
+        
+        double angle = atan2(dpos.y, dpos.x);
+        double newAngle = angle + rotateCueVel * deltaTime * (cue.rotationStatus == ROTATE_LEFT ? -1.0 : 1.0);
+
+        cue.targetPosition = ball->pos + MakeVector(newAngle, Norm(dpos));
+    }
+
     if(!cue.active){
         bool isEverythingSlowEnough = true;
 

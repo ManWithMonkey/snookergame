@@ -74,13 +74,13 @@ private:
     const double buffer_y       = 0.01f;
     const double table_left     = 0.1f;
     const double table_top      = 0.05f;
-    const double table_right    = 2.f - 0.5f;
+    const double table_right    = 2.f - 0.1f;
     const double table_bottom   = 1.f - 0.05f;
-    const double holer          = 0.08f;
+    const double holer          = 0.09f;
     const double ballr          = 0.04f;
 
     // cue
-    const double rotateCueVel       = 0.1;
+    const double rotateCueVel       = 0.5;
     const double pullCue            = 0.1;
     const double cueActivationVel   = 0.04;
 

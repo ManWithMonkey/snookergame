@@ -33,6 +33,12 @@ struct Hole{
     bool IsInside(const Ball& ball);
 };
 
+enum CueRotation{
+    NO_ROTATION = 0,
+    ROTATE_LEFT,
+    ROTATE_RIGHT
+};
+
 struct Cue{
     int ballIndex;
     vec2 targetPosition;
@@ -45,6 +51,7 @@ struct Cue{
     double releaseMinStregth;
     double releaseMaxStregth;
 
+    int rotationStatus = NO_ROTATION;
     bool active = true;
 };
 
