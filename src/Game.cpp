@@ -208,12 +208,12 @@ void Game::InitDefaultBallFormation(){
     ball.vel = {2.f, 0.1f};
     balls.push_back(ball);
 
-    for(int i=0; i<balls.size() - 1; i++){
-        balls[i].vel = {
-            -1.f + 2.f * ((double)rand() / (double)RAND_MAX),
-            -1.f + 2.f * ((double)rand() / (double)RAND_MAX)
-        };
-    }
+    // for(int i=0; i<balls.size() - 1; i++){
+    //     balls[i].vel = {
+    //         -1.f + 2.f * ((double)rand() / (double)RAND_MAX),
+    //         -1.f + 2.f * ((double)rand() / (double)RAND_MAX)
+    //     };
+    // }
 }
 
 void Game::DrawBall(const Ball& ball, char c){

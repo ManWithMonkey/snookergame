@@ -64,7 +64,7 @@ private:
     const double MIRROR_LOSS = 0.99f;
     const double DPOS_LOSS   = 0.99f;
     const double VEL_LOSS    = 0.99f;
-    const double deacceleration = 0.1f;
+    const double deacceleration = 0.95f;
 
 private:
     // normalize game so its uneffected by screensize
