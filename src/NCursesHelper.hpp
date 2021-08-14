@@ -11,7 +11,7 @@
 #include <assert.h>
 
 // ncurses error checking macro
-#define CHECK(expr) do {assert(expr != ERR);} while (false)
+#define CHECK(expr) do {assert((expr) != ERR);} while (false)
 
 const int MAX_COLOR = 1000; // why 1000 ???
 

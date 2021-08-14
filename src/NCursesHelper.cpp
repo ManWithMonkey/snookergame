@@ -29,7 +29,7 @@ enum cursor_visibility {
 	CURS_BRIGHT = 2
 };
 
-enum default_colors {
+enum default_colors { // first 8 colors (0 - 7) are reserved
 	BLACK   = COLOR_BLACK,
 	RED     = COLOR_RED,
 	GREEN   = COLOR_GREEN,
@@ -40,9 +40,9 @@ enum default_colors {
 	WHITE   = COLOR_WHITE,
 };
 
-
 enum color_pairs {
-	WHITE_ON_BLACK = 1, // because color pair 0 is reserved
+	DEFAULT_RESERVED, // color pair 0 is special; it denotes “no color”.
+	WHITE_ON_BLACK,
 	BLACK_ON_RED,
 	BLACK_ON_GREEN,
 	BLACK_ON_BLUE,
@@ -50,42 +50,32 @@ enum color_pairs {
 
 
 void Init() {
+
 	initscr();
-	CHECK(start_color());
+
+	// colors
+	assert(has_colors());
 	assert(can_change_color());
+	CHECK(start_color());
 
-	keypad(stdscr, true);
-	noecho();
-	CHECK(curs_set(CURS_INVIS));
-
+	// input settings
+	CHECK(keypad(stdscr, true));
+	CHECK(noecho());
 	CHECK(nodelay(stdscr, true));
 
+	// cursor
+	CHECK(curs_set(CURS_INVIS));
+
+	// screen size
 	HandleScreenResizing();
 
-	//colors
-
-	// color pair 0 is special; it denotes “no color”.
-
-	for (int i = 0; i < 8; i++) {
-		short R, G, B;
-		CHECK(color_content(i, &R, &G, &B));
-		std::cout << "color " << i << " has RGB (" << R << ", " << G << " , " << B << std::endl;
-	}
-
-
-
-	init_color(0, 0, 0, 0);
-	CHECK(init_color(1, MAX_COLOR, MAX_COLOR, MAX_COLOR));
-	init_color(2, MAX_COLOR, 0, 0);
-	init_color(3, 0, MAX_COLOR, 0);
-	init_color(4, 0, 0, MAX_COLOR);
-
-	// init_pair (color_id, foreground, background)
+	// color pairs
+	// syntax : init_pair (color_id, foreground, background)
 	init_pair(WHITE_ON_BLACK, COLOR_WHITE, COLOR_BLACK);
 	init_pair(BLACK_ON_RED,   COLOR_BLACK, COLOR_RED);
 	init_pair(BLACK_ON_GREEN, COLOR_BLACK, COLOR_GREEN);
 	init_pair(BLACK_ON_BLUE,  COLOR_BLACK, COLOR_BLUE);
-	attron(COLOR_PAIR(BLACK_ON_BLUE));
+	attr_on(COLOR_PAIR(BLACK_ON_BLUE), NULL);
 }
 
 void Quit() {
