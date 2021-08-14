@@ -28,7 +28,7 @@ void Game::Draw(){
 
     // cue
     if(cue.active){
-        DrawCue(cue, '176', 'X');
+        DrawCue(cue, 176, 'X');
     }
 }
 
