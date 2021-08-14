@@ -12,7 +12,7 @@ struct Line{
 };
 
 struct Ball{
-    float r;
+    double r;
 
     vec2 pos;
     vec2 vel;
@@ -25,9 +25,9 @@ struct Ball{
 
 struct Hole{
     vec2 pos;
-    float holeRadius;
-    float insideRadius;
-    float pullStrength;
+    double holeRadius;
+    double insideRadius;
+    double pullStrength;
 
     bool IsClose(const Ball& ball);
     bool IsInside(const Ball& ball);

@@ -2,7 +2,7 @@
 #define __VEC2_H__
 
 struct vec2{
-    float x, y;
+    double x, y;
 
     vec2 operator+(const vec2& rhs) const;
     vec2 operator-(const vec2& rhs) const;
@@ -10,7 +10,7 @@ struct vec2{
 };
 
 struct vec3{
-    float x, y, z;
+    double x, y, z;
 };
 
 #endif // __VEC2_H__

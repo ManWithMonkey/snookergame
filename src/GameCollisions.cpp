@@ -14,12 +14,12 @@ BallBallCollision Game::GetClosestBallBallCollision(){
             if(!other.active)
                 continue;
 
-            float collisionScalar = GetCollisionPointMovementScalarNewton(ball.pos, ball.dpos, ball.r, other.pos, other.dpos, other.r);
+            double collisionScalar = GetCollisionPointMovementScalarNewton(ball.pos, ball.dpos, ball.r, other.pos, other.dpos, other.r);
             vec2 collisionPointCenter1 = ball.pos   + ball.dpos     * collisionScalar;
             vec2 collisionPointCenter2 = other.pos  + other.dpos    * collisionScalar;
 
             bool collides = MovingCirclesCollide(ball.pos, ball.dpos, ball.r, other.pos, other.dpos, other.r);
-            bool collides2 = (collisionScalar > 0.f) && (collisionScalar <= 1.f);
+            bool collides2 = (collisionScalar > 0.0) && (collisionScalar <= 1.0);
 
             if(collides && collides2){
                 auto result = GetNewVelocities(ball.pos, ball.dpos, ball.r, other.pos, other.dpos, other.r);
@@ -30,13 +30,13 @@ BallBallCollision Game::GetClosestBallBallCollision(){
                 vec2 u1 = UnitVector(mirror1);
                 vec2 u2 = UnitVector(mirror2);
 
-                float dl1 = Norm(ball.dpos);
-                float dl2 = Norm(other.dpos);
-                float l1 = Norm(ball.vel);
-                float l2 = Norm(other.vel);
+                double dl1 = Norm(mirror1);
+                double dl2 = Norm(mirror2);
+                double l1 = Norm(ball.vel);
+                double l2 = Norm(other.vel);
 
-                float dl = dl1 + dl2;
-                float l  = l1  + l2;
+                double dl = dl1 + dl2;
+                double l  = l1  + l2;
 
                 BallBallCollision collision;
                 collision.pos1 = collisionPointCenter1;
@@ -86,25 +86,25 @@ BallLineCollision Game::GetClosestBallLineCollision(){
                 vec2 center = MovingCircleCollisionPointWithLine(ball.pos, ball.dpos, ball.r, line.a, line.b);
                 vec2 closest = LineClosestPointFromPoint(line.a, line.b, ball.pos);
 
-                float distance = Norm(center - closest);
+                double distance = Norm(center - closest);
 
                 vec2 normal = UnitVector(closest - ball.pos);
                 vec2 mirror = MirrorVectorFromNormal(ball.pos + ball.dpos - center, normal);
 
-                float totalMotionLength     = Norm(ball.dpos);
-                float mirrorMotionLength    = Norm(mirror);
+                double totalMotionLength     = Norm(ball.dpos);
+                double mirrorMotionLength    = Norm(mirror);
 
                 BallLineCollision collision;
                 collision.b = i;
                 collision.l = j;
-                collision.pos = ball.pos + UnitVector(ball.dpos) * (totalMotionLength - mirrorMotionLength) * MIRROR_LOSS * 0.f;
+                collision.pos = ball.pos + UnitVector(ball.dpos) * (totalMotionLength - mirrorMotionLength) * MIRROR_LOSS * 0.0;
                 collision.dpos = UnitVector(mirror) * mirrorMotionLength * DPOS_LOSS;
                 collision.vel = MirrorVectorFromNormal(ball.vel, normal) * VEL_LOSS;
                 collision.nocollision = false;
-                collision.scalarOfDeltatime = 1.f - mirrorMotionLength / totalMotionLength;
+                collision.scalarOfDeltatime = 1.0 - mirrorMotionLength / totalMotionLength;
 
-                float scalar = collision.scalarOfDeltatime;
-                if(scalar >= 0.f)
+                double scalar = collision.scalarOfDeltatime;
+                if(scalar >= 0.0)
                     collisions.push_back(collision);
             }
         }
@@ -137,7 +137,8 @@ void Game::UpdatePositionsAndHandleCollisions(){
         bool l = !blcoll.nocollision;
 
         if(!b && !l){
-            continue;
+            // continue;
+            break;
         }
         else if(b && l){
             dotheball_insteadof_theline = bbcoll.scalarOfDeltatime < blcoll.scalarOfDeltatime;
@@ -185,20 +186,19 @@ void Game::UpdatePositionsAndHandleCollisions(){
 
 void Game::HandleClippingIfNecessary(){
     // balls in balls
-    if(false)
     for(int i = 0; i < balls.size(); i++){
         Ball& ball = balls[i];
 
         for(int i2 = i + 1; i2 < balls.size(); i2 ++){
             Ball& other = balls[i2];
 
-            float minDistance = (other.r + ball.r) * 0.95f;
-            float distance = Norm(other.pos - ball.pos);
+            double minDistance = (other.r + ball.r) * 1.0;
+            double distance = Norm(other.pos - ball.pos);
 
             if(distance < minDistance){
                 vec2 u = UnitVector(other.pos - ball.pos);
 
-                float hdd = (minDistance - distance) * 0.51f;
+                double hdd = (minDistance - distance) * 0.51;
                 
                 ball.pos  = ball.pos  - u * hdd;
                 other.pos = other.pos + u * hdd;
@@ -209,8 +209,8 @@ void Game::HandleClippingIfNecessary(){
                 vec2 mirror1 = MirrorVectorFromNormal(rv1, u);
                 vec2 mirror2 = MirrorVectorFromNormal(rv2, u);
 
-                vec2 v1 = ball.vel * (1.f - Norm(mirror1) / Norm(ball.vel)) + mirror1;
-                vec2 v2 = other.vel * (1.f - Norm(mirror2) / Norm(other.vel)) + mirror2;
+                vec2 v1 = ball.vel * (1.0 - Norm(mirror1) / Norm(ball.vel)) + mirror1;
+                vec2 v2 = other.vel * (1.0 - Norm(mirror2) / Norm(other.vel)) + mirror2;
 
                 // ball.vel  = MirrorVectorFromNormal(ball.vel, u);
                 // other.vel = MirrorVectorFromNormal(other.vel, u);
@@ -230,13 +230,13 @@ void Game::HandleClippingIfNecessary(){
         for(int i2 = 0; i2 < lines.size(); i2 ++){
             Line& line = lines[i2];
 
-            float minDistance = ball.r * 1.f;
-            float distance = LinePointDistance(line.a, line.b, ball.pos);
+            double minDistance = ball.r * 1.0;
+            double distance = LinePointDistance(line.a, line.b, ball.pos);
 
             if(distance < minDistance){
                 vec2 u = UnitVector(LineClosestPointFromPoint(line.a, line.b, ball.pos) - ball.pos);
 
-                float hdd = (minDistance - distance) * 1.01f;
+                double hdd = (minDistance - distance) * 1.01;
                 
                 ball.pos  = ball.pos - u * hdd;
                 ball.vel  = MirrorVectorFromNormal(ball.vel, u);
