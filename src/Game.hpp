@@ -49,6 +49,8 @@ private:
     void HandleClippingIfNecessary();
     void UpdateHoleStuff();
 
+    void InitDefaultBallFormation();
+
 private:
     std::chrono::steady_clock::time_point lastUpdate;
     float deltaTime = 0.f;
@@ -58,9 +60,9 @@ private:
     std::vector<Ball> balls;
     std::vector<Hole> holes;
 
-    const int MAX_COLLISIONS_ITERS = 500;
-    const float MIRROR_LOSS = 0.8f;
-    const float DPOS_LOSS   = 0.33f;
+    const int MAX_COLLISIONS_ITERS = 4;
+    const float MIRROR_LOSS = 0.01f;
+    const float DPOS_LOSS   = 0.01f;
     const float VEL_LOSS    = 0.99f;
 
 private:
@@ -74,6 +76,20 @@ private:
     const float table_top    = 0.0f;
     const float table_right  = map_width - table_left;
     const float table_bottom = map_height - table_top;
+
+    const float table_w = (table_right - table_left);
+    const float table_h = (table_bottom - table_top);
+
+    const float buffer_x = 0.10f;
+    const float buffer_y = 0.05f;
+
+    const float holer = 0.12f;
+    const float ballr = 0.04f;
+
+    const float l = table_left      + buffer_x + holer;
+    const float t = table_top       + buffer_y + holer;
+    const float r = table_right     - buffer_x - holer;
+    const float b = table_bottom    - buffer_y - holer;
 
     const float deacceleration = 0.95f;
 

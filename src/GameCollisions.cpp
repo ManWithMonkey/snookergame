@@ -19,8 +19,9 @@ BallBallCollision Game::GetClosestBallBallCollision(){
             vec2 collisionPointCenter2 = other.pos  + other.dpos    * collisionScalar;
 
             bool collides = MovingCirclesCollide(ball.pos, ball.dpos, ball.r, other.pos, other.dpos, other.r);
+            bool collides2 = (collisionScalar > 0.f) && (collisionScalar <= 1.f);
 
-            if(collides && (collisionScalar <= 1.f) && (collisionScalar > 0.f)){
+            if(collides && collides2){
                 auto result = GetNewVelocities(ball.pos, ball.dpos, ball.r, other.pos, other.dpos, other.r);
 
                 vec2 mirror1 = result.first;
@@ -42,8 +43,8 @@ BallBallCollision Game::GetClosestBallBallCollision(){
                 collision.pos2 = collisionPointCenter2;
                 collision.dpos1 = mirror1 * DPOS_LOSS;
                 collision.dpos2 = mirror2 * DPOS_LOSS;
-                collision.vel1 = u1 * l * (dl1 / dl);
-                collision.vel2 = u2 * l * (dl2 / dl);
+                collision.vel1 = u1 * l * (dl1 / dl) * VEL_LOSS;
+                collision.vel2 = u2 * l * (dl2 / dl) * VEL_LOSS;
                 collision.scalarOfDeltatime = collisionScalar;
 
                 collision.i = i;
@@ -136,7 +137,7 @@ void Game::UpdatePositionsAndHandleCollisions(){
         bool l = !blcoll.nocollision;
 
         if(!b && !l){
-            break;
+            continue;
         }
         else if(b && l){
             dotheball_insteadof_theline = bbcoll.scalarOfDeltatime < blcoll.scalarOfDeltatime;
@@ -183,15 +184,15 @@ void Game::UpdatePositionsAndHandleCollisions(){
 }
 
 void Game::HandleClippingIfNecessary(){
-
     // balls in balls
+    if(false)
     for(int i = 0; i < balls.size(); i++){
         Ball& ball = balls[i];
 
         for(int i2 = i + 1; i2 < balls.size(); i2 ++){
             Ball& other = balls[i2];
 
-            float minDistance = (other.r + ball.r) * 1.f;
+            float minDistance = (other.r + ball.r) * 0.95f;
             float distance = Norm(other.pos - ball.pos);
 
             if(distance < minDistance){
@@ -213,11 +214,11 @@ void Game::HandleClippingIfNecessary(){
 
                 // ball.vel  = MirrorVectorFromNormal(ball.vel, u);
                 // other.vel = MirrorVectorFromNormal(other.vel, u);
-                ball.vel  = v1;
-                other.vel = v2;
+                // ball.vel  = v1;
+                // other.vel = v2;
 
-                // ball.vel = ball.vel - u * hdd;
-                // other.vel = other.vel + u * hdd;
+                ball.vel = ball.vel - u * hdd;
+                other.vel = other.vel + u * hdd;
             }
         }
     }

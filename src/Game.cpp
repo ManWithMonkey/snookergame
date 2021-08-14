@@ -32,15 +32,7 @@ void Game::Reset(){
         return (float)rand() / ((float)(RAND_MAX) + 1.f);
     };
 
-    balls.clear();
     lines.clear();
-
-    const float l = 0.15f * map_width;
-    const float t = 0.15f * map_height;
-    const float r = map_width - l;
-    const float b = map_height - t;
-    const float holer = 0.11f;
-    const float ballr = 0.06f;
 
     std::vector<vec2> pointBand;
 
@@ -98,17 +90,6 @@ void Game::Reset(){
         });
     }
 
-    for(int j=0; j<2; j++){
-        for(int i=0; i<3; i++){
-            Ball ball;
-            ball.pos = {map_width / 2.f - 6.f * ballr + (float)i * 2.5f * ballr, map_height / 2.f - 3.f * ballr + 2.f * ballr * (float)j};
-            ball.vel = {-2.f + 4.f * frand(), -2.f + 4.f * frand()};
-            ball.r = ballr;
-
-            balls.push_back(ball);
-        }
-    }
-
     Hole hole;
     hole.holeRadius = realholer * 1.0f;
     hole.insideRadius = ballr * 1.2f;
@@ -119,14 +100,25 @@ void Game::Reset(){
         hole.pos = center;
         holes.push_back(hole);
     }
+
+    balls.clear();
+    InitDefaultBallFormation();
 }
 
 void Game::Update(){
     float w = GetWidth();
     float h = GetHeight();
 
+    // deaccelerate
+    for(int i = 0; i < balls.size(); i++){
+        Ball& ball = balls[i];
+        ball.vel = ball.vel * (1.f - deacceleration * deltaTime);
+    }
+
+    // holes
     UpdateHoleStuff();
 
+    // calculate dpos
     for(int i = 0; i < balls.size(); i++){
         Ball& ball = balls[i];
 
@@ -142,16 +134,16 @@ void Game::Update(){
         if(ball.pos.x >= map_width)     ball.vel.x = -velx;
         if(ball.pos.y >= map_height)    ball.vel.y = -vely;
 
-        ball.vel = ball.vel * (1.f - 1.f * deltaTime);
-
         // position change
         ball.dpos.x = ball.vel.x * deltaTime;
         ball.dpos.y = ball.vel.y * deltaTime;
     }
 
+    // collisions
     UpdatePositionsAndHandleCollisions();
     HandleClippingIfNecessary();
 
+    // deltatime for next iteration
     auto now = std::chrono::steady_clock::now();
     deltaTime = std::chrono::duration_cast<std::chrono::microseconds>(now - lastUpdate).count() / 1000000.0f;
     lastUpdate = now;
@@ -180,6 +172,47 @@ void Game::UpdateHoleStuff(){
             }
         }
     }
+}
+
+void Game::InitDefaultBallFormation(){
+
+    float w = r - l;
+    float h = b - t;
+
+    float startx = l + w * 0.7f;
+    float starty = t + h * 0.5f;
+
+    float dx = ballr * 2.5f;
+    float dy = ballr * 3.1f;
+
+    Ball ball;
+    ball.r = ballr;
+    ball.vel = {-1.f, -0.01f};
+
+    for(int l=0; l<4; l++){
+        float x = startx + dx * (float)l;
+
+        for(int i=l+1; i>0; i--){
+            float y = starty + dy * ((float)i - (float)l / 2.f - 1.f);
+
+            ball.pos = {x, y};
+            balls.push_back(ball);
+        }
+    }
+
+    float cueballx = l + w * 0.2f;
+    float cuebally = t + h * 0.5f;
+
+    ball.pos = {cueballx, cuebally};
+    ball.vel = {2.f, 0.1f};
+    balls.push_back(ball);
+
+    // for(int i=0; i<balls.size() - 1; i++){
+    //     balls[i].vel = {
+    //         -1.f + 2.f * ((float)rand() / (float)RAND_MAX),
+    //         -1.f + 2.f * ((float)rand() / (float)RAND_MAX)
+    //     };
+    // }
 }
 
 void Game::DrawBall(const Ball& ball, char c){
