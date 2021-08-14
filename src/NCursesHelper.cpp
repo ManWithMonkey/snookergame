@@ -19,26 +19,6 @@ void Terminal::PlotPixel(int x, int y, char c){
     SCREEN_DATA[Index(x, y)] = c;
 }
 
-/*
-	The curs_set routine sets the cursor state to invisible, normal, or
-	very visible for visibility equal to 0, 1, or 2 respectively.
-*/
-enum cursor_visibility {
-	CURS_INVIS  = 0,
-	CURS_NORMAL = 1,
-	CURS_BRIGHT = 2
-};
-
-enum default_colors { // first 8 colors (0 - 7) are reserved
-	BLACK   = COLOR_BLACK,
-	RED     = COLOR_RED,
-	GREEN   = COLOR_GREEN,
-	YELLOW  = COLOR_YELLOW,
-	BLUE    = COLOR_BLUE,
-	MAGENTA = COLOR_MAGENTA,
-	CYAN    = COLOR_CYAN,
-	WHITE   = COLOR_WHITE,
-};
 
 enum color_pairs {
 	DEFAULT_RESERVED, // color pair 0 is special; it denotes “no color”.
@@ -48,10 +28,9 @@ enum color_pairs {
 	BLACK_ON_BLUE,
 };
 
-
 void Init() {
-
-	initscr();
+	// window
+	assert(initscr() != NULL);
 
 	// colors
 	assert(has_colors());
@@ -71,10 +50,11 @@ void Init() {
 
 	// color pairs
 	// syntax : init_pair (color_id, foreground, background)
-	init_pair(WHITE_ON_BLACK, COLOR_WHITE, COLOR_BLACK);
-	init_pair(BLACK_ON_RED,   COLOR_BLACK, COLOR_RED);
-	init_pair(BLACK_ON_GREEN, COLOR_BLACK, COLOR_GREEN);
-	init_pair(BLACK_ON_BLUE,  COLOR_BLACK, COLOR_BLUE);
+	init_pair(WHITE_ON_BLACK, WHITE, BLACK);
+	init_pair(BLACK_ON_RED,   BLACK, RED);
+	init_pair(BLACK_ON_GREEN, BLACK, GREEN);
+	init_pair(BLACK_ON_BLUE,  BLACK, BLUE);
+
 	attr_on(COLOR_PAIR(BLACK_ON_BLUE), NULL);
 }
 

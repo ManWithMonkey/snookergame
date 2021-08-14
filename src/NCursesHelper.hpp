@@ -13,6 +13,27 @@
 // ncurses error checking macro
 #define CHECK(expr) do {assert((expr) != ERR);} while (false)
 
+/*
+	The curs_set routine sets the cursor state to invisible, normal, or
+	very visible for visibility equal to 0, 1, or 2 respectively.
+*/
+enum cursor_visibility {
+	CURS_INVIS  = 0,
+	CURS_NORMAL = 1,
+	CURS_BRIGHT = 2
+};
+
+enum default_colors { // first 8 colors (0 - 7) are reserved
+	BLACK   = COLOR_BLACK,
+	RED     = COLOR_RED,
+	GREEN   = COLOR_GREEN,
+	YELLOW  = COLOR_YELLOW,
+	BLUE    = COLOR_BLUE,
+	MAGENTA = COLOR_MAGENTA,
+	CYAN    = COLOR_CYAN,
+	WHITE   = COLOR_WHITE,
+};
+
 const int MAX_COLOR = 1000; // why 1000 ???
 
 struct Terminal
