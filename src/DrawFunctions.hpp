@@ -5,15 +5,15 @@
 
 namespace DrawFunctions{
 
-void DrawPoint(float x1, float y1, char c);
-void DrawLine(float x1, float y1, float x2, float y2, char c);
-void DrawLineHorisontal(float y, float x1, float x2, char c);
-void DrawLineVertical(float x, float y1, float y2, char c);
+void DrawPoint(double x1, double y1, char c);
+void DrawLine(double x1, double y1, double x2, double y2, char c);
+void DrawLineHorisontal(double y, double x1, double x2, char c);
+void DrawLineVertical(double x, double y1, double y2, char c);
 
-void DrawSolidBall(float x, float y, float r, char c);
-void DrawSolidEllipse(float x, float y, float rx, float ry, char c);
+void DrawSolidBall(double x, double y, double r, char c);
+void DrawSolidEllipse(double x, double y, double rx, double ry, char c);
 
-void DrawRotatedRect(float x, float y, float cx, float cy, float w, float h, char c);
+void DrawRotatedRect(double x, double y, double cx, double cy, double w, double h, char c);
 
 void TypeString(int x, int y, std::string str);
 

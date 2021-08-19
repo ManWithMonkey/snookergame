@@ -50,7 +50,7 @@ private:
 
 private:
     std::chrono::steady_clock::time_point lastUpdate;
-    double deltaTime = 0.f;
+    double deltaTime = 0.;
 
     // todo: seperate collision lines and draw lines
     std::vector<Line> lines;
@@ -60,23 +60,23 @@ private:
 
     const int MAX_COLLISIONS_ITERS = 100;
 
-    const double MIRROR_LOSS    = 0.99f;
-    const double DPOS_LOSS      = 0.99f;
-    const double VEL_LOSS       = 0.99f;
+    const double MIRROR_LOSS    = 0.99;
+    const double DPOS_LOSS      = 0.99;
+    const double VEL_LOSS       = 0.99;
 
-    const double deacceleration = 0.99f;
+    const double deacceleration = 0.99;
 
     // normalize game so its uneffected by screensize
-    const double map_width      = 2.f;
-    const double map_height     = 1.f;
+    const double map_width      = 2.;
+    const double map_height     = 1.;
 
-    const double buffer_x       = 0.02f;
-    const double buffer_y       = 0.01f;
-    const double table_left     = 0.1f;
-    const double table_top      = 0.05f;
-    const double table_right    = 2.f - 0.1f;
-    const double table_bottom   = 1.f - 0.05f;
-    const double ballr          = 0.04f;
+    const double buffer_x       = 0.02;
+    const double buffer_y       = 0.01;
+    const double table_left     = 0.1;
+    const double table_top      = 0.05;
+    const double table_right    = 2. - 0.1;
+    const double table_bottom   = 1. - 0.05;
+    const double ballr          = 0.04;
     const double wallBounce     = 0.99;
 
     // holes

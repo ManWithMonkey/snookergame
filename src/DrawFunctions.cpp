@@ -2,11 +2,11 @@
 
 namespace DrawFunctions{
 
-void DrawPoint(float x1, float y1, char c){
+void DrawPoint(double x1, double y1, char c){
 	PlotPixel(x1, y1, c);
 }
 
-void DrawLine(float x1, float y1, float x2, float y2, char c){
+void DrawLine(double x1, double y1, double x2, double y2, char c){
 	if(y2 < y1){
 		std::swap(y1, y2);
 		std::swap(x1, x2);
@@ -29,20 +29,20 @@ void DrawLine(float x1, float y1, float x2, float y2, char c){
 	// x = (y - b) / k
 	if(std::abs(dx) >= std::abs(dy)){
 		if(dx > 0){
-			for(int x = std::max(0.f, x1); x < std::min((float)GetWidth(), x2); x++){
+			for(int x = std::max(0., x1); x < std::min((double)GetWidth(), x2); x++){
 				double y = k * x + b;
 				PlotPixel(x, y, c);
 			}
 		}
 		else{
-			for(int x = std::max(0.f, x2); x < std::min((float)GetWidth(), x1); x++){
+			for(int x = std::max(0., x2); x < std::min((double)GetWidth(), x1); x++){
 				double y = k * x + b;
 				PlotPixel(x, y, c);
 			}
 		}
 	}
 	else{
-		for(int y = std::max(0.f, y1); y < std::min((float)GetHeight(), y2); y++){
+		for(int y = std::max(0., y1); y < std::min((double)GetHeight(), y2); y++){
 			double x = (y - b) / k;
 			PlotPixel(x, y, c);
 		}
@@ -50,7 +50,7 @@ void DrawLine(float x1, float y1, float x2, float y2, char c){
 }
 
 
-void DrawLineHorisontal(float y, float x1, float x2, char c){
+void DrawLineHorisontal(double y, double x1, double x2, char c){
     if(x2 < x1) std::swap(x1, x2);
 
     for(int x=x1; x<x2; x ++){
@@ -58,7 +58,7 @@ void DrawLineHorisontal(float y, float x1, float x2, char c){
     }
 }
 
-void DrawLineVertical(float x, float y1, float y2, char c){
+void DrawLineVertical(double x, double y1, double y2, char c){
     if(y2 < y1) std::swap(y1, y2);
 
     for(int y=y1; y<y2; y ++){
@@ -67,51 +67,51 @@ void DrawLineVertical(float x, float y1, float y2, char c){
 }
 
 
-void DrawSolidBall(float x, float y, float r, char c){
+void DrawSolidBall(double x, double y, double r, char c){
 	if(!isfinite(x) || !isfinite(y) || !isfinite(r))
 		return;
 
-    float iy = y - r;
-    float ix;
+    double iy = y - r;
+    double ix;
 
     while(iy <= y + r){
-        float hw = std::sqrt(std::abs(r * r - (iy - y) * (iy - y)));
+        double hw = std::sqrt(std::abs(r * r - (iy - y) * (iy - y)));
 
         ix = x - hw;
 
         while(ix <= x + hw){
             PlotPixel(ix, iy, c);
 
-            ix += 1.f;
+            ix += 1.;
         }
 
-        iy += 1.f;
+        iy += 1.;
     }
 }
 
-void DrawSolidEllipse(float x, float y, float rx, float ry, char c){
+void DrawSolidEllipse(double x, double y, double rx, double ry, char c){
 	if(!isfinite(x) || !isfinite(y) || !isfinite(rx) || !isfinite(ry))
 		return;
 
-    float iy = y - ry;
-    float ix;
+    double iy = y - ry;
+    double ix;
 
     while(iy <= y + ry){
-        float hw = std::sqrt(std::abs(ry * ry - (iy - y) * (iy - y))) * (rx / ry);
+        double hw = std::sqrt(std::abs(ry * ry - (iy - y) * (iy - y))) * (rx / ry);
 
         ix = x - hw;
 
         while(ix <= x + hw){
             PlotPixel(ix, iy, c);
 
-            ix += 1.f;
+            ix += 1.;
         }
 
-        iy += 1.f;
+        iy += 1.;
     }
 }
 
-void DrawRotatedRect(float x, float y, float cx, float cy, float w, float h, char c){
+void DrawRotatedRect(double x, double y, double cx, double cy, double w, double h, char c){
 	// todo
 }
 

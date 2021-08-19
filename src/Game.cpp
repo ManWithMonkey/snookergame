@@ -68,10 +68,10 @@ void Game::Reset(){
     };
 
     double angleOffsets[4] = {
-        1.f * 3.14159f * 0.5f,
-        0.f * 3.14159f * 0.5f,
-        3.f * 3.14159f * 0.5f,
-        2.f * 3.14159f * 0.5f
+        1. * M_PI * 0.5,
+        0. * M_PI * 0.5,
+        3. * M_PI * 0.5,
+        2. * M_PI * 0.5
     };
 
 
@@ -79,12 +79,12 @@ void Game::Reset(){
         pointBand.push_back(corners[i][1]);
         lastBounceBand.push_back(wallBounce);
 
-        double da = (1.f) * 3.14159f / (double)holePointCount;
+        double da = (1.) * M_PI / (double)holePointCount;
         for(int j=0; j<holePointCount; j++){
-            double ang = 2.f * 3.14159f - (double)j * da + angleOffsets[i] - 3.14159f * 0.25f;
+            double ang = 2. * M_PI - (double)j * da + angleOffsets[i] - M_PI * 0.25;
             double length = realholer;
 
-            vec2 center = (corners[i][2] + corners[i][1] + corners[i][0] * 2.f) * 0.25f;
+            vec2 center = (corners[i][2] + corners[i][1] + corners[i][0] * 2.) * 0.25;
             vec2 point = center + MakeVector(ang, length);
             pointBand.push_back(point);
             lastBounceBand.push_back(holeWallBounce);
@@ -146,8 +146,8 @@ void Game::Update(){
         double vely = std::max(0.1, std::abs(ball.vel.y));
 
         // totally out of bounds
-        if(ball.pos.x < 0.f)            ball.vel.x =  velx;
-        if(ball.pos.y < 0.f)            ball.vel.y =  vely;
+        if(ball.pos.x < 0.)            ball.vel.x =  velx;
+        if(ball.pos.y < 0.)            ball.vel.y =  vely;
         if(ball.pos.x >= map_width)     ball.vel.x = -velx;
         if(ball.pos.y >= map_height)    ball.vel.y = -vely;
 
@@ -230,7 +230,7 @@ void Game::InitDefaultBallFormation(){
 void Game::InitDefaultCue(){
     cue.active = true;
     cue.ballIndex = balls.size() - 1;
-    cue.angle = 3.14159;
+    cue.angle = M_PI;
     cue.distanceFromBallMin = ballr * 0.5;
     cue.distanceFromBallMax = ballr * 6.0;
     cue.pullScale = 0.0;
@@ -240,8 +240,8 @@ void Game::InitDefaultCue(){
     cue.rotationStatus = NO_ROTATION;
 
     vec2 toCenter = vec2{table_left, table_top} + vec2{table_w, table_h} * 0.5 - balls.back().pos;
-    if(Norm(toCenter) >= balls.back().r * 4.f){
-        cue.angle = 3.14159 + atan2(toCenter.y, toCenter.x);
+    if(Norm(toCenter) >= balls.back().r * 4.){
+        cue.angle = M_PI + atan2(toCenter.y, toCenter.x);
     }
 }
 
@@ -344,7 +344,7 @@ void Game::ReleaseCue(){
     if(!cue.active || cue.ballIndex < 0 || cue.ballIndex >= balls.size())
         return;
 
-    float strength = cue.releaseMinStregth + (cue.releaseMaxStregth - cue.distanceFromBallMin) * cue.pullScale;
+    double strength = cue.releaseMinStregth + (cue.releaseMaxStregth - cue.distanceFromBallMin) * cue.pullScale;
 
     Ball* ball = &balls[cue.ballIndex];
     vec2 unit = MakeVector(cue.angle, -1.0);

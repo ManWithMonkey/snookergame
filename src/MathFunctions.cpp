@@ -108,7 +108,7 @@ bool MovingCirclesCollide(vec2 p1, vec2 dp1, double r1, vec2 p2, vec2 dp2, doubl
         (p1 + dp1 * scalar) -
         (p2 + dp2 * scalar)
     );
-    return distance <= r1 + r2 + 1E-5f;
+    return distance <= r1 + r2 + 1E-5;
 }
 
 double PointPointDistance(vec2 a, vec2 b){

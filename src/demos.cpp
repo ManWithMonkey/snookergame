@@ -2,20 +2,20 @@
 
 using namespace DrawFunctions;
 
-static float x = 0;
-static float y = 0;
+static double x = 0;
+static double y = 0;
 
 void BouncingBallTest(){
-    const float vel = 0.03f;
+    const double vel = 0.03;
 
-    static float velx = vel;
-    static float vely = vel;
-    static float r = 5.f;
+    static double velx = vel;
+    static double vely = vel;
+    static double r = 5.;
 
     if(x < r) velx = vel;
     if(y < r) vely = vel;
-    if(x > (float)(GetWidth()   - 1) - r) velx = -vel;
-    if(y > (float)(GetHeight()  - 1) - r) vely = -vel;
+    if(x > (double)(GetWidth()   - 1) - r) velx = -vel;
+    if(y > (double)(GetHeight()  - 1) - r) vely = -vel;
 
     x += velx;
     y += vely;
@@ -23,14 +23,14 @@ void BouncingBallTest(){
     DrawSolidBall(x, y, r, '#');
 }
 
-static float x2 = 0;
-static float y2 = 0;
+static double x2 = 0;
+static double y2 = 0;
 
 void CanvasTest(){
-    const float vel = 0.05f;
+    const double vel = 0.05;
 
-    static float velx = vel;
-    static float vely = vel;
+    static double velx = vel;
+    static double vely = vel;
 
     static Canvas canvas = Canvas(
         7, 5, 3, 2,
