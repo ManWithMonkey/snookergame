@@ -9,8 +9,4 @@ struct vec2{
     vec2 operator*(double s) const;
 };
 
-struct vec3{
-    double x, y, z;
-};
-
 #endif // __VEC2_H__

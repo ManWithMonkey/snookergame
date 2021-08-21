@@ -2,11 +2,11 @@
 #define __INPUT_H__
 
 #include "NCursesHelper.hpp"
-#include "Game.hpp"
+#include "GameTemplate.hpp"
 
 namespace Input{
 
-void InitGameInput(Game* object);
+void InitGameInput(GameTemplate* object);
 void InitCallbacks();
 
 void ResizeEvent();

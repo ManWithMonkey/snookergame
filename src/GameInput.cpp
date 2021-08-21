@@ -1,6 +1,15 @@
-#include "Game.hpp"
+#include "GameInput.hpp"
 
-void Game::LeftEvent(){
+GameInput::GameInput(){
+    ResizeEvent();
+}
+
+void GameInput::ResizeEvent(){
+    fromMapToScreenScalarX = (double)GetWidth()   / map_width;
+    fromMapToScreenScalarY = (double)GetHeight()  / map_height;
+}
+
+void GameInput::LeftEvent(){
     if(!cue.active)
         return;
     if(cue.ballIndex < 0 || cue.ballIndex >= balls.size())
@@ -13,7 +22,7 @@ void Game::LeftEvent(){
         cue.rotationStatus = ROTATE_LEFT;
 }
 
-void Game::RightEvent(){
+void GameInput::RightEvent(){
     if(!cue.active)
         return;
     if(cue.ballIndex < 0 || cue.ballIndex >= balls.size())
@@ -26,22 +35,22 @@ void Game::RightEvent(){
         cue.rotationStatus = ROTATE_RIGHT;
 }
 
-void Game::UpEvent(){
+void GameInput::UpEvent(){
     if(!cue.active)
         return;
    
-    cue.pullScale = std::max(0.0, cue.pullScale - pullCue);
+    cue.pullScale = std::max(0.0, cue.pullScale - pullCuePerClick);
     cue.rotationStatus = NO_ROTATION;
 }
 
-void Game::DownEvent(){
+void GameInput::DownEvent(){
     if(!cue.active)
         return;
    
-    cue.pullScale = std::min(1.0, cue.pullScale + pullCue);
+    cue.pullScale = std::min(1.0, cue.pullScale + pullCuePerClick);
     cue.rotationStatus = NO_ROTATION;
 }
 
-void Game::SpaceEvent(){
+void GameInput::SpaceEvent(){
     ReleaseCue();
 }

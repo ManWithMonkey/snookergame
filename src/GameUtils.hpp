@@ -6,6 +6,10 @@
 #include "vec2.hpp"
 #include "MathFunctions.hpp"
 
+inline auto frand = []() -> double {
+    return (double)rand() / ((double)(RAND_MAX) + 1.0);
+};
+
 struct Line{
     vec2 a, b;
 
@@ -18,7 +22,6 @@ struct Ball{
     vec2 pos;
     vec2 vel;
 
-    // change in position for next iteration
     vec2 dpos; 
 
     bool active = true;

@@ -1,6 +1,30 @@
-#include "Game.hpp"
+#include "GameCollisions.hpp"
 
-BallBallCollision Game::GetClosestBallBallCollision(Ball& ball){
+
+
+
+
+
+
+
+
+/* TODO
+
+- make use of GetClosest(&) in GetClosest()
+
+*/
+
+
+
+
+
+
+
+
+
+
+
+BallBallCollision GameCollisions::GetClosestBallBallCollision(Ball& ball){
     std::vector<BallBallCollision> collisions;
 
     for(int j = 0; j < balls.size(); j ++){
@@ -62,7 +86,7 @@ BallBallCollision Game::GetClosestBallBallCollision(Ball& ball){
     }
 }
 
-BallLineCollision Game::GetClosestBallLineCollision(Ball& ball){
+BallLineCollision GameCollisions::GetClosestBallLineCollision(Ball& ball){
     std::vector<BallLineCollision> collisions;
 
     for(int j=0; j<lines.size(); j++){
@@ -109,7 +133,7 @@ BallLineCollision Game::GetClosestBallLineCollision(Ball& ball){
     }
 }
 
-BallBallCollision Game::GetClosestBallBallCollision(){
+BallBallCollision GameCollisions::GetClosestBallBallCollision(){
 
     std::vector<BallBallCollision> collisions;
 
@@ -178,7 +202,7 @@ BallBallCollision Game::GetClosestBallBallCollision(){
     }
 }
 
-BallLineCollision Game::GetClosestBallLineCollision(){
+BallLineCollision GameCollisions::GetClosestBallLineCollision(){
 
     std::vector<BallLineCollision> collisions;
 
@@ -234,7 +258,7 @@ BallLineCollision Game::GetClosestBallLineCollision(){
 }
 
 
-void Game::UpdatePositions(){
+void GameCollisions::HandleCollisionsAndApplyMotion(){
 
     // inefficient, might re-calculate unrelated collisions that would never be affected by one another
 
@@ -293,9 +317,11 @@ void Game::UpdatePositions(){
         ball.pos.x += ball.dpos.x;
         ball.pos.y += ball.dpos.y;
     }
+
+    HandleClipping();
 }
 
-void Game::HandleClipping(){
+void GameCollisions::HandleClipping(){
 
     // balls inside balls
     for(int i = 0; i < balls.size(); i++){

@@ -1,7 +1,7 @@
-#include "Game.hpp"
+#include "Game8Ball.hpp"
 #include "Input.hpp"
 
-static Game game;
+static Game8Ball game;
 
 int main(){
     Input::InitCallbacks();

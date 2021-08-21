@@ -2,7 +2,7 @@
 
 namespace Input{
 
-static Game* inputObject = nullptr;
+static GameTemplate* inputObject = nullptr;
 
 void InitCallbacks(){
     AddResizeCallback(ResizeEvent);
@@ -17,7 +17,7 @@ void InitCallbacks(){
     AddCallback('2', Key2);
 }
 
-void InitGameInput(Game* object){
+void InitGameInput(GameTemplate* object){
     inputObject = object;
 }
 
