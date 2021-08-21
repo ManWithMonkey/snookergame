@@ -28,13 +28,7 @@ namespace Terminal
 	void Quit();
 	void Refresh();	
 
-	// remove this?
-	void AddCallback(int c, void(*func)());
-
-	void AddKeyCallback(void(*func)(int));
-	void AddResizeCallback(void(*func)());
-
-	void AddObjectCallback(NCursesCallbackClass* obj);
+	void AddCallback(EventCallbackClass* obj);
 
 	void HandleEvents();
 	void HandleResizeEvent();

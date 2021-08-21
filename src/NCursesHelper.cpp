@@ -16,10 +16,7 @@ static int  CURRENT_DRAW_COLOR = COLOR_PAIR(WHITE_ON_BLACK);
 static bool USE_MOUSE = true;
 static MEVENT MOUSE_EVENT;
 
-static std::vector<std::pair<int, void(*)()>> callbacksIfKeyPressed;
-static std::vector<void(*)()> resizeCallbacks;
-static std::vector<void(*)(int)> keyCallbacks;
-static std::vector<NCursesCallbackClass*> objectCallbacks;
+static std::vector<EventCallbackClass*> callbacks;
 
 void EnableColor(){
 	USE_COLOR = true;
@@ -131,11 +128,7 @@ void HandleResizeEvent() {
 	WIDTH = nw;
 	HEIGHT = nh;
 
-    for(auto& func : resizeCallbacks){
-        func();
-    }
-
-    for(auto& objCallback : objectCallbacks){
+    for(auto& objCallback : callbacks){
         objCallback->ResizeEvent();
     }
 
@@ -145,7 +138,7 @@ void HandleResizeEvent() {
 void HandleMouseEvent(){
 	getmouse(&MOUSE_EVENT);
 
-	for(auto& objCallback : objectCallbacks){
+	for(auto& objCallback : callbacks){
 		objCallback->MouseEvent(MOUSE_EVENT.x, MOUSE_EVENT.y, MOUSE_EVENT.bstate);
 	}
 }
@@ -156,45 +149,13 @@ void HandleKeyboardEvent(int key){
 		return;
 	}
 
-	// REMOVE START
-	for(auto& pair : callbacksIfKeyPressed){
-	    if(pair.first == key){
-	        pair.second();
-	    }
-	}
-
-	for(auto& callback : keyCallbacks){
-		callback(key);
-	}
-	// REMOVE END
-
-	for(auto& objCallback : objectCallbacks){
+	for(auto& objCallback : callbacks){
 		objCallback->KeyEvent(key);
 	}
 }
 
-
-// REMOVE START
-void AddCallback(int c, void(*func)()){
-    std::pair<int, void(*)()> newpair;
-
-    newpair.first = c;
-    newpair.second = func;
-
-    callbacksIfKeyPressed.push_back(newpair);
-}
-// REMOVE END
-
-void AddResizeCallback(void(*func)()){
-    resizeCallbacks.push_back(func);
-}
-
-void AddKeyCallback(void(*func)(int)){
-	keyCallbacks.push_back(func);
-}
-
-void AddObjectCallback(NCursesCallbackClass* obj){
-	objectCallbacks.push_back(obj);
+void AddCallback(EventCallbackClass* obj){
+	callbacks.push_back(obj);
 }
 
 void Refresh() {

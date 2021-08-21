@@ -8,6 +8,8 @@ class GameCueLogic : public virtual GameData, public virtual GameDraw{
 protected:
     virtual void InitDefaultCue() = 0;
 
+    bool IsCueValid(const Cue& cue) const;
+
     void UpdateCue(double dt);
     void ReleaseCue();
 

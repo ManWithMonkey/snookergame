@@ -1,11 +1,11 @@
 #include "NCursesUtils.hpp"
 
-void NCursesCallbackClass::KeyEvent(int key){
+void EventCallbackClass::KeyEvent(int key){
 }
 
-void NCursesCallbackClass::ResizeEvent(){
+void EventCallbackClass::ResizeEvent(){
 }
 
-void NCursesCallbackClass::MouseEvent(int x, int y, mmask_t buttonStateBits){
+void EventCallbackClass::MouseEvent(int x, int y, mmask_t buttonStateBits){
 }
 

@@ -1,5 +1,12 @@
 #include "GameCueLogic.hpp"
 
+bool GameCueLogic::IsCueValid(const Cue& cue) const{
+    if(!cue.active || cue.ballIndex < 0 || cue.ballIndex >= balls.size())
+        return false;
+    else
+        return true;
+}
+
 void GameCueLogic::UpdateCue(double dt){
     if(cue.active && (cue.rotationStatus != NO_ROTATION) && !(cue.ballIndex < 0 || cue.ballIndex >= balls.size())){
         Ball* ball = &balls[cue.ballIndex];

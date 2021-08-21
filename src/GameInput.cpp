@@ -25,9 +25,7 @@ void GameInput::KeyEvent(int key){
 }
 
 void GameInput::MouseEvent(int mx, int my, mmask_t buttonStateBits){
-    if(!cue.active)
-        return;
-    if(cue.ballIndex < 0 || cue.ballIndex >= balls.size())
+    if(!IsCueValid(cue))
         return;
         
     cue.rotationStatus = NO_ROTATION;
@@ -53,9 +51,7 @@ void GameInput::MouseEvent(int mx, int my, mmask_t buttonStateBits){
 }
 
 void GameInput::LeftEvent(){
-    if(!cue.active)
-        return;
-    if(cue.ballIndex < 0 || cue.ballIndex >= balls.size())
+    if(!IsCueValid(cue))
         return;
 
     // if already rotating, stop
@@ -66,9 +62,7 @@ void GameInput::LeftEvent(){
 }
 
 void GameInput::RightEvent(){
-    if(!cue.active)
-        return;
-    if(cue.ballIndex < 0 || cue.ballIndex >= balls.size())
+    if(!IsCueValid(cue))
         return;
     
     // if already rotating, stop
@@ -79,7 +73,7 @@ void GameInput::RightEvent(){
 }
 
 void GameInput::UpEvent(){
-    if(!cue.active)
+    if(!IsCueValid(cue))
         return;
    
     cue.pullScale = std::max(0.0, cue.pullScale - pullCuePerClick);
@@ -87,7 +81,7 @@ void GameInput::UpEvent(){
 }
 
 void GameInput::DownEvent(){
-    if(!cue.active)
+    if(!IsCueValid(cue))
         return;
    
     cue.pullScale = std::min(1.0, cue.pullScale + pullCuePerClick);

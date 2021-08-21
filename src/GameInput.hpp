@@ -7,7 +7,7 @@
 // debug
 #include <sstream>
 
-class GameInput : public virtual GameLogic, public virtual GameCueLogic, public virtual NCursesCallbackClass{
+class GameInput : public virtual GameLogic, public virtual GameCueLogic, public virtual EventCallbackClass{
 public:
     GameInput();
 
