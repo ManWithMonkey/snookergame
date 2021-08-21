@@ -34,6 +34,14 @@ enum default_colors { // first 8 colors (0 - 7) are reserved
 	WHITE   = COLOR_WHITE,
 };
 
+enum color_pairs {
+	DEFAULT_RESERVED, // color pair 0 is special; it denotes “no color”.
+	WHITE_ON_BLACK,
+	BLACK_ON_RED,
+	BLACK_ON_GREEN,
+	BLACK_ON_BLUE,
+};
+
 const int MAX_COLOR = 1000; // why 1000 ???
 
 struct Terminal
@@ -49,9 +57,15 @@ struct Terminal
 	static int HEIGHT;
 
 	static int SCREEN_DATA[MAX_WIDTH * MAX_HEIGHT];
+	static int COLOR_DATA[MAX_WIDTH * MAX_HEIGHT];
 	// wrapper function for getting index of pixel on screen
 	static int Index(int x, int y);
 
+	static void EnableColor();
+	static void DisableColor();
+
+	// e.g. cp == BLACK_ON_WHITE, instead of COLOR_PAIR(BLACK_ON_WHITE)
+	static void SetDrawColor(int cp);
 	static void PlotPixel(int x, int y, char c);
 };
 

@@ -87,10 +87,12 @@ void Game::Update(){
 }
 
 void Game::Draw() {
+	Terminal::SetDrawColor(BLACK_ON_GREEN);
 	for (Ball &ball : balls) {
 		DrawBall(ball, 'O');
 	}
 
+	Terminal::SetDrawColor(BLACK_ON_RED);
     for(Line& line : lines){
         DrawLine(line, '#');
     }

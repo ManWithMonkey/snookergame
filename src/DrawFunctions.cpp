@@ -113,9 +113,11 @@ void PaintBlankScreen(){
 
 	char a = ' ';
 
+	Terminal::SetDrawColor(WHITE_ON_BLACK);
+
 	for (int y = 0; y < h; y++) {
 		for (int x = 0; x < w; x++) {
-			Terminal::SCREEN_DATA[Terminal::Index(x, y)] = a;
+			Terminal::PlotPixel(x, y, a);
 		}
 	}
 }

@@ -7,9 +7,25 @@ int         Terminal::WIDTH = 0;
 int         Terminal::HEIGHT = 0;
 bool        Terminal::SHOULD_QUIT = false;
 int         Terminal::SCREEN_DATA[MAX_WIDTH * MAX_HEIGHT];
+int         Terminal::COLOR_DATA[MAX_WIDTH * MAX_HEIGHT];
+static int  CURRENT_DRAW_COLOR = COLOR_PAIR(WHITE_ON_BLACK);
+static bool USE_COLOR = false;
+
+void Terminal::EnableColor(){
+	USE_COLOR = true;
+}
+
+void Terminal::DisableColor(){
+	USE_COLOR = false;
+}
+
 
 int Terminal::Index(int x, int y){
     return (y * MAX_WIDTH + x);
+}
+
+void Terminal::SetDrawColor(int cp){
+	CURRENT_DRAW_COLOR = COLOR_PAIR(cp);
 }
 
 void Terminal::PlotPixel(int x, int y, char c){
@@ -17,16 +33,12 @@ void Terminal::PlotPixel(int x, int y, char c){
         return;
 
     SCREEN_DATA[Index(x, y)] = c;
+
+	if(USE_COLOR){
+    	COLOR_DATA[Index(x, y)] = CURRENT_DRAW_COLOR;
+	}
 }
 
-
-enum color_pairs {
-	DEFAULT_RESERVED, // color pair 0 is special; it denotes “no color”.
-	WHITE_ON_BLACK,
-	BLACK_ON_RED,
-	BLACK_ON_GREEN,
-	BLACK_ON_BLUE,
-};
 
 void Init() {
 	// window
@@ -56,6 +68,8 @@ void Init() {
 	init_pair(BLACK_ON_BLUE,  BLACK, BLUE);
 
 	attr_on(COLOR_PAIR(BLACK_ON_RED), NULL);
+
+	Terminal::EnableColor();
 }
 
 void Quit() {
@@ -96,9 +110,21 @@ void Refresh() {
 	int h = std::min(Terminal::HEIGHT,  Terminal::MAX_HEIGHT);
 
 	for (int y = 0; y < h; y++) {
-		for (int x = 0; x < w; x++) {
-			char c = Terminal::SCREEN_DATA[Terminal::Index(x, y)];
-			mvaddch(y, x, c);
+		for (int x = 0; x < w; x++){
+			int index = Terminal::Index(x, y);
+
+			char pixel = Terminal::SCREEN_DATA[index];
+			int color = Terminal::COLOR_DATA[index];
+
+			if(USE_COLOR){
+				attr_on(color, NULL);
+				mvaddch(y, x, pixel);
+				attr_off(color, NULL);
+			}
+			else{
+				mvaddch(y, x, pixel);
+			}
+
 		}
 	}
 
