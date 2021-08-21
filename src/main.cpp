@@ -1,14 +1,10 @@
 #include "Game8Ball.hpp"
 
-static Game8Ball game;
-
 int main(){
     Terminal::Init();
+	
+	Game8Ball game;
 	Terminal::AddCallback(&game);
-
-	// temporary fix, add GameTemplate::InitScreenSize() or something
-	game.ResizeEvent();
-	//
 
     while(!Terminal::ShouldQuit()){
         Terminal::HandleEvents();
