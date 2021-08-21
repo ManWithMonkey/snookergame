@@ -99,14 +99,15 @@ void HandleScreenResizing() {
 }
 
 void HandleInput() {
-	int c;
+	int key;
 
-	while ((c = getch()) != ERR) {
-		switch (c) {
+	while ((key = getch()) != ERR) {
+		switch (key) {
 		case KEY_RESIZE:
 			HandleScreenResizing();
 			Refresh();
 			break;
+
 		case 'q':
 		case 'Q':
 			SHOULD_QUIT = true;
@@ -114,17 +115,18 @@ void HandleInput() {
 		}
 
         for(auto& pair : callbacksIfKeyPressed){
-            if(pair.first == c){
+            if(pair.first == key){
                 pair.second();
             }
         }
 
         for(auto& callback : keyCallbacks){
-			callback(c);
+			callback(key);
         }
 	}
 }
 
+// REMOVE START
 void AddCallback(int c, void(*func)()){
     std::pair<int, void(*)()> newpair;
 
@@ -133,15 +135,11 @@ void AddCallback(int c, void(*func)()){
 
     callbacksIfKeyPressed.push_back(newpair);
 }
+// REMOVE END
 
 void AddResizeCallback(void(*func)()){
     resizeCallbacks.push_back(func);
 }
-
-// template<typename T>
-// void AddObjectCallBack(ObjectCallbackFunction<T> callback){
-// 	objectCallbacks.push_back(callback);
-// }
 
 void AddKeyCallback(void(*func)(int)){
 	keyCallbacks.push_back(func);

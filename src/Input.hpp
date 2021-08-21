@@ -4,6 +4,8 @@
 #include "NCursesHelper.hpp"
 #include "GameTemplate.hpp"
 
+// todo: this is an ugly wrapper since Terminal cant call Game::KeyEvent itself (i think)
+
 namespace Input{
 
 void InitGameInput(GameTemplate* object);

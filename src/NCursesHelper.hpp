@@ -3,9 +3,7 @@
 
 #include "NCursesUtils.hpp"
 
-// todo: should be namespace Terminal instead of struct, static variables should not exist or should be in a better structure or be in cpp file instead, everything in this file should be under one namespace
-
-const int MAX_COLOR = 1000;
+const int NCURSES_MAX_COLOR = 1000;
 
 namespace Terminal
 {
@@ -27,12 +25,11 @@ namespace Terminal
 	void Quit();
 	void Refresh();	
 
+	// remove this?
 	void AddCallback(int c, void(*func)());
+
 	void AddKeyCallback(void(*func)(int));
 	void AddResizeCallback(void(*func)());
-
-	// template<typename T>
-	// void AddObjectCallBack(ObjectCallbackFunction<T> callback);
 
 	void HandleEvents();
 	void HandleInput();
@@ -46,6 +43,5 @@ namespace Terminal
 	inline int SCREEN_DATA[MAX_WIDTH * MAX_HEIGHT];
 	inline int COLOR_DATA[MAX_WIDTH * MAX_HEIGHT];
 };
-
 
 #endif // __NCURSESHELPER_H__

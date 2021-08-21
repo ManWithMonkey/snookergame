@@ -41,10 +41,4 @@ enum color_pairs {
 	BLACK_ON_BLUE,
 };
 
-template<typename T>
-struct ObjectCallbackFunction{
-	T* obj;
-	void(*callback)();
-};
-
 #endif // __NCURSESUTILS_H__
