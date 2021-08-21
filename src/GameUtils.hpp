@@ -3,7 +3,6 @@
 
 #include "NCursesHelper.hpp"
 #include "DrawFunctions.hpp"
-#include "Canvas.hpp"
 #include "vec2.hpp"
 #include "MathFunctions.hpp"
 
