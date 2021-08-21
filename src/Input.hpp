@@ -10,15 +10,7 @@ void InitGameInput(GameTemplate* object);
 void InitCallbacks();
 
 void ResizeEvent();
-
-void Reset();
-void Space();
-void Up();
-void Down();
-void Left();
-void Right();
-void Key1();
-void Key2();
+void KeyEvent(int key);
 
 }; // namespace Input
 

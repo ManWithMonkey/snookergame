@@ -7,20 +7,20 @@ int main(){
     Input::InitCallbacks();
     Input::InitGameInput(&game);
 
-    Init();
+    Terminal::Init();
 
-    while(!ShouldQuit()){
-        HandleEvents();
+    while(!Terminal::ShouldQuit()){
+        Terminal::HandleEvents();
         DrawFunctions::PaintBlankScreen();
 
 		game.Update();
 		game.Draw();
 
-		Refresh();
+		Terminal::Refresh();
 		napms(1);
 	}
 
-	Quit();
+	Terminal::Quit();
 
 	return 0;
 }

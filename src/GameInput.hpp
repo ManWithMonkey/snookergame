@@ -9,11 +9,16 @@ public:
     GameInput();
 
     void ResizeEvent();
+    void KeyEvent(int key);
     void LeftEvent();
     void RightEvent();
     void UpEvent();
     void DownEvent();
     void SpaceEvent();
+
+protected:
+    // child class will handle this, since this class has not Reset() defined
+    bool postResetCall = false;
 };
 
 #endif // __GAMEINPUT_H__

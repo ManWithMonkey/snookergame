@@ -4,8 +4,8 @@ GameLogic::GameLogic(){
 }
 
 void GameLogic::Update(double dt){
-    double w = GetWidth();
-    double h = GetHeight();
+    double w = Terminal::GetWidth();
+    double h = Terminal::GetHeight();
 
     // todo, ApplyDeacceleration()
 

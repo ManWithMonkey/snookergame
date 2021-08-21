@@ -1,5 +1,7 @@
 #include "DrawFunctions.hpp"
 
+using namespace Terminal;
+
 namespace DrawFunctions{
 
 void DrawPoint(float x1, float y1, char c){
@@ -91,15 +93,15 @@ void DrawSolidBall(float x, float y, float r, char c){
 
 
 void PaintDefaultScreen(){
-	int w = std::min(Terminal::WIDTH,   Terminal::MAX_WIDTH);
-	int h = std::min(Terminal::HEIGHT,  Terminal::MAX_HEIGHT);
+	int w = std::min(Terminal::GetWidth(),   Terminal::MAX_WIDTH);
+	int h = std::min(Terminal::GetHeight(),  Terminal::MAX_HEIGHT);
 
 	char b = 176;
 	char a[] = {'.', ' ', ' ', ' ', ' '};
 
 	for (int y = 0; y < h; y++) {
 		for (int x = 0; x < w; x++) {
-			if (x == 0 || y == 0 || x == Terminal::WIDTH - 1 || y == Terminal::HEIGHT - 1)
+			if (x == 0 || y == 0 || x == Terminal::GetWidth() - 1 || y == Terminal::GetHeight() - 1)
 				Terminal::SCREEN_DATA[Terminal::Index(x, y)] = b;
 			else
 				Terminal::SCREEN_DATA[Terminal::Index(x, y)] = a[(y + x) % sizeof(a)];
@@ -108,8 +110,8 @@ void PaintDefaultScreen(){
 }
 
 void PaintBlankScreen(){
-	int w = std::min(Terminal::WIDTH,   Terminal::MAX_WIDTH);
-	int h = std::min(Terminal::HEIGHT,  Terminal::MAX_HEIGHT);
+	int w = std::min(Terminal::GetWidth(),   Terminal::MAX_WIDTH);
+	int h = std::min(Terminal::GetHeight(),  Terminal::MAX_HEIGHT);
 
 	char a = ' ';
 

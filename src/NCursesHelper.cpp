@@ -1,34 +1,40 @@
 #include "NCursesHelper.hpp"
 
-// static variables
-const int   Terminal::MAX_WIDTH;
-const int   Terminal::MAX_HEIGHT;
-int         Terminal::WIDTH = 0;
-int         Terminal::HEIGHT = 0;
-bool        Terminal::SHOULD_QUIT = false;
-int         Terminal::SCREEN_DATA[MAX_WIDTH * MAX_HEIGHT];
-int         Terminal::COLOR_DATA[MAX_WIDTH * MAX_HEIGHT];
-static int  CURRENT_DRAW_COLOR = COLOR_PAIR(WHITE_ON_BLACK);
-static bool USE_COLOR = false;
+namespace Terminal{
 
-void Terminal::EnableColor(){
+// static variables
+
+// width and height updated from HandleScreenResizing on runtime
+static int WIDTH = 0;
+static int HEIGHT = 0;
+
+static bool SHOULD_QUIT = false;
+
+static bool USE_COLOR = false;
+static int  CURRENT_DRAW_COLOR = COLOR_PAIR(WHITE_ON_BLACK);
+
+static std::vector<std::pair<int, void(*)()>> callbacksIfKeyPressed;
+static std::vector<void(*)()> resizeCallbacks;
+static std::vector<void(*)(int)> keyCallbacks;
+
+void EnableColor(){
 	USE_COLOR = true;
 }
 
-void Terminal::DisableColor(){
+void DisableColor(){
 	USE_COLOR = false;
 }
 
 
-int Terminal::Index(int x, int y){
+int Index(int x, int y){
     return (y * MAX_WIDTH + x);
 }
 
-void Terminal::SetDrawColor(int cp){
+void SetDrawColor(int cp){
 	CURRENT_DRAW_COLOR = COLOR_PAIR(cp);
 }
 
-void Terminal::PlotPixel(int x, int y, char c){
+void PlotPixel(int x, int y, char c){
     if (x < 0 || y < 0 || x >= WIDTH || y >= HEIGHT)
         return;
 
@@ -69,7 +75,7 @@ void Init() {
 
 	attr_on(COLOR_PAIR(BLACK_ON_RED), NULL);
 
-	Terminal::EnableColor();
+	EnableColor();
 }
 
 void Quit() {
@@ -84,8 +90,8 @@ void HandleScreenResizing() {
 	int nw, nh;
 	getmaxyx(stdscr, nh, nw);
 
-	Terminal::WIDTH = nw;
-	Terminal::HEIGHT = nh;
+	WIDTH = nw;
+	HEIGHT = nh;
 
     for(auto& func : resizeCallbacks){
         func();
@@ -103,7 +109,7 @@ void HandleInput() {
 			break;
 		case 'q':
 		case 'Q':
-			Terminal::SHOULD_QUIT = true;
+			SHOULD_QUIT = true;
 			break;
 		}
 
@@ -111,6 +117,10 @@ void HandleInput() {
             if(pair.first == c){
                 pair.second();
             }
+        }
+
+        for(auto& callback : keyCallbacks){
+			callback(c);
         }
 	}
 }
@@ -124,21 +134,29 @@ void AddCallback(int c, void(*func)()){
     callbacksIfKeyPressed.push_back(newpair);
 }
 
-
 void AddResizeCallback(void(*func)()){
     resizeCallbacks.push_back(func);
 }
 
+// template<typename T>
+// void AddObjectCallBack(ObjectCallbackFunction<T> callback){
+// 	objectCallbacks.push_back(callback);
+// }
+
+void AddKeyCallback(void(*func)(int)){
+	keyCallbacks.push_back(func);
+}
+
 void Refresh() {
-	int w = std::min(Terminal::WIDTH,   Terminal::MAX_WIDTH);
-	int h = std::min(Terminal::HEIGHT,  Terminal::MAX_HEIGHT);
+	int w = std::min(WIDTH,   MAX_WIDTH);
+	int h = std::min(HEIGHT,  MAX_HEIGHT);
 
 	for (int y = 0; y < h; y++) {
 		for (int x = 0; x < w; x++){
-			int index = Terminal::Index(x, y);
+			int index = Index(x, y);
 
-			char pixel = Terminal::SCREEN_DATA[index];
-			int color = Terminal::COLOR_DATA[index];
+			char pixel = SCREEN_DATA[index];
+			int color = COLOR_DATA[index];
 
 			if(USE_COLOR){
 				attr_on(color, NULL);
@@ -156,13 +174,15 @@ void Refresh() {
 }
 
 bool ShouldQuit() {
-	return Terminal::SHOULD_QUIT;
+	return SHOULD_QUIT;
 }
 
 int GetWidth() {
-	return Terminal::WIDTH;
+	return WIDTH;
 }
 
 int GetHeight() {
-	return Terminal::HEIGHT;
+	return HEIGHT;
 }
+
+}; // namespace Terminal

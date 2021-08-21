@@ -9,6 +9,14 @@ void GameTemplate::Update(){
     deltaTime = std::chrono::duration_cast<std::chrono::microseconds>(now - lastUpdate).count() / 1E6;
     lastUpdate = now;
 
+    if(postResetCall){
+        Reset();
+        postResetCall = false;
+
+        // no need to update right after reset
+        return;
+    }
+
     GameLogic::Update(deltaTime);
     GameCueLogic::UpdateCue(deltaTime);
 }

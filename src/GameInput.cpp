@@ -5,8 +5,23 @@ GameInput::GameInput(){
 }
 
 void GameInput::ResizeEvent(){
-    fromMapToScreenScalarX = (double)GetWidth()   / map_width;
-    fromMapToScreenScalarY = (double)GetHeight()  / map_height;
+    fromMapToScreenScalarX = (double)Terminal::GetWidth()   / map_width;
+    fromMapToScreenScalarY = (double)Terminal::GetHeight()  / map_height;
+}
+
+void GameInput::KeyEvent(int key){
+    if(key == KEY_LEFT)
+        LeftEvent();
+    if(key == KEY_RIGHT)
+        RightEvent();
+    if(key == KEY_UP)
+        UpEvent();
+    if(key == KEY_DOWN)
+        DownEvent();
+    if(key == ' ')
+        SpaceEvent();
+    if(key == 'r')
+        postResetCall = true;
 }
 
 void GameInput::LeftEvent(){
