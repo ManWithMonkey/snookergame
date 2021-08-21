@@ -77,6 +77,12 @@ bool ShouldQuit();
 int GetWidth();
 int GetHeight();
 
+static std::vector<std::pair<int, void(*)()>> callbacksIfKeyPressed;
+void AddCallback(int c, void(*func)());
+
+static std::vector<void(*)()> resizeCallbacks;
+void AddResizeCallback(void(*func)());
+
 void HandleEvents(); // formerly UpdateNCurses
 void HandleScreenResizing();
 void HandleInput();

@@ -1,22 +1,13 @@
 #include "Game.hpp"
-#include "MathFunctions.hpp"
-
-#include <random>
+#include "Input.hpp"
 
 static Game game;
 
-void ResizeEvent(){
-    game.ResizeEvent();
-}
-
-void Reset(){
-    game.Reset();
-}
-
 int main(){
+    Input::InitCallbacks();
+    Input::InitGameInput(&game);
+
     Init();
-    ResizeEvent();
-    Reset();
 
     while(!ShouldQuit()){
         HandleEvents();

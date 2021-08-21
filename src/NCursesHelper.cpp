@@ -86,6 +86,10 @@ void HandleScreenResizing() {
 
 	Terminal::WIDTH = nw;
 	Terminal::HEIGHT = nh;
+
+    for(auto& func : resizeCallbacks){
+        func();
+    }
 }
 
 void HandleInput() {
@@ -102,7 +106,27 @@ void HandleInput() {
 			Terminal::SHOULD_QUIT = true;
 			break;
 		}
+
+        for(auto& pair : callbacksIfKeyPressed){
+            if(pair.first == c){
+                pair.second();
+            }
+        }
 	}
+}
+
+void AddCallback(int c, void(*func)()){
+    std::pair<int, void(*)()> newpair;
+
+    newpair.first = c;
+    newpair.second = func;
+
+    callbacksIfKeyPressed.push_back(newpair);
+}
+
+
+void AddResizeCallback(void(*func)()){
+    resizeCallbacks.push_back(func);
 }
 
 void Refresh() {
