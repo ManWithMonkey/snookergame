@@ -55,7 +55,7 @@ void Init() {
 	init_pair(BLACK_ON_GREEN, BLACK, GREEN);
 	init_pair(BLACK_ON_BLUE,  BLACK, BLUE);
 
-	attr_on(COLOR_PAIR(BLACK_ON_BLUE), NULL);
+	attr_on(COLOR_PAIR(BLACK_ON_RED), NULL);
 }
 
 void Quit() {
