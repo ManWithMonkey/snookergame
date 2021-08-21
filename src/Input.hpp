@@ -9,10 +9,10 @@
 namespace Input{
 
 void InitGameInput(GameTemplate* object);
-void InitCallbacks();
+// void InitCallbacks();
 
 void ResizeEvent();
-void KeyEvent(int key);
+// void KeyEvent(int key);
 
 }; // namespace Input
 

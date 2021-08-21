@@ -17,6 +17,9 @@ namespace Terminal
 	void EnableColor();
 	void DisableColor();
 
+	void EnableMouse();
+	void DisableMouse();
+
 	// e.g. cp == BLACK_ON_WHITE, instead of COLOR_PAIR(BLACK_ON_WHITE)
 	void SetDrawColor(int cp);
 	void PlotPixel(int x, int y, char c);
@@ -31,9 +34,12 @@ namespace Terminal
 	void AddKeyCallback(void(*func)(int));
 	void AddResizeCallback(void(*func)());
 
+	void AddObjectCallback(NCursesCallbackClass* obj);
+
 	void HandleEvents();
-	void HandleInput();
-	void HandleScreenResizing();
+	void HandleResizeEvent();
+	void HandleMouseEvent();
+	void HandleKeyboardEvent(int key);
 
 	// max width and height are just for saving memory, can be arbitrarily large
 	inline const int MAX_WIDTH = 300;

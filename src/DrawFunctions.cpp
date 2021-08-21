@@ -91,7 +91,7 @@ void DrawSolidBall(float x, float y, float r, char c){
     }
 }
 
-
+// REMOVE START
 void PaintDefaultScreen(){
 	int w = std::min(Terminal::GetWidth(),   Terminal::MAX_WIDTH);
 	int h = std::min(Terminal::GetHeight(),  Terminal::MAX_HEIGHT);
@@ -108,14 +108,15 @@ void PaintDefaultScreen(){
 		}
 	}
 }
+// REMOVE END
 
-void PaintBlankScreen(){
+void PaintBlankScreen(int colorpair){
 	int w = std::min(Terminal::GetWidth(),   Terminal::MAX_WIDTH);
 	int h = std::min(Terminal::GetHeight(),  Terminal::MAX_HEIGHT);
 
 	char a = ' ';
 
-	Terminal::SetDrawColor(WHITE_ON_BLACK);
+	Terminal::SetDrawColor(colorpair);
 
 	for (int y = 0; y < h; y++) {
 		for (int x = 0; x < w; x++) {

@@ -23,6 +23,7 @@ protected:
     void DrawLine(const Line& line, char c);
     void DrawHole(const Hole& hole, char c);
     void DrawCue(const Cue& cue, char c, char x);
+    void DrawCueStrengthBar(const Cue& cue, char c, char x);
     // void DrawCueGhosts(const Cue& cue, char c);
 };
 

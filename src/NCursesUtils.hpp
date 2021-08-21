@@ -41,4 +41,10 @@ enum color_pairs {
 	BLACK_ON_BLUE,
 };
 
+struct NCursesCallbackClass{
+	virtual void KeyEvent(int key);
+	virtual void ResizeEvent();
+	virtual void MouseEvent(int x, int y, mmask_t buttonStateBits);
+};
+
 #endif // __NCURSESUTILS_H__

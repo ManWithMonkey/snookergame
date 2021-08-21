@@ -24,6 +24,34 @@ void GameInput::KeyEvent(int key){
         postResetCall = true;
 }
 
+void GameInput::MouseEvent(int mx, int my, mmask_t buttonStateBits){
+    if(!cue.active)
+        return;
+    if(cue.ballIndex < 0 || cue.ballIndex >= balls.size())
+        return;
+        
+    cue.rotationStatus = NO_ROTATION;
+
+    if(buttonStateBits == 2){
+        ReleaseCue();
+    }
+
+    Ball& ball = balls[cue.ballIndex];
+
+    double x = (double)mx / fromMapToScreenScalarX;
+    double y = (double)my / fromMapToScreenScalarY;
+
+    double dx = x - ball.pos.x;
+    double dy = y - ball.pos.y;
+
+    double length = std::hypot(dx, dy);
+    double newAngle = std::atan2(dy, dx) + M_PI;
+    double newPullScale = length / map_width * 2.0;
+
+    cue.angle = newAngle;
+    cue.pullScale = std::clamp(newPullScale, 0.0, 1.0);
+}
+
 void GameInput::LeftEvent(){
     if(!cue.active)
         return;

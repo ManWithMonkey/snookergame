@@ -28,7 +28,6 @@ private:
     const double holeInsideRadius   = ballr *  1.2;
     const double holeWallBounce     = 0.4;
 
-    
     const double table_w = (table_right - table_left);
     const double table_h = (table_bottom - table_top);
 

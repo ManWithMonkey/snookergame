@@ -1,14 +1,6 @@
 #include "GameCueLogic.hpp"
 
-GameCueLogic::GameCueLogic(){
-}
-
 void GameCueLogic::UpdateCue(double dt){
-    UpdateCueStuff(dt);
-}
-
-void GameCueLogic::UpdateCueStuff(double dt){
-
     if(cue.active && (cue.rotationStatus != NO_ROTATION) && !(cue.ballIndex < 0 || cue.ballIndex >= balls.size())){
         Ball* ball = &balls[cue.ballIndex];
         
