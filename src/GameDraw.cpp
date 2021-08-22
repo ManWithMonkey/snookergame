@@ -9,7 +9,7 @@ void GameDraw::Draw(){
     }
 
 	Terminal::SetDrawColor(ghostColor);
-    DrawCueGhosts(cue, '#');
+    DrawCueGhosts(cuestick, '#');
 
 	Terminal::SetDrawColor(lineColor);
     for(Line& line : lines){
@@ -17,8 +17,13 @@ void GameDraw::Draw(){
     }
 
 	Terminal::SetDrawColor(cueColor);
-    if(cue.active){
-        DrawCue(cue, ' ', ' ');
+    if(cuestick.active){
+        DrawCueStick(cuestick, ' ');
+    }
+
+    Terminal::SetDrawColor(ballWhenGrabbedColor);
+    if(cuehand.active){
+        DrawCueHand(cuehand, ' ');
     }
 
     Terminal::SetDrawColor(ballColor);
@@ -73,15 +78,15 @@ void GameDraw::DrawHole(const Hole& hole, char c){
     DrawFunctions::DrawSolidEllipse(x1, y1, rx, ry, c);
 }
 
-void GameDraw::DrawCue(const Cue& cue, char c, char x){
-    if(!IsCueValid(cue))
+void GameDraw::DrawCueStick(const CueStick& stick, char c){
+    if(!IsCueStickValid(stick))
         return;
 
-    Ball* ball = &balls[cue.ballIndex];
+    Ball* ball = &balls[stick.ballIndex];
 
-    vec2 unit = MakeVector(cue.angle, 1.0);
-    double distanceFromBall = cue.distanceFromBallMin + (cue.distanceFromBallMax - cue.distanceFromBallMin) * cue.pullScale + ball->r;
-    double distanceFromBall2 = distanceFromBall + cue.lengthOnScreen;
+    vec2 unit = MakeVector(stick.angle, 1.0);
+    double distanceFromBall = stick.distanceFromBallMin + (stick.distanceFromBallMax - stick.distanceFromBallMin) * stick.pullScale + ball->r;
+    double distanceFromBall2 = distanceFromBall + stick.lengthOnScreen;
 
     double x1 = (ball->pos + unit * distanceFromBall).x * fromMapToScreenScalarX;
     double y1 = (ball->pos + unit * distanceFromBall).y * fromMapToScreenScalarY;
@@ -91,8 +96,19 @@ void GameDraw::DrawCue(const Cue& cue, char c, char x){
     DrawFunctions::DrawLine(x1, y1, x2, y2, c);
 }
 
-void GameDraw::DrawCueGhosts(const Cue& cue, char c){
-    if(!IsCueValid(cue))
+void GameDraw::DrawCueHand(const CueHand& hand, char c){
+    if(!IsCueHandValid(hand))
+        return;
+
+    Ball ball = balls[hand.ballIndex];
+    ball.pos = hand.pos;
+    ball.r = hand.ballRadiusWhenPickedUpScalar * ball.r;
+
+    DrawBall(ball, c);
+}
+
+void GameDraw::DrawCueGhosts(const CueStick& cue, char c){
+    if(!IsCueStickValid(cue))
         return;
 
     Ball startball = balls[cue.ballIndex];

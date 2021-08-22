@@ -24,6 +24,7 @@ protected:
     const Color tracerColor     = {50, 50, 50};
     const Color lineColor       = {100, 100, 100};
     const Color cueColor        = {800, 800, 200};
+    const Color ballWhenGrabbedColor = {700, 700, 800};
 
 protected:
     void DrawBall(double x, double y, double r, char c);
@@ -32,9 +33,10 @@ protected:
     void DrawBall(const Ball& ball, char c);
     void DrawLine(const Line& line, char c);
     void DrawHole(const Hole& hole, char c);
-    void DrawCue(const Cue& cue, char c, char x);
+    void DrawCueStick(const CueStick& cue, char c);
+    void DrawCueHand(const CueHand& cue, char c);
     // void DrawCueStrengthBar(const Cue& cue, char c, char x);
-    void DrawCueGhosts(const Cue& cue, char c);
+    void DrawCueGhosts(const CueStick& cue, char c);
 };
 
 #endif // __GAMEDRAW_H__

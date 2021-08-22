@@ -6,11 +6,17 @@
 class GameCueLogic : public virtual GameData{
 protected:
     virtual void InitDefaultCue() = 0;
+    virtual bool IsValidBallDropArea(vec2 pos);
 
-    bool IsCueValid(const Cue& cue) const;
+    bool IsCueStickValid(const CueStick& cue) const;
+    bool IsCueHandValid(const CueHand& hand) const;
 
+    // remove? or seperate mouse input and keyboard input modes
     void UpdateCue(double dt);
+    // 
+
     void ReleaseCue();
+    void ReleaseHand();
 
 protected:
     // rename everything

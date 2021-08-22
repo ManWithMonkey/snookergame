@@ -20,6 +20,8 @@ protected:
     void CalculateMotions(double dt);
     void UpdateBallHoleInteraction(double dt);
 
+    void HandleBallInsideHole(Ball& ball);
+
 protected:
     const int MAX_COLLISIONS_ITERS = 100;
 
@@ -34,6 +36,8 @@ protected:
 
     const double holeDeacceleration = 3.0;
     const double holeSuckMinVel     = 0.2;
+
+    bool inputMode = false;
 
 };
 

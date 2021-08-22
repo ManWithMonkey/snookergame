@@ -19,6 +19,7 @@ struct Ball{
     vec2 vel;
     vec2 dpos; 
 
+    bool isCueball = false;
     bool active = true;
 };
 
@@ -38,7 +39,7 @@ enum CueRotation{
     ROTATE_RIGHT
 };
 
-struct Cue{
+struct CueStick{
     bool active = true;
 
     int ballIndex;
@@ -54,6 +55,18 @@ struct Cue{
     double lengthOnScreen;
     double distanceFromBallMin;
     double distanceFromBallMax;
+};
+
+struct CueHand{
+    bool active = false;
+
+    int ballIndex;
+    vec2 pos;
+
+    // const double cueHandMovePerTickX = 1.0;
+    // const double cueHandMovePerTickY = 1.0;
+    const double ballRadiusWhenPickedUpScalar = 1.2;
+    const double minBallVelForHandToActivate = 0.075;
 };
 
 // todo: use CollisionStruct for both ballball and ballline

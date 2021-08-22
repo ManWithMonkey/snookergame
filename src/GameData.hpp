@@ -11,7 +11,8 @@ public:
     std::vector<Hole> holes;
 
     // std::vector<Cue> cues;
-    Cue cue;
+    CueStick cuestick;
+    CueHand cuehand;
 
     const double map_width      = 2.0;
     const double map_height     = 1.0;
@@ -19,6 +20,7 @@ public:
     double fromMapToScreenScalarX;
     double fromMapToScreenScalarY;
 
+    virtual int GetCueballIndex();
     void ClearGameData();
 };
 

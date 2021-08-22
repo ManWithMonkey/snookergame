@@ -11,6 +11,7 @@ private:
     virtual void InitDefaultMapFormation() override;
     virtual void InitDefaultBallFormation() override;
     virtual void InitDefaultCue() override;
+    virtual bool IsValidBallDropArea(vec2 pos);
 
 private:
     const double buffer_x       = 0.02;

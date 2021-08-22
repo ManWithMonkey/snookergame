@@ -25,67 +25,75 @@ void GameInput::KeyEvent(int key){
 }
 
 void GameInput::MouseEvent(int mx, int my, mmask_t buttonStateBits){
-    if(!IsCueValid(cue))
-        return;
-        
-    cue.rotationStatus = NO_ROTATION;
+    if(IsCueStickValid(cuestick)){
+        cuestick.rotationStatus = NO_ROTATION;
 
-    if(buttonStateBits == 2){
-        ReleaseCue();
+        if(buttonStateBits == 2){
+            ReleaseCue();
+        }
+
+        Ball& ball = balls[cuestick.ballIndex];
+
+        double x = (double)mx / fromMapToScreenScalarX;
+        double y = (double)my / fromMapToScreenScalarY;
+
+        double dx = x - ball.pos.x;
+        double dy = y - ball.pos.y;
+
+        double length = std::hypot(dx, dy);
+        double newAngle = std::atan2(dy, dx) + M_PI;
+        double newPullScale = length / map_width * 2.0;
+
+        cuestick.angle = newAngle;
+        cuestick.pullScale = std::clamp(newPullScale, 0.0, 1.0);
     }
 
-    Ball& ball = balls[cue.ballIndex];
-
-    double x = (double)mx / fromMapToScreenScalarX;
-    double y = (double)my / fromMapToScreenScalarY;
-
-    double dx = x - ball.pos.x;
-    double dy = y - ball.pos.y;
-
-    double length = std::hypot(dx, dy);
-    double newAngle = std::atan2(dy, dx) + M_PI;
-    double newPullScale = length / map_width * 2.0;
-
-    cue.angle = newAngle;
-    cue.pullScale = std::clamp(newPullScale, 0.0, 1.0);
+    if(IsCueHandValid(cuehand)){
+        cuehand.pos.x = (double)mx / fromMapToScreenScalarX;
+        cuehand.pos.y = (double)my / fromMapToScreenScalarY;
+        
+        if(buttonStateBits == 2){
+            ReleaseHand();
+        }
+    }
 }
 
 void GameInput::LeftEvent(){
-    if(!IsCueValid(cue))
+    if(!IsCueStickValid(cuestick))
         return;
 
     // if already rotating, stop
-    if(cue.rotationStatus == ROTATE_LEFT || cue.rotationStatus == ROTATE_RIGHT)
-        cue.rotationStatus = NO_ROTATION;
+    if(cuestick.rotationStatus == ROTATE_LEFT || cuestick.rotationStatus == ROTATE_RIGHT)
+        cuestick.rotationStatus = NO_ROTATION;
     else
-        cue.rotationStatus = ROTATE_LEFT;
+        cuestick.rotationStatus = ROTATE_LEFT;
 }
 
 void GameInput::RightEvent(){
-    if(!IsCueValid(cue))
+    if(!IsCueStickValid(cuestick))
         return;
     
     // if already rotating, stop
-    if(cue.rotationStatus == ROTATE_LEFT || cue.rotationStatus == ROTATE_RIGHT)
-        cue.rotationStatus = NO_ROTATION;
+    if(cuestick.rotationStatus == ROTATE_LEFT || cuestick.rotationStatus == ROTATE_RIGHT)
+        cuestick.rotationStatus = NO_ROTATION;
     else
-        cue.rotationStatus = ROTATE_RIGHT;
+        cuestick.rotationStatus = ROTATE_RIGHT;
 }
 
 void GameInput::UpEvent(){
-    if(!IsCueValid(cue))
+    if(!IsCueStickValid(cuestick))
         return;
    
-    cue.pullScale = std::max(0.0, cue.pullScale - pullCuePerClick);
-    cue.rotationStatus = NO_ROTATION;
+    cuestick.pullScale = std::max(0.0, cuestick.pullScale - pullCuePerClick);
+    cuestick.rotationStatus = NO_ROTATION;
 }
 
 void GameInput::DownEvent(){
-    if(!IsCueValid(cue))
+    if(!IsCueStickValid(cuestick))
         return;
    
-    cue.pullScale = std::min(1.0, cue.pullScale + pullCuePerClick);
-    cue.rotationStatus = NO_ROTATION;
+    cuestick.pullScale = std::min(1.0, cuestick.pullScale + pullCuePerClick);
+    cuestick.rotationStatus = NO_ROTATION;
 }
 
 void GameInput::SpaceEvent(){

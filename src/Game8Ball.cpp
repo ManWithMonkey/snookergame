@@ -107,18 +107,31 @@ void Game8Ball::InitDefaultBallFormation(){
 
     ball.pos = {cueballx, cuebally};
     ball.vel = {0.0, 0.0};
+    ball.isCueball = true;
     balls.push_back(ball);
 }
 
 void Game8Ball::InitDefaultCue(){
-    cue.angle = cueStartAngle;
-    cue.ballIndex = balls.size() - 1;
-    cue.distanceFromBallMin = cueDistanceFromBallMinMultipleOfBallr * ballr;
-    cue.distanceFromBallMax = cueDistanceFromBallMaxMultipleOfBallr * ballr;
-    cue.lengthOnScreen = cueLengthOnScreen;
-    cue.pullScale = cueStartPullScale;
-    cue.releaseMinStregth = cueReleaseMinStregth;
-    cue.releaseMaxStregth = cueReleaseMaxStregth;
-    cue.rotationStatus = NO_ROTATION;
-    cue.active = true;
+    cuestick.angle = cueStartAngle;
+    cuestick.ballIndex = GetCueballIndex();
+    cuestick.distanceFromBallMin = cueDistanceFromBallMinMultipleOfBallr * ballr;
+    cuestick.distanceFromBallMax = cueDistanceFromBallMaxMultipleOfBallr * ballr;
+    cuestick.lengthOnScreen = cueLengthOnScreen;
+    cuestick.pullScale = cueStartPullScale;
+    cuestick.releaseMinStregth = cueReleaseMinStregth;
+    cuestick.releaseMaxStregth = cueReleaseMaxStregth;
+    cuestick.rotationStatus = NO_ROTATION;
+    cuestick.active = true;
+
+    cuehand.active = false;
+    cuehand.pos = vec2{map_width, map_height} * 0.5;
+}
+
+bool Game8Ball::IsValidBallDropArea(vec2 pos){
+    return (
+        pos.x > table_left      + ballr &&
+        pos.x < table_right     - ballr &&
+        pos.y > table_top       + ballr &&
+        pos.y < table_bottom    - ballr
+    );
 }

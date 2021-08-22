@@ -16,5 +16,6 @@ Done:
 - Game logic
 
 Undone:
+- move ball from hole
 - scores
 - teams

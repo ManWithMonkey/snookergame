@@ -47,7 +47,7 @@ void GameLogic::UpdateBallHoleInteraction(double dt){
             bool close = hole.IsClose(ball);
 
             if(inside){
-                ball.active = false;
+                HandleBallInsideHole(ball);
                 break;
             }
             if(close){
@@ -60,5 +60,13 @@ void GameLogic::UpdateBallHoleInteraction(double dt){
                 ball.vel = ball.vel + unit * strength * dt;
             }
         }
+    }
+}
+
+void GameLogic::HandleBallInsideHole(Ball& ball){
+    ball.active = false;
+    if(ball.isCueball){
+        cuehand.active = true;
+        cuehand.ballIndex = GetCueballIndex();
     }
 }

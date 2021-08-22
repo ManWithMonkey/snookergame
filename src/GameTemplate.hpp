@@ -24,6 +24,7 @@ public:
 protected:
     std::chrono::steady_clock::time_point lastUpdate;
     double deltaTime = 0.;
+
 };
 
 #endif // __GAMETEMPLATE_H__
