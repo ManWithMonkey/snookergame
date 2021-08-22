@@ -7,27 +7,29 @@ void GameDraw::Draw(){
     //     DrawCueGhosts(cue, ':');
     // }
 
-    Terminal::SetDrawColor(WHITE_ON_BLACK);
+	Terminal::SetDrawColor(900, 900, 900);
     for(Hole& hole : holes){
         DrawHole(hole, '.');
     }
 
-    Terminal::SetDrawColor(BLACK_ON_RED);
-    for(Ball& ball : balls){
-        if(ball.active)
-            DrawBall(ball, '#');
-    }
-
-    Terminal::SetDrawColor(BLACK_ON_BLUE);
+	Terminal::SetDrawColor(100, 100, 900);
     for(Line& line : lines){
         DrawLine(line, ' ');
     }
 
-    // cue
-    Terminal::SetDrawColor(BLACK_ON_BLUE);
+	Terminal::SetDrawColor(900, 900, 100);
     if(cue.active){
         DrawCue(cue, 176, 'X');
     }
+
+    Terminal::SetDrawColor(800, 900, 800);
+    for(Ball& ball : balls){
+        if(ball.active)
+            DrawBallRainbow(ball, ' ');
+            // DrawBall(ball, ' ');
+    }
+
+    // DrawBallRainbow(balls.back(), ' ');
 }
 
 void GameDraw::DrawBall(double x, double y, double r, char c){
@@ -55,6 +57,15 @@ void GameDraw::DrawBall(const Ball& ball, char c){
     double ry = ball.r       * fromMapToScreenScalarY;
 
     DrawFunctions::DrawSolidEllipse(x, y, rx, ry, c);
+}
+
+void GameDraw::DrawBallRainbow(const Ball& ball, char c){
+    double x = ball.pos.x    * fromMapToScreenScalarX;
+    double y = ball.pos.y    * fromMapToScreenScalarY;
+    double rx = ball.r       * fromMapToScreenScalarX;
+    double ry = ball.r       * fromMapToScreenScalarY;
+
+    DrawFunctions::DrawRainbowEllipse(x, y, rx, ry, c);
 }
 
 void GameDraw::DrawLine(const Line& line, char c){

@@ -15,11 +15,9 @@ void DrawSolidEllipse(float x, float y, float rx, float ry, char c);
 
 void TypeString(int x, int y, std::string str);
 
-// remove, legacy
-void PaintDefaultScreen();
-// end of remove
-
 void PaintBlankScreen(int colorpair);
+
+void DrawRainbowEllipse(float x, float y, float rx, float ry, char c);
 
 };
 

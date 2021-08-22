@@ -20,6 +20,7 @@ protected:
     void DrawLine(double x1, double y1, double x2, double y2, char c);
 
     void DrawBall(const Ball& ball, char c);
+    void DrawBallRainbow(const Ball& ball, char c);
     void DrawLine(const Line& line, char c);
     void DrawHole(const Hole& hole, char c);
     void DrawCue(const Cue& cue, char c, char x);

@@ -2,21 +2,25 @@
 
 namespace Terminal{
 
-// static variables
-
 // width and height updated from HandleScreenResizing on runtime
 static int WIDTH = 0;
 static int HEIGHT = 0;
 
+// terminal should be closing
 static bool SHOULD_QUIT = false;
 
+// color stuff
 static bool USE_COLOR = false;
 static int  CURRENT_DRAW_COLOR = COLOR_PAIR(WHITE_ON_BLACK);
+static TerminalColorModule colorTable;
 
+// mouse
 static bool USE_MOUSE = true;
 static MEVENT MOUSE_EVENT;
 
+// callback object
 static std::vector<EventCallbackClass*> callbacks;
+
 
 void EnableColor(){
 	USE_COLOR = true;
@@ -42,8 +46,17 @@ int Index(int x, int y){
     return (y * MAX_WIDTH + x);
 }
 
-void SetDrawColor(int cp){
-	CURRENT_DRAW_COLOR = COLOR_PAIR(cp);
+// static const int OFFSET = 20;
+// static const int MAXIMUM_COLOR = 200;
+// static std::vector<Color> InitializedColors;
+
+void SetDrawColor(unsigned short r, unsigned short b, unsigned short g){
+	int colorId = colorTable.GetIdOfColorPair(r, g, b);
+
+	if(colorId < 0)
+		return;
+	
+	CURRENT_DRAW_COLOR = colorId;
 }
 
 void PlotPixel(int x, int y, char c){
@@ -53,10 +66,9 @@ void PlotPixel(int x, int y, char c){
     SCREEN_DATA[Index(x, y)] = c;
 
 	if(USE_COLOR){
-    	COLOR_DATA[Index(x, y)] = CURRENT_DRAW_COLOR;
+    	COLORID_DATA[Index(x, y)] = CURRENT_DRAW_COLOR;
 	}
 }
-
 
 void Init() {
 	// window
@@ -89,7 +101,7 @@ void Init() {
 	init_pair(BLACK_ON_GREEN, BLACK, GREEN);
 	init_pair(BLACK_ON_BLUE,  BLACK, BLUE);
 
-	attr_on(COLOR_PAIR(BLACK_ON_RED), NULL);
+	attr_on(COLOR_PAIR(WHITE_ON_BLACK), NULL);
 
 	EnableColor();
 	EnableMouse();
@@ -159,6 +171,9 @@ void AddCallback(EventCallbackClass* obj){
 }
 
 void Refresh() {
+	if(USE_COLOR)
+		colorTable.RefreshStart();
+	
 	int w = std::min(WIDTH,   MAX_WIDTH);
 	int h = std::min(HEIGHT,  MAX_HEIGHT);
 
@@ -167,12 +182,15 @@ void Refresh() {
 			int index = Index(x, y);
 
 			char pixel = SCREEN_DATA[index];
-			int color = COLOR_DATA[index];
+			int colorid = COLORID_DATA[index];
+			int color = COLOR_PAIR(colorid);
 
 			if(USE_COLOR){
 				attr_on(color, NULL);
 				mvaddch(y, x, pixel);
 				attr_off(color, NULL);
+
+				colorTable.MarkColorAsUsed(colorid);
 			}
 			else{
 				mvaddch(y, x, pixel);
@@ -182,6 +200,9 @@ void Refresh() {
 	}
 
 	refresh();
+
+	if(USE_COLOR)
+		colorTable.RemoveUnused();
 }
 
 bool ShouldQuit() {

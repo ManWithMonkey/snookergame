@@ -21,7 +21,7 @@ namespace Terminal
 	void DisableMouse();
 
 	// e.g. cp == BLACK_ON_WHITE, instead of COLOR_PAIR(BLACK_ON_WHITE)
-	void SetDrawColor(int cp);
+	void SetDrawColor(unsigned short r, unsigned short b, unsigned short g);
 	void PlotPixel(int x, int y, char c);
 
 	void Init();
@@ -41,7 +41,7 @@ namespace Terminal
 
 	// screen pixel and color data
 	inline int SCREEN_DATA[MAX_WIDTH * MAX_HEIGHT];
-	inline int COLOR_DATA[MAX_WIDTH * MAX_HEIGHT];
+	inline int COLORID_DATA[MAX_WIDTH * MAX_HEIGHT];
 };
 
 #endif // __NCURSESHELPER_H__

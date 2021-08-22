@@ -47,4 +47,31 @@ struct EventCallbackClass{
 	virtual void MouseEvent(int x, int y, mmask_t buttonStateBits);
 };
 
+struct Color{
+	unsigned long colorKey;
+	int colorpair_id;
+	bool usedInLastRefresh = false;
+};
+
+struct TerminalColorModule{
+	// seems to work with 20-255
+	static const int minColorIndex = 20;
+	static const int maxColorIndex = 255;
+	static const int colorCacheSize = maxColorIndex - minColorIndex;
+
+	unsigned long GetColorKey(unsigned short r, unsigned short g, unsigned short b);
+	void MarkColorAsUsed(unsigned long key);
+
+	int colorsUsedCounter = 0;
+	std::vector<Color> colorCache;
+
+	TerminalColorModule();
+
+	void RemoveUnused();
+	void RefreshStart();
+
+	// returns -1 if couldnt find or create
+	int GetIdOfColorPair(unsigned short r, unsigned short g, unsigned short b);
+};
+
 #endif // __NCURSESUTILS_H__

@@ -91,32 +91,13 @@ void DrawSolidBall(float x, float y, float r, char c){
     }
 }
 
-// REMOVE START
-void PaintDefaultScreen(){
-	int w = std::min(Terminal::GetWidth(),   Terminal::MAX_WIDTH);
-	int h = std::min(Terminal::GetHeight(),  Terminal::MAX_HEIGHT);
-
-	char b = 176;
-	char a[] = {'.', ' ', ' ', ' ', ' '};
-
-	for (int y = 0; y < h; y++) {
-		for (int x = 0; x < w; x++) {
-			if (x == 0 || y == 0 || x == Terminal::GetWidth() - 1 || y == Terminal::GetHeight() - 1)
-				Terminal::SCREEN_DATA[Terminal::Index(x, y)] = b;
-			else
-				Terminal::SCREEN_DATA[Terminal::Index(x, y)] = a[(y + x) % sizeof(a)];
-		}
-	}
-}
-// REMOVE END
-
 void PaintBlankScreen(int colorpair){
 	int w = std::min(Terminal::GetWidth(),   Terminal::MAX_WIDTH);
 	int h = std::min(Terminal::GetHeight(),  Terminal::MAX_HEIGHT);
 
 	char a = ' ';
 
-	Terminal::SetDrawColor(colorpair);
+	Terminal::SetDrawColor(100, 100, 100);
 
 	for (int y = 0; y < h; y++) {
 		for (int x = 0; x < w; x++) {
@@ -151,6 +132,45 @@ void TypeString(int x, int y, std::string str){
 	for(int i=0; i<str.length(); i++){
 		DrawPoint(x+i, y, str[i]);
 	}
+}
+
+void DrawRainbowEllipse(float x, float y, float rx, float ry, char c){
+	if(!isfinite(x) || !isfinite(y) || !isfinite(rx) || !isfinite(ry))
+		return;
+
+    float iy = y - ry;
+    float ix;
+
+	static double d = 0;
+	const int dCycle = 100;
+	const double dIncrement = 0.1;
+
+	int dint = d;
+
+	const double scalar = 2.0 * M_PI;
+
+	int red 	= std::sin((double)(dint % dCycle) / (double)(dCycle) * scalar + M_PI * 0.0000) * 400 + 500;
+	int green 	= std::cos((double)(dint % dCycle) / (double)(dCycle) * scalar + M_PI * 0.6666) * 400 + 500;
+	int blue 	= std::sin((double)(dint % dCycle) / (double)(dCycle) * scalar + M_PI * 0.3333) * 400 + 500;
+
+	d += dIncrement;
+
+	Terminal::SetDrawColor(red, green, blue);
+
+    while(iy <= y + ry){
+        float hw = std::sqrt(std::abs(ry * ry - (iy - y) * (iy - y))) * (rx / ry);
+
+        ix = x - hw;
+
+        while(ix <= x + hw){
+
+            DrawPoint(ix, iy, c);
+
+            ix += 1.f;
+        }
+
+        iy += 1.f;
+    }
 }
 
 };
