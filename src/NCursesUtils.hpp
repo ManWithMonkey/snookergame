@@ -48,30 +48,40 @@ struct EventCallbackClass{
 };
 
 struct Color{
+	unsigned short r, g, b;
+};
+
+struct ColorKeyStruct{
 	unsigned long colorKey;
 	int colorpair_id;
 	bool usedInLastRefresh = false;
+
+	ColorKeyStruct& operator=(Color color);
+
+private:
+	static unsigned long GetColorKey(unsigned short r, unsigned short g, unsigned short b);
 };
 
 struct TerminalColorModule{
+public:
+	void ResetColorFlags();
+	void MarkColorAsUsed(unsigned long key);
+	void RemoveUnusedColors();
+
+	// returns -1 if couldnt find or create
+	int GetIdOfColorPair(unsigned short r, unsigned short g, unsigned short b);
+
+	TerminalColorModule();
+
+private:
 	// seems to work with 20-255
 	static const int minColorIndex = 20;
 	static const int maxColorIndex = 255;
 	static const int colorCacheSize = maxColorIndex - minColorIndex;
 
-	unsigned long GetColorKey(unsigned short r, unsigned short g, unsigned short b);
-	void MarkColorAsUsed(unsigned long key);
-
 	int colorsUsedCounter = 0;
-	std::vector<Color> colorCache;
+	std::vector<ColorKeyStruct> colorCache;
 
-	TerminalColorModule();
-
-	void RemoveUnused();
-	void RefreshStart();
-
-	// returns -1 if couldnt find or create
-	int GetIdOfColorPair(unsigned short r, unsigned short g, unsigned short b);
 };
 
 #endif // __NCURSESUTILS_H__

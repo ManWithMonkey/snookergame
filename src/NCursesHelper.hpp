@@ -22,6 +22,7 @@ namespace Terminal
 
 	// e.g. cp == BLACK_ON_WHITE, instead of COLOR_PAIR(BLACK_ON_WHITE)
 	void SetDrawColor(unsigned short r, unsigned short b, unsigned short g);
+	void SetDrawColor(Color color);
 	void PlotPixel(int x, int y, char c);
 
 	void Init();

@@ -46,17 +46,20 @@ int Index(int x, int y){
     return (y * MAX_WIDTH + x);
 }
 
-// static const int OFFSET = 20;
-// static const int MAXIMUM_COLOR = 200;
-// static std::vector<Color> InitializedColors;
-
 void SetDrawColor(unsigned short r, unsigned short b, unsigned short g){
 	int colorId = colorTable.GetIdOfColorPair(r, g, b);
 
-	if(colorId < 0)
+	// if color was not found and could not be created, set draw color as default
+	if(colorId < 0){
+		CURRENT_DRAW_COLOR = WHITE_ON_BLACK;
 		return;
+	}
 	
 	CURRENT_DRAW_COLOR = colorId;
+}
+
+void SetDrawColor(Color color){
+	SetDrawColor(color.r, color.b, color.g);
 }
 
 void PlotPixel(int x, int y, char c){
@@ -88,20 +91,20 @@ void Init() {
 	CHECK(curs_set(CURS_INVIS));
 
 	// mouse
-	mouseinterval(0);
-	mousemask(ALL_MOUSE_EVENTS | REPORT_MOUSE_POSITION, NULL);
+	CHECK(mouseinterval(0));
+	CHECK(mousemask(ALL_MOUSE_EVENTS | REPORT_MOUSE_POSITION, NULL));
 
 	// screen size
 	HandleResizeEvent();
 
 	// color pairs
 	// syntax : init_pair (color_id, foreground, background)
-	init_pair(WHITE_ON_BLACK, WHITE, BLACK);
-	init_pair(BLACK_ON_RED,   BLACK, RED);
-	init_pair(BLACK_ON_GREEN, BLACK, GREEN);
-	init_pair(BLACK_ON_BLUE,  BLACK, BLUE);
+	CHECK(init_pair(WHITE_ON_BLACK, WHITE, BLACK));
+	CHECK(init_pair(BLACK_ON_RED,   BLACK, RED));
+	CHECK(init_pair(BLACK_ON_GREEN, BLACK, GREEN));
+	CHECK(init_pair(BLACK_ON_BLUE,  BLACK, BLUE));
 
-	attr_on(COLOR_PAIR(WHITE_ON_BLACK), NULL);
+	CHECK(attr_on(COLOR_PAIR(WHITE_ON_BLACK), NULL));
 
 	EnableColor();
 	EnableMouse();
@@ -172,7 +175,7 @@ void AddCallback(EventCallbackClass* obj){
 
 void Refresh() {
 	if(USE_COLOR)
-		colorTable.RefreshStart();
+		colorTable.ResetColorFlags();
 	
 	int w = std::min(WIDTH,   MAX_WIDTH);
 	int h = std::min(HEIGHT,  MAX_HEIGHT);
@@ -202,7 +205,7 @@ void Refresh() {
 	refresh();
 
 	if(USE_COLOR)
-		colorTable.RemoveUnused();
+		colorTable.RemoveUnusedColors();
 }
 
 bool ShouldQuit() {

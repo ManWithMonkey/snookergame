@@ -8,7 +8,7 @@ int main(){
 
     while(!Terminal::ShouldQuit()){
         Terminal::HandleEvents();
-        DrawFunctions::PaintBlankScreen(COLOR_PAIR(BLACK_ON_RED));
+        // DrawFunctions::PaintBlankScreen(COLOR_PAIR(BLACK_ON_RED));
 		
 		game.Update();
 		game.Draw();

@@ -1,35 +1,28 @@
 #include "GameDraw.hpp"
 
 void GameDraw::Draw(){
-    // ghosts
-    // Terminal::SetDrawColor(WHITE_ON_BLACK);
-    // if(cue.active){
-    //     DrawCueGhosts(cue, ':');
-    // }
+    DrawFunctions::PaintBlankScreen(backgroundColor);
 
-	Terminal::SetDrawColor(900, 900, 900);
+	Terminal::SetDrawColor(holeColor);
     for(Hole& hole : holes){
         DrawHole(hole, '.');
     }
 
-	Terminal::SetDrawColor(100, 100, 900);
+	Terminal::SetDrawColor(lineColor);
     for(Line& line : lines){
         DrawLine(line, ' ');
     }
 
-	Terminal::SetDrawColor(900, 900, 100);
+	Terminal::SetDrawColor(cueColor);
     if(cue.active){
-        DrawCue(cue, 176, 'X');
+        DrawCue(cue, ' ', ' ');
     }
 
-    Terminal::SetDrawColor(800, 900, 800);
+    Terminal::SetDrawColor(ballColor);
     for(Ball& ball : balls){
         if(ball.active)
-            DrawBallRainbow(ball, ' ');
-            // DrawBall(ball, ' ');
+            DrawBall(ball, ' ');
     }
-
-    // DrawBallRainbow(balls.back(), ' ');
 }
 
 void GameDraw::DrawBall(double x, double y, double r, char c){
@@ -57,15 +50,6 @@ void GameDraw::DrawBall(const Ball& ball, char c){
     double ry = ball.r       * fromMapToScreenScalarY;
 
     DrawFunctions::DrawSolidEllipse(x, y, rx, ry, c);
-}
-
-void GameDraw::DrawBallRainbow(const Ball& ball, char c){
-    double x = ball.pos.x    * fromMapToScreenScalarX;
-    double y = ball.pos.y    * fromMapToScreenScalarY;
-    double rx = ball.r       * fromMapToScreenScalarX;
-    double ry = ball.r       * fromMapToScreenScalarY;
-
-    DrawFunctions::DrawRainbowEllipse(x, y, rx, ry, c);
 }
 
 void GameDraw::DrawLine(const Line& line, char c){
@@ -100,58 +84,6 @@ void GameDraw::DrawCue(const Cue& cue, char c, char x){
     double y1 = (ball->pos + unit * distanceFromBall).y * fromMapToScreenScalarY;
     double x2 = (ball->pos + unit * distanceFromBall2).x * fromMapToScreenScalarX;
     double y2 = (ball->pos + unit * distanceFromBall2).y * fromMapToScreenScalarY;
-    // double x3 = cue.targetPosition.x * fromMapToScreenScalarX;
-    // double y3 = cue.targetPosition.y * fromMapToScreenScalarY;
 
     DrawFunctions::DrawLine(x1, y1, x2, y2, c);
-    // DrawFunctions::DrawPoint(x3, y3, x);
 }
-
-// void GameDraw::DrawCueGhosts(const Cue& cue, char c){
-//     if(!cue.active)
-//         return;
-//     if(cue.ballIndex < 0 || cue.ballIndex >= balls.size())
-//         return;
-
-//     Ball* ball = &balls[cue.ballIndex];
-//     vec2 unit = MakeVector(cue.angle, -100.0);
-
-//     vec2 temp = ball->dpos;
-//     ball->dpos = unit;
-
-//     auto bl = GetClosestBallLineCollision(*ball);
-//     auto bb = GetClosestBallBallCollision(*ball);
-
-//     ball->dpos = temp;
-
-//     bool apply_ballball_instead_of_ballline;
-
-//     bool b = !bb.nocollision;
-//     bool l = !bl.nocollision;
-
-//     if(!b && !l){
-//         // no more collisions, no need to iterate
-//         return;
-//     }
-//     else if(b && l){
-//         apply_ballball_instead_of_ballline = bb.scalarOfDeltatime < bl.scalarOfDeltatime;
-//     }
-//     else if(b){
-//         apply_ballball_instead_of_ballline = true;
-//     }
-//     else if(l){
-//         apply_ballball_instead_of_ballline = false;
-//     }
-
-//     double scalar;
-
-//     if(apply_ballball_instead_of_ballline)
-//         scalar = bb.scalarOfDeltatime;
-//     else
-//         scalar = bl.scalarOfDeltatime;
-
-//     vec2 ghost = ball->pos + unit * scalar;
-
-//     DrawLine(ball->pos.x, ball->pos.y, ghost.x, ghost.y, c);
-//     DrawBall(ghost.x, ghost.y, ball->r, c);
-// }
