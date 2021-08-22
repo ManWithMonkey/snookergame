@@ -7,7 +7,7 @@ class GameCollisions : public virtual GameData{
 protected:
     void HandleCollisionsAndApplyMotion();
 
-protected: // should be private?
+protected:
     BallBallCollision GetClosestBallBallCollision(Ball& ball);
     BallLineCollision GetClosestBallLineCollision(Ball& ball);
     BallBallCollision GetClosestBallBallCollision();

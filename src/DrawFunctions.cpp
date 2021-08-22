@@ -68,29 +68,6 @@ void DrawLineVertical(float x, float y1, float y2, char c){
     }
 }
 
-
-void DrawSolidBall(float x, float y, float r, char c){
-	if(!isfinite(x) || !isfinite(y) || !isfinite(r))
-		return;
-
-    float iy = y - r;
-    float ix;
-
-    while(iy <= y + r){
-        float hw = std::sqrt(std::abs(r * r - (iy - y) * (iy - y)));
-
-        ix = x - hw;
-
-        while(ix <= x + hw){
-            DrawPoint(ix, iy, c);
-
-            ix += 1.f;
-        }
-
-        iy += 1.f;
-    }
-}
-
 void PaintBlankScreen(Color color){
 	int w = std::min(Terminal::GetWidth(),   Terminal::MAX_WIDTH);
 	int h = std::min(Terminal::GetHeight(),  Terminal::MAX_HEIGHT);
@@ -106,9 +83,30 @@ void PaintBlankScreen(Color color){
 	}
 }
 
+void DrawRectangle(int x1, int y1, int x2, int y2, char c){
+	for(int y = std::max(0, y1); y < std::min(GetHeight(), y2); y++){
+		DrawPoint(x1, y, c);
+		DrawPoint(x2, y, c);
+	}
+	for(int x = std::max(1, x1-1); x < std::min(GetWidth()-1, x2-1); x++){
+		DrawPoint(x, y1, c);
+		DrawPoint(x, y2, c);
+	}
+}
+
+void FillRectangle(int x1, int y1, int x2, int y2, char c){
+	for(int y = std::max(0, y1); y < std::min(GetHeight(), y2); y++){
+		for(int x = std::max(0, x1); x < std::min(GetWidth(), x2); x++){
+			DrawPoint(x, y, c);
+		}
+	}
+}
+
 void DrawSolidEllipse(float x, float y, float rx, float ry, char c){
 	if(!isfinite(x) || !isfinite(y) || !isfinite(rx) || !isfinite(ry))
 		return;
+
+	// todo: make this better somehow
 
     float iy = y - ry;
     float ix;

@@ -6,10 +6,6 @@
 #include "vec2.hpp"
 #include "MathFunctions.hpp"
 
-inline auto frand = []() -> double {
-    return (double)rand() / ((double)(RAND_MAX) + 1.0);
-};
-
 struct Line{
     vec2 a, b;
 
@@ -21,7 +17,6 @@ struct Ball{
 
     vec2 pos;
     vec2 vel;
-
     vec2 dpos; 
 
     bool active = true;
@@ -44,25 +39,40 @@ enum CueRotation{
 };
 
 struct Cue{
+    bool active = true;
+
     int ballIndex;
     double angle = 0.0;
 
-    double distanceFromBallMin;
-    double distanceFromBallMax;
-    double lengthOnScreen;
     double pullScale;
     double releaseMinStregth;
     double releaseMaxStregth;
 
     int rotationStatus = NO_ROTATION;
-    bool active = true;
+
+    // purely visual
+    double lengthOnScreen;
+    double distanceFromBallMin;
+    double distanceFromBallMax;
 };
+
+// todo: use CollisionStruct for both ballball and ballline
+
+// struct CollisionStruct{
+//     double scalarOfDeltatime;
+//     vec2 pos1, pos2;
+//     vec2 dpos1, dpos2;
+//     vec2 vel1, vel2;
+//     int i = 0, j = 0;
+//     bool nocollision = true;
+// };
 
 struct BallBallCollision{
     double scalarOfDeltatime;
     vec2 pos1, pos2;
     vec2 dpos1, dpos2;
     vec2 vel1, vel2;
+    
     int i = 0, j = 0;
     bool nocollision = true;
 };

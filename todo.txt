@@ -4,7 +4,6 @@ Done:
 - Line draw on screen
 - Ball, line architectures
 
-Undone:
 - Line-line collision/distance
 - Point-line collision
 - Ball-line collision
@@ -15,3 +14,7 @@ Undone:
 - Table layout
 
 - Game logic
+
+Undone:
+- scores
+- teams
