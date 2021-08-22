@@ -3,18 +3,7 @@
 
 #include "GameUtils.hpp"
 
-#define _USE_MATH_DEFINES
-#include <math.h>
 #include <algorithm>
-
-vec2 Normal(vec2 v);
-vec2 NormalUnit(vec2 v);
-double Norm(vec2 v);
-vec2 UnitVector(vec2 v);
-double DotProduct(vec2 a, vec2 b);
-double Angle(vec2 v);
-vec2 MirrorVectorFromNormal(vec2 v, vec2 n);
-vec2 MakeVector(double angle, double length);
 
 bool AABB(vec2 a1, vec2 b1, vec2 a2, vec2 b2);
 bool LineLineCollision(vec2 a1, vec2 b1, vec2 a2, vec2 b2);

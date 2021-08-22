@@ -1,58 +1,5 @@
 #include "MathFunctions.hpp"
 
-vec2 Normal(vec2 v){
-    return {v.y, -v.x};
-}
-
-vec2 NormalUnit(vec2 v){
-    return Normal(UnitVector(v));
-}
-
-double Norm(vec2 v){
-    return std::sqrt(v.x * v.x + v.y * v.y);
-}
-
-vec2 UnitVector(vec2 v){
-    double l = Norm(v);
-
-    if(l == 0.0){
-        return {0.0, 0.0};
-    }
-
-    return {v.x / l, v.y / l};
-}
-
-double DotProduct(vec2 a, vec2 b){
-    return a.x * b.x + a.y * b.y;
-}
-
-double Angle(vec2 v){
-    return std::atan2(v.y, v.x);
-}
-
-vec2 MirrorVectorFromNormal(vec2 v, vec2 n){
-    // https ://math.stackexchange.com/questions/13261/how-to-get-a-reflection-vector
-    return v - n * 2.0 * DotProduct(v, n);
-}
-
-vec2 MakeVector(double angle, double length){
-    return vec2{cos(angle), sin(angle)} * length;
-}
-
-// REMOVE
-vec2 Add(vec2 a, vec2 b){
-    return {a.x + b.x, a.y + b.y};
-}
-
-vec2 Subtract(vec2 a, vec2 b){
-    return {a.x - b.x, a.y - b.y};
-}
-
-vec2 Multiply(vec2 a, double s){
-    return {a.x * s, a.y * s};
-}
-// END OF REMOVE
-
 bool AABB(vec2 a1, vec2 b1, vec2 a2, vec2 b2){
     double x1 = std::min(a1.x, b1.x);
     double y1 = std::min(a1.y, b1.y);
@@ -100,9 +47,8 @@ bool MovingCircleCollidesWithStaticLine(vec2 p, vec2 dp, double r, vec2 a, vec2 
 }
 
 bool MovingCirclesCollide(vec2 p1, vec2 dp1, double r1, vec2 p2, vec2 dp2, double r2){
-    // return LineLineDistance(p1, p1 + dp1, p2, p2 + dp2) <= r1 + r2;
+    // todo: make this better
 
-    // quick fix
     double scalar = GetCollisionPointMovementScalarNewton(p1, dp1, r1, p2, dp2, r2);
     double distance = Norm(
         (p1 + dp1 * scalar) -
@@ -201,7 +147,7 @@ vec2 MovingCircleCollisionPointWithLine(vec2 p, vec2 dp, double r, vec2 a, vec2 
     // assumes that it does collide
     vec2 result = {0, 0};
 
-    vec2 dline = Subtract(b, a);
+    vec2 dline = b - a;
     vec2 uline = UnitVector(dline);
     vec2 n = Normal(uline);
 
@@ -217,7 +163,6 @@ vec2 MovingCircleCollisionPointWithLine(vec2 p, vec2 dp, double r, vec2 a, vec2 
         return PointPointDistance(LineClosestPointFromPoint(a, b, cp), cp) - r;
     };
 
-    // double l = Norm(dp);
     double t = 0.0;
     double delta = 1E-5;
     double value1 = Calc(t);
