@@ -214,7 +214,7 @@ double GetCollisionPointMovementScalarNewton(vec2 p1, vec2 dp1, double r1, vec2 
     return t;
 }
 
-std::pair<vec2, vec2> GetNewVelocities(vec2 p1, vec2 dp1, double r1, vec2 p2, vec2 dp2, double r2){
+std::pair<vec2, vec2> GetNewDPositionsAfterCollision(vec2 p1, vec2 dp1, double r1, vec2 p2, vec2 dp2, double r2){
     std::pair<vec2, vec2> result;
     
     double collisionScalar = GetCollisionPointMovementScalarNewton(p1, dp1, r1, p2, dp2, r2);
@@ -246,4 +246,7 @@ std::pair<vec2, vec2> GetNewVelocities(vec2 p1, vec2 dp1, double r1, vec2 p2, ve
     result = {resx, resy};
 
     return result;
+}
+
+std::pair<Ball, Ball> GetBallsDuringCollision(const Ball& b1, const Ball& b2){
 }

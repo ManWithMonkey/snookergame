@@ -40,7 +40,7 @@ BallBallCollision GameCollisions::GetClosestBallBallCollision(Ball& ball){
         bool collides2 = (collisionScalar > 0.0) && (collisionScalar <= 1.0);
 
         if(collides && collides2){
-            auto result = GetNewVelocities(ball.pos, ball.dpos, ball.r, other.pos, other.dpos, other.r);
+            auto result = GetNewDPositionsAfterCollision(ball.pos, ball.dpos, ball.r, other.pos, other.dpos, other.r);
 
             vec2 mirror1 = result.first;
             vec2 mirror2 = result.second;
@@ -155,7 +155,7 @@ BallBallCollision GameCollisions::GetClosestBallBallCollision(){
             bool collides2 = (collisionScalar > 0.0) && (collisionScalar <= 1.0);
 
             if(collides && collides2){
-                auto result = GetNewVelocities(ball.pos, ball.dpos, ball.r, other.pos, other.dpos, other.r);
+                auto result = GetNewDPositionsAfterCollision(ball.pos, ball.dpos, ball.r, other.pos, other.dpos, other.r);
 
                 vec2 mirror1 = result.first;
                 vec2 mirror2 = result.second;
