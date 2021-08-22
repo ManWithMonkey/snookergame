@@ -16,13 +16,8 @@ public:
     void Update(double dt);
 
 protected:
-    // BallBallCollision GetClosestBallBallCollision(Ball& ball);
-    // BallLineCollision GetClosestBallLineCollision(Ball& ball);
-    // BallBallCollision GetClosestBallBallCollision();
-    // BallLineCollision GetClosestBallLineCollision();
-
-    // void UpdatePositions();
-    // void HandleClipping();
+    void ApplyDeacceleration(double dt);
+    void CalculateMotions(double dt);
     void UpdateBallHoleInteraction(double dt);
 
 protected:
@@ -32,8 +27,10 @@ protected:
     const double DPOS_LOSS      = 0.99;
     const double VEL_LOSS       = 0.99;
 
-    const double deacceleration = 0.99;
+    const double deacceleration = 0.95;
     const double wallBounce     = 1.0;
+
+    const double instantStopBelowVelocity = 0.075;
 
     const double holeDeacceleration = 3.0;
     const double holeSuckMinVel     = 0.2;

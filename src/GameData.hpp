@@ -13,6 +13,12 @@ public:
     // std::vector<Cue> cues;
     Cue cue;
 
+    const double map_width      = 2.0;
+    const double map_height     = 1.0;
+    
+    double fromMapToScreenScalarX;
+    double fromMapToScreenScalarY;
+
     void ClearGameData();
 };
 

@@ -8,6 +8,9 @@ void GameDraw::Draw(){
         DrawHole(hole, '.');
     }
 
+	Terminal::SetDrawColor(ghostColor);
+    DrawCueGhosts(cue, '#');
+
 	Terminal::SetDrawColor(lineColor);
     for(Line& line : lines){
         DrawLine(line, ' ');
@@ -71,7 +74,7 @@ void GameDraw::DrawHole(const Hole& hole, char c){
 }
 
 void GameDraw::DrawCue(const Cue& cue, char c, char x){
-    if(cue.ballIndex < 0 || cue.ballIndex >= balls.size())
+    if(!IsCueValid(cue))
         return;
 
     Ball* ball = &balls[cue.ballIndex];
@@ -86,4 +89,60 @@ void GameDraw::DrawCue(const Cue& cue, char c, char x){
     double y2 = (ball->pos + unit * distanceFromBall2).y * fromMapToScreenScalarY;
 
     DrawFunctions::DrawLine(x1, y1, x2, y2, c);
+}
+
+void GameDraw::DrawCueGhosts(const Cue& cue, char c){
+    if(!IsCueValid(cue))
+        return;
+
+    Ball startball = balls[cue.ballIndex];
+    Ball endball = balls[cue.ballIndex];
+    endball.dpos = MakeVector(cue.angle + M_PI, MAX_GHOST_DISTANCE);
+
+    BallBallCollision collision = GetClosestBallBallCollision(endball);
+    BallLineCollision collisionline = GetClosestBallLineCollision(endball);
+
+    bool bb_not_bl;
+
+    if(!collision.nocollision && !collisionline.nocollision){
+        if(collision.scalarOfDeltatime < collisionline.scalarOfDeltatime){
+            endball.pos = collision.pos1;
+            bb_not_bl = true;
+        }
+        else{
+            endball.pos = collisionline.pos;
+            bb_not_bl = false;
+        }
+    }
+    else if(!collision.nocollision){
+        endball.pos = collision.pos1;
+        bb_not_bl = true;
+    }
+    else if(!collisionline.nocollision){
+        endball.pos = collisionline.pos;
+        bb_not_bl = false;
+    }
+
+    DrawBall(endball, c);
+
+    // trace 1
+    DrawLine(startball.pos.x, startball.pos.y, endball.pos.x, endball.pos.y, c);
+
+    // trace 2
+    if(bb_not_bl){
+        vec2 tracer = UnitVector(collision.dpos2) * TRACER_LENGTH;
+
+        Line l;
+        l.a = endball.pos;
+        l.b = endball.pos + tracer;
+        DrawLine(l, c);
+    }
+    else{
+        vec2 tracer = UnitVector(collisionline.dpos) * TRACER_LENGTH;
+
+        Line l;
+        l.a = endball.pos;
+        l.b = endball.pos + tracer;
+        DrawLine(l, c);
+    }
 }

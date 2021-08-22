@@ -7,46 +7,38 @@ void GameLogic::Update(double dt){
     double w = Terminal::GetWidth();
     double h = Terminal::GetHeight();
 
-    // todo, ApplyDeacceleration()
+    UpdateBallHoleInteraction(dt);
+    ApplyDeacceleration(dt);
+    CalculateMotions(dt);
+    HandleCollisionsAndApplyMotion();
+}
 
-    // deaccelerate
+void GameLogic::ApplyDeacceleration(double dt){
     for(int i = 0; i < balls.size(); i++){
         Ball& ball = balls[i];
         ball.vel = ball.vel * (1.0 - deacceleration * dt);
+
+        // instant stop if too slow
+        if(Norm(ball.vel) < instantStopBelowVelocity)
+            ball.vel = {0, 0};
     }
+}
 
-    // holes
-    UpdateBallHoleInteraction(dt);
-
-    // todo: CalculateMotions for dpos
-    // calculate dpos
+void GameLogic::CalculateMotions(double dt){
     for(int i = 0; i < balls.size(); i++){
         Ball& ball = balls[i];
-
         if(!ball.active)
             continue;
-
-        // REMOVE START - should be optional or in a function
-        double velx = std::max(0.1, std::abs(ball.vel.x));
-        double vely = std::max(0.1, std::abs(ball.vel.y));
-
-        // totally out of bounds
-        if(ball.pos.x < 0.)             ball.vel.x =  velx;
-        if(ball.pos.y < 0.)             ball.vel.y =  vely;
-        if(ball.pos.x >= map_width)     ball.vel.x = -velx;
-        if(ball.pos.y >= map_height)    ball.vel.y = -vely;
-        // REMOVE END
 
         // position change
         ball.dpos.x = ball.vel.x * dt;
         ball.dpos.y = ball.vel.y * dt;
     }
-
-    // collisions
-    HandleCollisionsAndApplyMotion();
 }
 
 void GameLogic::UpdateBallHoleInteraction(double dt){
+    // todo: holes dont really work properly, sometimes even accelerates ball to bounce at high velocity from hole
+
     for(int i = 0; i < balls.size(); i++){
         Ball& ball = balls[i];
 

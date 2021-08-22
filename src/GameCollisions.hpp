@@ -2,13 +2,12 @@
 #define __GAMECOLLISIONS_H__
 
 #include "GameData.hpp"
-#include "GameDraw.hpp"
 
 class GameCollisions : public virtual GameData{
 protected:
     void HandleCollisionsAndApplyMotion();
 
-private:
+protected: // should be private?
     BallBallCollision GetClosestBallBallCollision(Ball& ball);
     BallLineCollision GetClosestBallLineCollision(Ball& ball);
     BallBallCollision GetClosestBallBallCollision();

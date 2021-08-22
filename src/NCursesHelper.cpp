@@ -42,6 +42,21 @@ void DisableMouse(){
 	Refresh();
 }
 
+int GetMouseX(){
+	if(!USE_MOUSE)
+		return 0;
+	else
+		return MOUSE_EVENT.x;
+}
+
+int GetMouseY(){
+	if(!USE_MOUSE)
+		return 0;
+	else
+		return MOUSE_EVENT.y;
+}
+
+
 int Index(int x, int y){
     return (y * MAX_WIDTH + x);
 }

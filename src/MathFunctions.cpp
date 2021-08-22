@@ -248,5 +248,45 @@ std::pair<vec2, vec2> GetNewDPositionsAfterCollision(vec2 p1, vec2 dp1, double r
     return result;
 }
 
-std::pair<Ball, Ball> GetBallsDuringCollision(const Ball& b1, const Ball& b2){
+BallBallCollision GetBallsDuringCollision(const Ball& ball, const Ball& other){
+    BallBallCollision result;
+
+    double collisionScalar = GetCollisionPointMovementScalarNewton(ball.pos, ball.dpos, ball.r, other.pos, other.dpos, other.r);
+    vec2 collisionPointCenter1 = ball.pos   + ball.dpos     * collisionScalar;
+    vec2 collisionPointCenter2 = other.pos  + other.dpos    * collisionScalar;
+
+    bool collides = MovingCirclesCollide(ball.pos, ball.dpos, ball.r, other.pos, other.dpos, other.r);
+    bool collides2 = (collisionScalar > 0.0) && (collisionScalar <= 1.0);
+
+    if(!collides || !collides2){
+        result.nocollision = true;
+        return result;
+    }
+
+    auto collResults = GetNewDPositionsAfterCollision(ball.pos, ball.dpos, ball.r, other.pos, other.dpos, other.r);
+
+    vec2 mirror1 = collResults.first;
+    vec2 mirror2 = collResults.second;
+
+    vec2 u1 = UnitVector(mirror1);
+    vec2 u2 = UnitVector(mirror2);
+
+    double dl1 = Norm(mirror1);
+    double dl2 = Norm(mirror2);
+    double l1 = Norm(ball.vel);
+    double l2 = Norm(other.vel);
+
+    double dl = dl1 + dl2;
+    double l  = l1  + l2;
+
+    result.pos1 = collisionPointCenter1;
+    result.pos2 = collisionPointCenter2;
+    result.dpos1 = mirror1;
+    result.dpos2 = mirror2;
+    result.vel1 = u1 * l * (dl1 / dl);
+    result.vel2 = u2 * l * (dl2 / dl);
+    result.scalarOfDeltatime = collisionScalar;
+    result.nocollision = false;
+
+    return result;
 }

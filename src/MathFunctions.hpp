@@ -5,6 +5,10 @@
 
 #include <algorithm>
 
+struct Ball;
+struct BallBallCollision;
+// struct BallBallCollisionInfo;
+
 bool AABB(vec2 a1, vec2 b1, vec2 a2, vec2 b2);
 bool LineLineCollision(vec2 a1, vec2 b1, vec2 a2, vec2 b2);
 bool MovingCircleCollidesWithStaticLine(vec2 p, vec2 dp, double r, vec2 a, vec2 b);
@@ -22,6 +26,6 @@ double GetCollisionPointMovementScalarNewton(vec2 p1, vec2 dp1, double r1, vec2 
 
 std::pair<vec2, vec2> GetNewDPositionsAfterCollision(vec2 p1, vec2 dp1, double r1, vec2 p2, vec2 dp2, double r2);
 
-std::pair<Ball, Ball> GetBallsDuringCollision(const Ball& b1, const Ball& b2);
+BallBallCollision GetBallsDuringCollision(const Ball& b1, const Ball& b2);
 
 #endif // __MATHFUNCTIONS_H__
